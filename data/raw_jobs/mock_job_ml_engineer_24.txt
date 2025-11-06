@@ -1,0 +1,6 @@
+岗位：机器学习工程师
+学历要求：硕士
+工作年限：5年
+技能要求：Python, PyTorch, TensorFlow, scikit-learn
+方向关键词：推荐系统, NLP, LLM
+掌握RAG/向量检索，熟悉LangChain优先。

@@ -1,0 +1,6 @@
+岗位：数据工程师
+学历要求：本科
+工作年限：3年
+技能要求：Spark, Hadoop, Kafka, Airflow
+方向关键词：数据仓库, ETL
+熟悉Linux环境与脚本，掌握SQL优化。

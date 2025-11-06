@@ -1,0 +1,6 @@
+岗位：后端工程师
+学历要求：本科
+工作年限：2年
+技能要求：Java, Go, MySQL, Redis, Kafka
+方向关键词：微服务, REST, 高并发
+了解 Docker/Kubernetes，具备云原生经验。

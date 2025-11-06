@@ -1,0 +1,46 @@
+{
+  "weights": {
+    "skills": 0.45,
+    "degree": 0.15,
+    "years": 0.2,
+    "position": 0.1,
+    "keywords": 0.07,
+    "certs": 0.03,
+    "languages": 0.0
+  },
+  "skills": [
+    "python", "java", "c++", "c#", "go", "golang", "typescript", "javascript", "nodejs",
+    "sql", "mysql", "postgresql", "oracle", "sqlserver",
+    "docker", "k8s", "kubernetes", "linux", "windows", "git",
+    "hadoop", "spark", "hive", "flink", "storm", "airflow", "presto", "clickhouse",
+    "tensorflow", "pytorch", "scikit-learn", "sklearn", "xgboost", "lightgbm", "catboost",
+    "opencv", "transformers", "huggingface", "bert", "gpt", "llm",
+    "flask", "fastapi", "django", "spring", "spring boot", "hibernate",
+    "redis", "mongodb", "elasticsearch", "kibana", "logstash",
+    "vue", "react", "angular", "next.js", "nuxt.js",
+    "aws", "azure", "gcp", "sagemaker", "databricks", "bigquery", "redshift", "snowflake",
+    "kafka", "rabbitmq", "zookeeper", "rest", "grpc", "microservices",
+    "prometheus", "grafana", "sentry", "helm", "istio", "argo", "jenkins", "github actions", "gitlab ci",
+    "faiss", "milvus", "pgvector", "langchain", "rag",
+    "scala", "rust", "ruby", "perl", "matlab", "r"
+  ],
+  "keywords": [
+    "nlp", "自然语言处理", "cv", "计算机视觉", "llm", "大模型", "transformer", "transformers",
+    "bert", "gpt", "langchain", "rag", "向量数据库",
+    "推荐", "推荐系统", "recommender", "ranking", "ctr", "点击率", "召回", "排序",
+    "搜索", "全文检索", "query understanding", "query intent",
+    "广告", "投放", "实时竞价", "rtb",
+    "风控", "反欺诈", "风控建模",
+    "金融", "电商", "医疗", "制造", "物联网"
+  ],
+  "certs": [
+    "pmp", "cka", "ckad", "aws saa", "aws sa", "aws devops", "azure az-900", "azure ai-900",
+    "gcp pca", "rhce", "hcia", "hcip", "软考中级", "软考高级", "软考"
+  ],
+  "languages": [
+    "英语四级", "英语六级", "cet-4", "cet4", "cet-6", "cet6",
+    "雅思", "托福", "英文流利", "英语可作为工作语言", "英语工作",
+    "日语n1", "日语n2", "日语", "jlpt",
+    "德语b2", "德语", "韩语topik", "韩语"
+  ]
+}

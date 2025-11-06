@@ -1,0 +1,6 @@
+岗位：DevOps工程师
+学历要求：本科
+工作年限：4年
+技能要求：Docker, Kubernetes, Jenkins, Terraform
+方向关键词：CI/CD, 云原生
+具备云平台经验（AWS/Azure/GCP）。

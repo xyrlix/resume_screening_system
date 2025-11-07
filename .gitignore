@@ -1,6 +1,5 @@
 # custom
-module/bert_entity/*.safetensors
-
+models/bert_entity/model.safetensors
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

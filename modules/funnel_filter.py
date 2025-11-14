@@ -29,6 +29,8 @@ else:
     _collection = None
 _sent = SentenceTransformer("all-MiniLM-L6-v2") if SentenceTransformer is not None else None
 _emb_cache: Dict[str, tuple] = {}
+_vsearch_cache: Dict[str, tuple] = {}
+_funnel_cache: Dict[str, tuple] = {}
 
 def _load_matcher():
     base_dir = os.path.join(os.path.dirname(__file__), "..", "scripts")
@@ -64,7 +66,6 @@ def vector_index_upsert(items: List[Dict[str, Any]]):
         return {"count": len(items or [])}
     ids = []
     docs = []
-    embs = []
     for it in items or []:
         rid = str(it.get("id"))
         txt = str(it.get("text", ""))
@@ -72,15 +73,21 @@ def vector_index_upsert(items: List[Dict[str, Any]]):
             continue
         ids.append(rid)
         docs.append(txt)
-        embs.append(_sent.encode([txt])[0])
     if not ids:
         return {"count": 0}
-    try:
-        _collection.upsert(ids=ids, documents=docs, embeddings=embs)
-    except Exception:
-        _collection.add(ids=ids, documents=docs, embeddings=embs)
-    logger.info(f"upsert count={len(ids)}")
-    return {"count": len(ids)}
+    chunk = 128
+    total = 0
+    for i in range(0, len(ids), chunk):
+        c_ids = ids[i:i+chunk]
+        c_docs = docs[i:i+chunk]
+        c_embs = _sent.encode(c_docs)
+        try:
+            _collection.upsert(ids=c_ids, documents=c_docs, embeddings=list(c_embs))
+        except Exception:
+            _collection.add(ids=c_ids, documents=c_docs, embeddings=list(c_embs))
+        total += len(c_ids)
+    logger.info(f"upsert count={total}")
+    return {"count": total}
 
 def vector_search(job_desc: str, top_k: int = 50) -> List[Dict[str, Any]]:
     if _collection is None or _sent is None:
@@ -91,6 +98,11 @@ def vector_search(job_desc: str, top_k: int = 50) -> List[Dict[str, Any]]:
         scored.sort(key=lambda x: x[0], reverse=True)
         out = [{"id": it.get("id"), "text": it.get("text")} for s, it in scored[:top_k]]
         return out
+    now = time.time()
+    key = f"{job_desc}::{top_k}"
+    ent = _vsearch_cache.get(key)
+    if ent and now - ent[1] < 30:
+        return ent[0]
     q = _encode_cached(job_desc)
     res = _collection.query(query_embeddings=[q], n_results=max(1, top_k))
     out = []
@@ -98,17 +110,24 @@ def vector_search(job_desc: str, top_k: int = 50) -> List[Dict[str, Any]]:
     docs = res.get("documents", [[]])[0]
     for i, d in zip(ids, docs):
         out.append({"id": i, "text": d})
+    _vsearch_cache[key] = (out, now)
     return out
 
 def three_stage_filter(job_desc: str, custom_rules: List[Dict[str, Any]] = None, top_k: int = 50) -> List[Dict[str, Any]]:
     logger = get_logger("funnel")
+    key = f"{job_desc}::{top_k}::{str(custom_rules or [])}"
+    now = time.time()
+    ent = _funnel_cache.get(key)
+    if ent and now - ent[1] < 60:
+        logger.info(f"cache_hit candidates={len(ent[0])}")
+        return ent[0]
     candidates = vector_search(job_desc, top_k=top_k)
     implicit = _llm.infer_implicit_demands(job_desc)
     results = []
+    jprof = _matcher.job_profile_from_text(job_desc)
     for c in candidates:
         t = c.get("text", "")
         rprof = _matcher.profile_from_text(t)
-        jprof = _matcher.job_profile_from_text(job_desc)
         base_sim = _score.base_similarity(t, job_desc)
         lang = detect_language(t)
         thr = 0.5 if _sent is not None else 0.2
@@ -133,6 +152,7 @@ def three_stage_filter(job_desc: str, custom_rules: List[Dict[str, Any]] = None,
         results.append({"id": c.get("id"), "score": final, "base": base_sim, "skill": round(skill_ratio, 4), "implicit": round(implicit_score, 4), "format": round(fmt_score, 4), "resume_profile": rprof, "job_profile": jprof})
     results = sorted(results, key=lambda x: x.get("score", 0.0), reverse=True)
     logger.info(f"job_desc_len={len(job_desc)} candidates={len(candidates)} results={len(results)}")
+    _funnel_cache[key] = (results, now)
     return results
 def _encode_cached(text: str):
     if _sent is None:

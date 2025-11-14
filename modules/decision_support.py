@@ -51,12 +51,16 @@ def dynamic_threshold(job_desc: str, results: List[Dict[str, Any]]) -> float:
 def recommend(job_desc: str, results: List[Dict[str, Any]]) -> Dict[str, Any]:
     thr = dynamic_threshold(job_desc, results)
     picks = []
+    max_q = int(os.getenv("DECISION_QS_MAX", "10"))
+    qn = 0
     for r in results:
         if float(r.get("score", 0)) >= thr:
             prof = r.get("resume_profile", {})
             text = "技能:" + ",".join(prof.get("skills", [])) + " 职位:" + str(prof.get("position", ""))
-            if hasattr(_llm, "generate_interview_questions_ctx"):
+            qs = []
+            if hasattr(_llm, "generate_interview_questions_ctx") and qn < max_q:
                 qs = _llm.generate_interview_questions_ctx(job_desc, text)
+                qn += 1
             else:
                 qs = _llm.generate_interview_questions(text)
             reason = f"base={r.get('base')} skill={r.get('skill')} implicit={r.get('implicit')} format={r.get('format')}"

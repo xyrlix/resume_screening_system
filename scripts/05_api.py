@@ -30,6 +30,16 @@ def _load_func_project(module_relpath: str, func_name: str):
     return getattr(mod, func_name)
 
 ner_predict = None
+
+def _ensure_ner():
+    global ner_predict
+    if ner_predict is None:
+        try:
+            ner_predict = _load_func('04_predict.py', 'predict')
+        except Exception:
+            def _fallback(text: str):
+                return []
+            ner_predict = _fallback
 quick_match = _load_func('04_matcher_model.py', 'quick_match')
 vector_index_upsert = _load_func_project('modules/funnel_filter.py', 'vector_index_upsert')
 three_stage_filter = _load_func_project('modules/funnel_filter.py', 'three_stage_filter')
@@ -39,6 +49,10 @@ update_industry_templates = _load_func_project('modules/llm_utils.py', 'update_i
 online_ingest = _load_func_project('modules/online_ingest.py', 'ingest_urls')
 extract_en_entities = _load_func_project('modules/en_entities.py', 'extract_en_entities')
 fetch_bosszhipin = _load_func_project('modules/adapters/bosszhipin.py', 'fetch_bosszhipin')
+fetch_zhilian = _load_func_project('modules/adapters/zhilian.py', 'fetch_zhilian')
+fetch_liepin = _load_func_project('modules/adapters/liepin.py', 'fetch_liepin')
+fetch_linkedin = _load_func_project('modules/adapters/linkedin.py', 'fetch_linkedin')
+set_llm_enabled = _load_func_project('modules/llm_utils.py', 'set_llm_enabled')
 
 
 app = FastAPI(title="Resume Screening API", version="0.1.0")
@@ -86,6 +100,21 @@ class PredictEnRequest(BaseModel):
     text: str
 
 class BossZhipinRequest(BaseModel):
+    urls: List[str]
+    cookie: str
+
+class ZhiLianRequest(BaseModel):
+    urls: List[str]
+    cookie: str
+
+class LLMEnabled(BaseModel):
+    enabled: bool
+
+class LiePinRequest(BaseModel):
+    urls: List[str]
+    cookie: str
+
+class LinkedInRequest(BaseModel):
     urls: List[str]
     cookie: str
 
@@ -177,6 +206,26 @@ def ingest_bosszhipin_api(req: BossZhipinRequest) -> Dict[str, Any]:
     items = fetch_bosszhipin(req.urls, req.cookie)
     return {"count": len(items), "items": items}
 
+@app.post("/ingest_zhilian")
+def ingest_zhilian_api(req: ZhiLianRequest) -> Dict[str, Any]:
+    items = fetch_zhilian(req.urls, req.cookie)
+    return {"count": len(items), "items": items}
+
+@app.post("/ingest_liepin")
+def ingest_liepin_api(req: LiePinRequest) -> Dict[str, Any]:
+    items = fetch_liepin(req.urls, req.cookie)
+    return {"count": len(items), "items": items}
+
+@app.post("/ingest_linkedin")
+def ingest_linkedin_api(req: LinkedInRequest) -> Dict[str, Any]:
+    items = fetch_linkedin(req.urls, req.cookie)
+    return {"count": len(items), "items": items}
+
+@app.post("/config/llm_enabled")
+def set_llm_enabled_api(req: LLMEnabled) -> Dict[str, Any]:
+    set_llm_enabled(bool(req.enabled))
+    return {"ok": True, "enabled": bool(req.enabled)}
+
 
 if __name__ == "__main__":
     import uvicorn
@@ -211,12 +260,3 @@ if __name__ == "__main__":
     port = choose_port(host)
     print(f"Starting API on {host}:{port} (env API_PORT={env_port})")
     uvicorn.run(app, host=host, port=port)
-def _ensure_ner():
-    global ner_predict
-    if ner_predict is None:
-        try:
-            ner_predict = _load_func('04_predict.py', 'predict')
-        except Exception:
-            def _fallback(text: str):
-                return []
-            ner_predict = _fallback

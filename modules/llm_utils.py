@@ -1,5 +1,6 @@
 from typing import List, Dict
 import time
+import os
 try:
     from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
     _bnb = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_use_double_quant=True, bnb_4bit_quant_type="nf4")
@@ -10,6 +11,8 @@ except Exception:
     _mdl = None
 
 _demands_cache: Dict[str, tuple] = {}
+_qs_cache: Dict[str, tuple] = {}
+_use_llm = os.getenv("ENABLE_LLM_GEN", "0") == "1"
 _role_templates = {
     "算法": "你是算法面试官，关注建模方法、评估指标与线上效果复盘。",
     "后端": "你是后端面试官，关注架构设计、性能与稳定性、故障定位与治理。",
@@ -79,12 +82,17 @@ def generate_interview_questions(text: str) -> List[str]:
     import re
     skills += re.findall(r"[A-Za-z+#\.\-]{2,}", (text or ""))
     skills = list({s.lower() for s in skills})[:6]
+    k = "base::" + ",".join(skills)
+    now = time.time()
+    ent = _qs_cache.get(k)
+    if ent and now - ent[1] < 3600:
+        return ent[0]
     prompt = (
         "你是资深技术面试官。基于候选人的技能与经历，生成3个高质量、可追问的面试问题，"
         "要求：问题要具体，引用候选人提到的技术关键词，至少包含1个业务结果量化追问。"
         f"技能关键词：{', '.join(skills)}。"
     )
-    if _mdl and _tok:
+    if _mdl and _tok and _use_llm:
         try:
             inp = _tok(prompt, return_tensors="pt")
             out = _mdl.generate(**inp, max_new_tokens=128, do_sample=False)
@@ -97,6 +105,7 @@ def generate_interview_questions(text: str) -> List[str]:
                 if any(x in p.lower() for x in ["如何", "请举例", "说明", "为什么", "如何验证", "如何量化"]):
                     qs.append(p)
             if qs:
+                _qs_cache[k] = (qs[:3], now)
                 return qs[:3]
         except Exception:
             pass
@@ -105,6 +114,7 @@ def generate_interview_questions(text: str) -> List[str]:
         "针对你提到的一个项目，请量化你的贡献（如性能提升比例、成本下降、用户增长等）并说明验证方式",
         "当系统出现性能瓶颈时，你的定位思路是什么？如何选择优化手段并衡量效果"
     ]
+    _qs_cache[k] = (base[:3], now)
     return base[:3]
 
 def generate_interview_questions_ctx(job_desc: str, text: str) -> List[str]:
@@ -125,12 +135,17 @@ def generate_interview_questions_ctx(job_desc: str, text: str) -> List[str]:
     skills = []
     skills += re.findall(r"[A-Za-z+#\.\-]{2,}", (text or ""))
     skills = list({s.lower() for s in skills})[:6]
+    k = "ctx::" + role + "::" + ind + "::" + ",".join(skills)
+    now = time.time()
+    ent = _qs_cache.get(k)
+    if ent and now - ent[1] < 3600:
+        return ent[0]
     prompt = (
         role_prompt + ind_prompt +
         "基于候选人技能与经历，生成3个高质量、可追问的面试问题，引用候选人技术关键词，至少包含1个业务结果量化追问。"
         f"技能关键词：{', '.join(skills)}。"
     )
-    if _mdl and _tok:
+    if _mdl and _tok and _use_llm:
         try:
             inp = _tok(prompt, return_tensors="pt")
             out = _mdl.generate(**inp, max_new_tokens=128, do_sample=False)
@@ -143,7 +158,15 @@ def generate_interview_questions_ctx(job_desc: str, text: str) -> List[str]:
                 if any(x in p.lower() for x in ["如何", "请举例", "说明", "为什么", "如何验证", "如何量化"]):
                     qs.append(p)
             if qs:
+                _qs_cache[k] = (qs[:3], now)
                 return qs[:3]
         except Exception:
             pass
-    return generate_interview_questions(text)
+    res = generate_interview_questions(text)
+    _qs_cache[k] = (res, now)
+    return res
+
+def set_llm_enabled(flag: bool) -> bool:
+    global _use_llm
+    _use_llm = bool(flag)
+    return _use_llm

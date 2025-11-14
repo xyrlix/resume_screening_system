@@ -3,6 +3,15 @@ import re
 import json
 import PyPDF2
 from docx import Document
+import sys
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.append(BASE_DIR)
+from utils.parse_tools import parse_pdf as _parse_pdf_util, parse_word as _parse_word_util, parse_image as _parse_image_util, parse_excel as _parse_excel_util
+from utils.clean_tools import clean_text as _clean_text_util
+from modules.debias import mask_sensitive, collect_fairness_tags
+from utils.logger import get_logger
+from utils.lang_tools import detect_language
 
 RAW_RESUMES_DIR = "data/raw_resumes"
 PROCESSED_DATA_DIR = "data/processed"
@@ -10,67 +19,75 @@ PROCESSED_DATA_DIR = "data/processed"
 os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
 
 def parse_pdf(pdf_path):
-    """解析PDF文件，提取文本内容"""
     try:
-        with open(pdf_path, 'rb') as f:
-            reader = PyPDF2.PdfReader(f)
-            text = ""
-            for page in reader.pages:
-                page_text = page.extract_text()
-                if page_text:
-                    text += page_text
-        return text
+        return _parse_pdf_util(pdf_path)
     except Exception as e:
         print(f"解析PDF文件失败: {pdf_path}, 原因: {e}")
         return ""
 
 def parse_word(docx_path):
-    """解析Word文件，提取文本内容"""
     try:
-        doc = Document(docx_path)
-        text = "\n".join([para.text for para in doc.paragraphs])
-        return text
+        return _parse_word_util(docx_path)
     except Exception as e:
         print(f"解析Word文件失败: {docx_path}, 原因: {e}")
         return ""
 
+def parse_image(image_path):
+    try:
+        return _parse_image_util(image_path)
+    except Exception as e:
+        print(f"解析图片失败: {image_path}, 原因: {e}")
+        return ""
+
+def parse_excel(xlsx_path):
+    try:
+        return _parse_excel_util(xlsx_path)
+    except Exception as e:
+        print(f"解析Excel失败: {xlsx_path}, 原因: {e}")
+        return ""
+
 def clean_resume_text(text):
-    """清洗简历文本，去除噪音"""
-    # 去除特殊符号和多余的空格，保留中文、英文、数字和基本标点
-    text = re.sub(r'[^\u4e00-\u9fa5a-zA-Z0-9\s,.!?;:()，。！？；：（）]', '', text)
-    # 将多个换行符替换为单个
-    text = re.sub(r'\n+', '\n', text)
-    # 去除首尾的空白字符
-    text = text.strip()
-    return text
+    return _clean_text_util(text)
 
 def process_resumes():
-    """批量处理所有原始简历"""
+    logger = get_logger("preprocess")
     processed_resumes = []
     for filename in os.listdir(RAW_RESUMES_DIR):
         file_path = os.path.join(RAW_RESUMES_DIR, filename)
+        low = filename.lower()
         text = ""
-        if filename.endswith(".pdf"):
+        if low.endswith(".pdf"):
             text = parse_pdf(file_path)
-        elif filename.endswith(".docx") or filename.endswith(".doc"):
+        elif low.endswith(".docx") or low.endswith(".doc"):
             text = parse_word(file_path)
-        
+        elif low.endswith(('.txt', '.md')):
+            try:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    text = f.read()
+            except Exception:
+                text = ""
+        elif low.endswith(('.jpg', '.jpeg', '.png')):
+            text = parse_image(file_path)
+        elif low.endswith('.xlsx'):
+            text = parse_excel(file_path)
         if text:
             clean_text = clean_resume_text(text)
-            # 准备用于实体标注的格式
+            lang = detect_language(clean_text)
+            masked = mask_sensitive(clean_text)
+            fairness = collect_fairness_tags(clean_text)
             processed_data = {
                 "text": clean_text,
-                "entities": [] # 初始为空，待标注
+                "language": lang,
+                "masked_text": masked,
+                "fairness_tags": fairness,
+                "entities": []
             }
             processed_resumes.append(processed_data)
-
-    # 将处理后的数据保存为JSON文件，用于后续的标注
+            logger.info(f"processed {filename} len={len(clean_text)} lang={lang}")
     output_path = os.path.join(PROCESSED_DATA_DIR, "resumes_for_annotation.json")
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(processed_resumes, f, ensure_ascii=False, indent=4)
-    
-    print(f"成功处理 {len(processed_resumes)} 份简历。")
-    print(f"预处理后的数据已保存到: {output_path}")
+    logger.info(f"count={len(processed_resumes)} output={output_path}")
 
 if __name__ == "__main__":
     process_resumes()

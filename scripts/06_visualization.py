@@ -7,12 +7,16 @@ import urllib.request
 import urllib.error
 import importlib.util
 from typing import Tuple, List, Dict
+try:
+    from streamlit_echarts import st_echarts
+except Exception:
+    st_echarts = None
 
 
 def page_setup():
     st.set_page_config(page_title="简历筛选系统", page_icon="📄", layout="wide")
     st.title("📄 智能简历筛选可视化")
-    st.caption("实体识别与人岗匹配（API + 可视化）")
+    st.caption("简历与岗位匹配，可视化展示匹配结果")
 
 
 def try_health(url: str, timeout: float = 0.8) -> bool:
@@ -463,6 +467,30 @@ def page_config_view():
             "position": float(w_position),
         }
         st.success("已设置临时权重（仅前端本地匹配有效）")
+    st.markdown("---")
+    st.subheader("行业模板库编辑")
+    base = st.session_state.api_base
+    tmpl = {}
+    try:
+        import urllib.request
+        with urllib.request.urlopen(base + "/config/industry_templates", timeout=2.5) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            tmpl = data.get("templates", {})
+    except Exception:
+        tmpl = {}
+    edit_text = st.text_area("编辑JSON", value=json.dumps(tmpl, ensure_ascii=False, indent=2), height=200)
+    if st.button("保存行业模板"):
+        try:
+            new_obj = json.loads(edit_text)
+        except Exception:
+            st.error("JSON不合法")
+            new_obj = None
+        if new_obj is not None:
+            res, err = api_post(base, "/config/industry_templates", {"templates": new_obj})
+            if err:
+                st.error(f"保存失败：{err}")
+            else:
+                st.success("已保存并应用行业模板")
 
 
 def _read_uploaded_text(file) -> str:
@@ -646,7 +674,7 @@ def main():
     page_setup()
     sidebar()
 
-    tabs = st.tabs(["概览", "实体预测", "单次匹配", "批量匹配", "岗位检索", "配置查看", "NER评估"])
+    tabs = st.tabs(["概览", "实体预测", "单次匹配", "批量匹配", "岗位检索", "三级漏斗", "公平性报告", "决策辅助", "配置查看", "NER评估"])
     with tabs[0]:
         page_health()
     with tabs[1]:
@@ -657,11 +685,233 @@ def main():
         page_match_batch()
     with tabs[4]:
         page_job_search()
-    with tabs[5]:
+    with tabs[7]:
+        page_decision()
+    with tabs[8]:
         page_config_view()
-    with tabs[6]:
+    with tabs[9]:
         page_ner_eval()
+    with tabs[5]:
+        page_funnel()
+    with tabs[6]:
+        page_fairness()
 
+
+ 
+def page_funnel():
+    st.subheader("三级漏斗筛选")
+    base = st.session_state.api_base
+    job_desc = st.text_area("岗位描述", height=160)
+    source = st.radio("候选来源", ["使用处理后的JSON", "向量库已有"], index=0)
+    top_k = st.number_input("Top K", min_value=1, value=50, step=1, key="funnel_top_k")
+    rules_text = st.text_area("自定义规则(JSON)", value='[{"field":"years","operator":"gt","value":2}]', height=100, key="funnel_rules")
+    if st.button("执行漏斗"):
+        try:
+            rules = json.loads(rules_text) if rules_text.strip() else []
+        except Exception:
+            st.error("规则JSON不合法")
+            return
+        if not job_desc.strip():
+            st.warning("请填写岗位描述")
+            return
+        if source == "使用处理后的JSON":
+            resume_json = os.path.join("data", "processed", "resumes_for_annotation.json")
+            if not os.path.isfile(resume_json):
+                st.error("简历JSON不存在")
+                return
+            with open(resume_json, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            items = []
+            for i, d in enumerate(data):
+                items.append({"id": str(i), "text": d.get("text", "")})
+            _ = api_post(base, "/vector_index", {"items": items})
+        res, err = api_post(base, "/filter", {"job_desc": job_desc, "top_k": int(top_k), "custom_rules": rules})
+        if err:
+            st.error(f"调用失败：{err}")
+            return
+        results = res.get("results", [])
+        st.success(f"完成筛选，返回 {len(results)} 条")
+        if results:
+            rows = [{"id": r.get("id"), "score": r.get("score"), "base": r.get("base"), "skill": r.get("skill"), "implicit": r.get("implicit"), "format": r.get("format") } for r in results]
+            st.dataframe(rows, use_container_width=True)
+            if st_echarts:
+                xs = [r.get("id") for r in results[:10]]
+                ys = [r.get("score") for r in results[:10]]
+                opts = {
+                    "tooltip": {"trigger": "axis"},
+                    "xAxis": {"type": "category", "data": xs},
+                    "yAxis": {"type": "value", "name": "score"},
+                    "series": [{"type": "bar", "data": ys, "itemStyle": {"color": "#4caf50"}}]
+                }
+                st_echarts(opts, height=320)
+            ids_all = [str(r.get("id")) for r in results]
+            default_sel = ids_all[:5]
+            sel = st.multiselect("选择对比候选人ID", ids_all[:20], default=default_sel)
+            if st_echarts:
+                inds = ["base", "skill", "implicit", "format"]
+                chosen = [r for r in results if str(r.get("id")) in sel][:20]
+                maxs = [1.0, 1.0, 1.0, 1.0]
+                if chosen:
+                    maxs = [max(0.1, max(float(x.get("base",0)) for x in chosen)), max(0.1, max(float(x.get("skill",0)) for x in chosen)), max(0.1, max(float(x.get("implicit",0)) for x in chosen)), max(0.1, max(float(x.get("format",0)) for x in chosen))]
+                ind_cfg = [{"name": n, "max": float(m)} for n, m in zip(inds, maxs)]
+                radar_data = []
+                for r in chosen:
+                    radar_data.append({"value": [float(r.get("base",0)), float(r.get("skill",0)), float(r.get("implicit",0)), float(r.get("format",0))], "name": str(r.get("id"))})
+                r_opts = {"legend": {"data": [str(r.get("id")) for r in chosen]}, "radar": {"indicator": ind_cfg}, "series": [{"type": "radar", "data": radar_data}]}
+                st_echarts(r_opts, height=360)
+            import pandas as pd
+            df = pd.DataFrame(rows)
+            csv = df.to_csv(index=False).encode("utf-8-sig")
+            st.download_button("下载CSV", data=csv, file_name="funnel_results.csv")
+
+def page_fairness():
+    st.subheader("公平性报告")
+    dev_thr = st.slider("偏差阈值(%)", min_value=1, max_value=10, value=2, step=1)
+    resume_json = os.path.join("data", "processed", "resumes_for_annotation.json")
+    if not os.path.isfile(resume_json):
+        st.info("未找到预处理输出")
+        return
+    with open(resume_json, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    gender_cnt = {}
+    tier_cnt = {}
+    gap_cnt = {}
+    for d in data:
+        tags = d.get("fairness_tags", {})
+        g = tags.get("gender", "未知")
+        t = tags.get("school_tier", "未知")
+        gp = tags.get("gap_type", "未知")
+        gender_cnt[g] = gender_cnt.get(g, 0) + 1
+        tier_cnt[t] = tier_cnt.get(t, 0) + 1
+        gap_cnt[gp] = gap_cnt.get(gp, 0) + 1
+    # 计算百分比
+    def _to_percent(d):
+        s = max(1, sum(d.values()))
+        return {k: round(v * 100.0 / s, 2) for k, v in d.items()}
+    g_pct = _to_percent(gender_cnt)
+    t_pct = _to_percent(tier_cnt)
+    gp_pct = _to_percent(gap_cnt)
+    if st_echarts:
+        opts_g = {
+            "tooltip": {"trigger": "axis"},
+            "xAxis": {"type": "category", "data": list(g_pct.keys())},
+            "yAxis": {"type": "value", "name": "通过率(%)"},
+            "series": [{"type": "bar", "data": list(g_pct.values()), "itemStyle": {"color": "#4caf50"}}],
+            "markLine": {"data": [{"yAxis": dev_thr}]}
+        }
+        st_echarts(opts_g, height=300)
+        opts_t = {
+            "tooltip": {"trigger": "axis"},
+            "xAxis": {"type": "category", "data": list(t_pct.keys())},
+            "yAxis": {"type": "value", "name": "通过率(%)"},
+            "series": [{"type": "bar", "data": list(t_pct.values()), "itemStyle": {"color": "#ff9800"}}],
+            "markLine": {"data": [{"yAxis": dev_thr}]}
+        }
+        st_echarts(opts_t, height=300)
+        opts_gp = {
+            "tooltip": {"trigger": "axis"},
+            "xAxis": {"type": "category", "data": list(gp_pct.keys())},
+            "yAxis": {"type": "value", "name": "通过率(%)"},
+            "series": [{"type": "bar", "data": list(gp_pct.values()), "itemStyle": {"color": "#1976d2"}}],
+            "markLine": {"data": [{"yAxis": dev_thr}]}
+        }
+        st_echarts(opts_gp, height=300)
+    else:
+        st.json({"gender": g_pct, "school_tier": t_pct, "gap_type": gp_pct})
+    # 导出CSV
+    import pandas as pd
+    df = pd.DataFrame({
+        "gender": g_pct,
+        "school_tier": t_pct,
+        "gap_type": gp_pct,
+    })
+    csv = df.to_csv().encode("utf-8-sig")
+    st.download_button("下载公平性百分比CSV", data=csv, file_name="fairness_report.csv")
+def page_decision():
+    st.subheader("决策辅助")
+    base = st.session_state.api_base
+    job_desc = st.text_area("岗位描述（可一行一个支持批量）", height=160)
+    rules_text = st.text_area("自定义规则(JSON)", value='[{"field":"years","operator":"gt","value":2}]', height=100, key="decision_rules")
+    top_k = st.number_input("Top K", min_value=1, value=50, step=1, key="decision_top_k")
+    page = st.number_input("页码", min_value=1, value=1, step=1)
+    page_size = st.number_input("每页数量", min_value=5, value=20, step=5)
+    run = st.button("生成推荐与分数线")
+    if run:
+        try:
+            rules = json.loads(rules_text) if rules_text.strip() else []
+        except Exception:
+            st.error("规则JSON不合法")
+            return
+        if not job_desc.strip():
+            st.warning("请填写岗位描述")
+            return
+        lines = [l.strip() for l in job_desc.split("\n") if l.strip()]
+        if len(lines) > 1:
+            payload = {"job_descs": lines, "top_k": int(top_k), "custom_rules": rules}
+            res, err = api_post(base, "/decision_batch", payload)
+            if err:
+                st.error(f"调用失败：{err}")
+                return
+            items = res.get("items", [])
+            for it in items:
+                st.markdown("---")
+                st.write("岗位：", it.get("job_desc"))
+                decision = it.get("decision", {})
+                threshold = decision.get("threshold")
+                picks = decision.get("recommended", [])
+                st.metric("动态分数线", f"{threshold}")
+                st.dataframe([{"id": p.get("id"), "score": p.get("score")} for p in picks], use_container_width=True)
+            import pandas as pd, io
+            overview_rows = []
+            for it in items:
+                decision = it.get("decision", {})
+                threshold = decision.get("threshold")
+                picks = decision.get("recommended", [])
+                overview_rows.append({"job_desc": it.get("job_desc"), "threshold": threshold, "recommended_count": len(picks)})
+            xls_buf = io.BytesIO()
+            with pd.ExcelWriter(xls_buf, engine="xlsxwriter") as w:
+                pd.DataFrame(overview_rows).to_excel(w, index=False, sheet_name="overview")
+            st.download_button("下载批量Excel", data=xls_buf.getvalue(), file_name="decision_batch_results.xlsx")
+            return
+        payload = {"job_desc": job_desc, "top_k": int(top_k), "custom_rules": rules, "page": int(page), "page_size": int(page_size)}
+        res, err = api_post(base, "/decision", payload)
+        if err:
+            st.error(f"调用失败：{err}")
+            return
+        decision = res.get("decision", {})
+        threshold = decision.get("threshold")
+        picks = decision.get("recommended", [])
+        st.metric("动态分数线", f"{threshold}")
+        st.write("推荐名单：")
+        st.dataframe([{"id": p.get("id"), "score": p.get("score")} for p in picks], use_container_width=True)
+        st.write("分页结果：")
+        page_rows = res.get("page_results", [])
+        st.dataframe(page_rows, use_container_width=True)
+        import pandas as pd, io
+        xls_buf = io.BytesIO()
+        with pd.ExcelWriter(xls_buf, engine="xlsxwriter") as w:
+            pd.DataFrame(res.get("results", [])).to_excel(w, index=False, sheet_name="results")
+            pd.DataFrame([{"id": p.get("id"), "score": p.get("score"), "questions": " | ".join(p.get("interview_questions", []))} for p in picks]).to_excel(w, index=False, sheet_name="recommended")
+        st.download_button("下载Excel", data=xls_buf.getvalue(), file_name="decision_results.xlsx")
+        if picks and st_echarts:
+            xs = [p.get("id") for p in picks]
+            ys = [p.get("score") for p in picks]
+            opts = {
+                "tooltip": {"trigger": "axis"},
+                "xAxis": {"type": "category", "data": xs},
+                "yAxis": {"type": "value"},
+                "series": [{"type": "line", "data": ys, "smooth": True, "itemStyle": {"color": "#1976d2"}}],
+                "markLine": {"data": [{"yAxis": threshold}]}
+            }
+            st_echarts(opts, height=320)
+        jrows = []
+        for p in picks:
+            jrows.append({"id": p.get("id"), "questions": " | ".join(p.get("interview_questions", []))})
+        st.dataframe(jrows, use_container_width=True)
+        import pandas as pd
+        df = pd.DataFrame(res.get("results", []))
+        csv = df.to_csv(index=False).encode("utf-8-sig")
+        st.download_button("下载全量结果CSV", data=csv, file_name="decision_all_results.csv")
 
 if __name__ == "__main__":
     main()

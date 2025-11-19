@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>简历筛选系统 · 管理页</title>
+    <style>
+      body{font-family:system-ui,-apple-system,Segoe UI,Roboto;max-width:920px;margin:24px auto;padding:0 16px}
+      header{display:flex;justify-content:space-between;align-items:center}
+      input,button{padding:8px;margin:4px}
+      section{border:1px solid #ddd;border-radius:8px;padding:12px;margin:12px 0}
+      .row{display:flex;gap:8px;flex-wrap:wrap}
+      textarea{width:100%;height:160px}
+      table{border-collapse:collapse}
+      td,th{border:1px solid #ccc;padding:6px}
+      .ok{color:#2e7d32}.err{color:#c62828}
+    </style>
+  </head>
+  <body>
+    <header>
+      <h3>📄 管理页</h3>
+      <nav><a href="/docs">API 文档</a></nav>
+    </header>
+    <section>
+      <div class="row">
+        <input id="api" placeholder="API_BASE_URL" />
+        <input id="tok" placeholder="Bearer Token" />
+        <button id="save">保存</button>
+      </div>
+      <small>提示：若留空 API，则使用同源；令牌将写入 Authorization 头。</small>
+    </section>
+    <section>
+      <h4>健康检查</h4>
+      <button id="health">GET /health</button>
+      <span id="hres"></span>
+    </section>
+    <section>
+      <h4>行业模板</h4>
+      <div class="row"><button id="tmpl-get">GET /config/industry_templates</button></div>
+      <pre id="tmpl-view" style="background:#f7f7f7;padding:8px"></pre>
+      <textarea id="tmpl-edit" placeholder="在此编辑模板JSON..." ></textarea>
+      <button id="tmpl-save">PUT /config/industry_templates</button>
+    </section>
+    <section>
+      <h4>LLM 开关</h4>
+      <div class="row">
+        <select id="llm-enabled"><option value="true">启用</option><option value="false">关闭</option></select>
+        <button id="llm-save">POST /config/llm_enabled</button>
+      </div>
+      <small>仅影响面试题生成。</small>
+    </section>
+    <section>
+      <h4>入库预热与上传目录入库</h4>
+      <div class="row">
+        <button id="warmup">POST /vector_index_warmup</button>
+        <input id="hours" type="number" placeholder="hours(可选)" />
+        <input id="pattern" placeholder="name_pattern(可选)" />
+        <button id="up-index">POST /uploads_index</button>
+      </div>
+      <pre id="warmup-res" style="background:#f7f7f7;padding:8px"></pre>
+    </section>
+    <section>
+      <h4>候选人上传</h4>
+      <div class="row">
+        <input type="file" id="upfile" />
+        <input id="fname" placeholder="文件名(可选)" />
+        <button id="upload-file">上传文件</button>
+      </div>
+      <div>
+        <textarea id="uptext" placeholder="或直接粘贴文本..." ></textarea>
+        <button id="upload-text">上传文本</button>
+      </div>
+      <pre id="upload-res" style="background:#f7f7f7;padding:8px"></pre>
+    </section>
+    <section>
+      <h4>批量决策与导出</h4>
+      <textarea id="jobs" placeholder="一行一个岗位描述..." ></textarea>
+      <div class="row">
+        <input id="topk" type="number" value="50" />
+        <button id="decide-batch">POST /decision_batch</button>
+      </div>
+      <pre id="decide-view" style="background:#f7f7f7;padding:8px"></pre>
+      <div id="chart" style="width:100%;height:320px"></div>
+    </section>
+    <script>
+      const st = {
+        api: localStorage.getItem('api_base') || location.origin,
+        tok: localStorage.getItem('api_tok') || ''
+      }
+      const apiInput = document.getElementById('api');
+      const tokInput = document.getElementById('tok');
+      apiInput.value = st.api; tokInput.value = st.tok;
+      document.getElementById('save').onclick = () => {
+        st.api = apiInput.value || location.origin;
+        st.tok = tokInput.value || '';
+        localStorage.setItem('api_base', st.api);
+        localStorage.setItem('api_tok', st.tok);
+      }
+      const h = (path, opts={}) => {
+        const headers = opts.headers || {};
+        if (st.tok) headers['Authorization'] = 'Bearer ' + st.tok;
+        return fetch(st.api + path, {...opts, headers});
+      }
+      document.getElementById('health').onclick = async () => {
+        const el = document.getElementById('hres');
+        try { const r = await h('/health'); el.textContent = r.ok ? 'OK' : 'ERR'; el.className = r.ok ? 'ok':'err'; }
+        catch(e){ el.textContent = 'ERR'; el.className='err'; }
+      }
+      document.getElementById('tmpl-get').onclick = async () => {
+        const el = document.getElementById('tmpl-view'); el.textContent = '加载中...';
+        try { const r = await h('/config/industry_templates'); const j = await r.json(); el.textContent = JSON.stringify(j, null, 2); }
+        catch(e){ el.textContent = String(e); }
+      }
+      document.getElementById('tmpl-save').onclick = async () => {
+        const text = document.getElementById('tmpl-edit').value
+        let obj
+        try{ obj = JSON.parse(text) }catch(e){ alert('JSON 不合法'); return }
+        const r = await h('/config/industry_templates', { method:'PUT', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ templates: obj }) })
+        const j = await r.json(); alert('保存结果: ' + JSON.stringify(j))
+      }
+      document.getElementById('llm-save').onclick = async () => {
+        const v = document.getElementById('llm-enabled').value === 'true'
+        const r = await h('/config/llm_enabled', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ enabled: v }) })
+        const j = await r.json(); alert('LLM 设置: ' + JSON.stringify(j))
+      }
+      document.getElementById('warmup').onclick = async () => {
+        const el = document.getElementById('warmup-res'); el.textContent='预热中...';
+        try{ const r = await h('/vector_index_warmup', { method:'POST' }); const j = await r.json(); el.textContent = JSON.stringify(j, null, 2) }
+        catch(e){ el.textContent = String(e) }
+      }
+      document.getElementById('up-index').onclick = async () => {
+        const el = document.getElementById('warmup-res'); el.textContent='入库中...';
+        const hval = document.getElementById('hours').value
+        const ptn = document.getElementById('pattern').value
+        const body = { }
+        if(hval) body.hours = parseInt(hval, 10)
+        if(ptn) body.name_pattern = ptn
+        try{ const r = await h('/uploads_index', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(body) }); const j = await r.json(); el.textContent = JSON.stringify(j, null, 2) }
+        catch(e){ el.textContent = String(e) }
+      }
+      document.getElementById('upload-file').onclick = async () => {
+        const f = document.getElementById('upfile').files[0]; const name = document.getElementById('fname').value;
+        if(!f){ alert('请选择文件'); return; }
+        const fd = new FormData(); fd.append('file', f); if(name) fd.append('filename', name);
+        const el = document.getElementById('upload-res'); el.textContent='上传中...';
+        try { const r = await h('/uploads', { method:'POST', body: fd }); const j = await r.json(); el.textContent = JSON.stringify(j, null, 2); }
+        catch(e){ el.textContent = String(e); }
+      }
+      document.getElementById('upload-text').onclick = async () => {
+        const t = document.getElementById('uptext').value; const name = document.getElementById('fname').value;
+        const fd = new FormData(); fd.append('text', t); if(name) fd.append('filename', name);
+        const el = document.getElementById('upload-res'); el.textContent='上传中...';
+        try { const r = await h('/uploads', { method:'POST', body: fd }); const j = await r.json(); el.textContent = JSON.stringify(j, null, 2); }
+        catch(e){ el.textContent = String(e); }
+      }
+      document.getElementById('decide-batch').onclick = async () => {
+        const lines = document.getElementById('jobs').value.split('\n').map(x=>x.trim()).filter(Boolean)
+        const topk = parseInt(document.getElementById('topk').value || '50', 10)
+        const el = document.getElementById('decide-view'); el.textContent='生成中...';
+        try{ const r = await h('/decision_batch', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ job_descs: lines, top_k: topk }) }); const j = await r.json(); el.textContent = JSON.stringify(j, null, 2)
+          const blob = new Blob([JSON.stringify(j, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'decision_batch.json'; a.click();
+          try {
+            const items = j.items || []
+            const picks = items.length ? (items[0].decision?.recommended || []) : []
+            const dom = document.getElementById('chart')
+            const chart = echarts.init(dom)
+            chart.setOption({
+              tooltip: { trigger: 'axis' },
+              xAxis: { type: 'category', data: picks.map(p=>p.id) },
+              yAxis: { type: 'value', name: 'score' },
+              series: [{ type: 'bar', data: picks.map(p=>p.score) }]
+            })
+          } catch(e) { /* ignore */ }
+        }catch(e){ el.textContent = String(e) }
+      }
+    </script>
+  </body>
+</html>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>

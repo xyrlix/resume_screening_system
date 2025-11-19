@@ -45,7 +45,27 @@ def detect_api_base() -> str:
 def api_post(base: str, path: str, payload: dict, timeout: float | None = None):
     url = base.rstrip("/") + path
     data = json.dumps(payload).encode("utf-8")
-    req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
+    headers = {"Content-Type": "application/json"}
+    tok = st.session_state.get("api_token")
+    if tok:
+        headers["Authorization"] = f"Bearer {tok}"
+    req = urllib.request.Request(url, data=data, headers=headers)
+    to = timeout if timeout is not None else float(st.session_state.get("api_timeout", 2.5))
+    try:
+        with urllib.request.urlopen(req, timeout=to) as resp:
+            return json.loads(resp.read().decode("utf-8")), None
+    except urllib.error.HTTPError as e:
+        return None, f"HTTPError {e.code}: {e.reason}"
+    except Exception as e:
+        return None, str(e)
+
+def api_get(base: str, path: str, timeout: float | None = None):
+    url = base.rstrip("/") + path
+    headers = {"Accept": "application/json"}
+    tok = st.session_state.get("api_token")
+    if tok:
+        headers["Authorization"] = f"Bearer {tok}"
+    req = urllib.request.Request(url, headers=headers)
     to = timeout if timeout is not None else float(st.session_state.get("api_timeout", 2.5))
     try:
         with urllib.request.urlopen(req, timeout=to) as resp:
@@ -132,11 +152,13 @@ def sidebar():
         api_to = st.slider("默认API超时(秒)", 2.0, 30.0, float(st.session_state.get("api_timeout", 12.0)), 0.5, key="sidebar_api_timeout")
         st.session_state["api_timeout"] = float(api_to)
         llm_enabled = st.checkbox("启用大模型面试题(全局)", value=bool(st.session_state.get("llm_global_enabled", False)), key="sidebar_llm_enabled")
+        api_token = st.text_input("API令牌(Bearer Token)", value=st.session_state.get("api_token", ""))
         export_csv_default = st.checkbox("默认导出为CSV", value=bool(st.session_state.get("export_csv_default", False)), key="sidebar_export_csv")
         apply = st.button("应用全局设置", key="sidebar_apply")
         if apply:
             st.session_state["export_csv_default"] = bool(export_csv_default)
             st.session_state["llm_global_enabled"] = bool(llm_enabled)
+            st.session_state["api_token"] = api_token
             _ = api_post(st.session_state.api_base, "/config/llm_enabled", {"enabled": bool(llm_enabled)})
 
 
@@ -614,12 +636,10 @@ def page_config_view():
     st.subheader("行业模板库编辑")
     base = st.session_state.api_base
     tmpl = {}
-    try:
-        import urllib.request
-        with urllib.request.urlopen(base + "/config/industry_templates", timeout=2.5) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-            tmpl = data.get("templates", {})
-    except Exception:
+    res, err = api_get(base, "/config/industry_templates", timeout=2.5)
+    if not err and res:
+        tmpl = res.get("templates", {})
+    else:
         tmpl = {}
     edit_text = st.text_area("编辑JSON", value=json.dumps(tmpl, ensure_ascii=False, indent=2), height=200)
     if st.button("保存行业模板"):

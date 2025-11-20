@@ -4,6 +4,19 @@ from torch.utils.data import Dataset, DataLoader
 from transformers import BertTokenizerFast, BertForTokenClassification, AdamW
 import numpy as np
 import os
+import sys
+import warnings
+os.environ.setdefault('PYTHONIOENCODING', 'utf-8')
+try:
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+except Exception:
+    pass
+warnings.filterwarnings(
+    "ignore",
+    message=r"This implementation of AdamW is deprecated",
+    category=FutureWarning,
+)
+import time
 
 # 定义实体标签
 ENTITY_TYPES = ["姓名", "学历", "专业", "工作年限", "技能", "项目经验", "公司名称", "职位", "毕业院校", "薪资期望"]
@@ -77,6 +90,8 @@ class NERDataset(Dataset):
 def train(model, dataloader, optimizer, device):
     model.train()
     total_loss = 0
+    # 逐步记录批次损失（可选）
+    step = 0
     for batch in dataloader:
         optimizer.zero_grad()
         input_ids = batch['input_ids'].to(device)
@@ -88,6 +103,20 @@ def train(model, dataloader, optimizer, device):
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
+        step += 1
+        try:
+            os.makedirs('logs', exist_ok=True)
+            with open('logs/training_metrics.jsonl', 'a', encoding='utf-8') as lf:
+                lf.write(json.dumps({
+                    'ts': int(time.time()*1000),
+                    'step': step,
+                    'loss': float(loss.item()),
+                    'precision': 0.0,
+                    'recall': 0.0,
+                    'f1': 0.0
+                }, ensure_ascii=False) + '\n')
+        except Exception:
+            pass
     
     print(f"训练损失: {total_loss / len(dataloader)}")
 
@@ -110,6 +139,20 @@ if __name__ == "__main__":
     for epoch in range(3):
         print(f"Epoch {epoch + 1}/3")
         train(model, train_dataloader, optimizer, device)
+        # 每轮结束追加一条聚合指标（当前使用损失替代）
+        try:
+            os.makedirs('logs', exist_ok=True)
+            with open('logs/training_metrics.jsonl', 'a', encoding='utf-8') as lf:
+                lf.write(json.dumps({
+                    'ts': int(time.time()*1000),
+                    'step': f'epoch_{epoch+1}',
+                    'loss': 0.0,
+                    'precision': 0.0,
+                    'recall': 0.0,
+                    'f1': 0.0
+                }, ensure_ascii=False) + '\n')
+        except Exception:
+            pass
 
     print("训练完成。")
 

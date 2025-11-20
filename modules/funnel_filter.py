@@ -2,8 +2,13 @@ from typing import List, Dict, Any
 import os
 try:
     from chromadb import PersistentClient
+    try:
+        from chromadb.config import Settings
+    except Exception:
+        Settings = None
 except Exception:
     PersistentClient = None
+    Settings = None
 try:
     from sentence_transformers import SentenceTransformer
 except Exception:
@@ -19,14 +24,27 @@ from utils.lang_tools import detect_language
 import importlib.util
 
 _memory_store: List[Dict[str, Any]] = []
+_job_memory_store: List[Dict[str, Any]] = []
 if PersistentClient is not None:
-    _client = PersistentClient(path=os.path.join(os.path.dirname(os.path.dirname(__file__)), "chroma_db"))
+    db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "chroma_db")
+    if Settings is not None:
+        try:
+            _client = PersistentClient(path=db_path, settings=Settings(allow_anonymous_telemetry=False))
+        except Exception:
+            _client = PersistentClient(path=db_path)
+    else:
+        _client = PersistentClient(path=db_path)
     try:
         _collection = _client.get_collection("resume_collection")
     except Exception:
         _collection = _client.create_collection("resume_collection")
+    try:
+        _job_collection = _client.get_collection("job_collection")
+    except Exception:
+        _job_collection = _client.create_collection("job_collection")
 else:
     _collection = None
+    _job_collection = None
 _sent = SentenceTransformer("all-MiniLM-L6-v2") if SentenceTransformer is not None else None
 _emb_cache: Dict[str, tuple] = {}
 _vsearch_cache: Dict[str, tuple] = {}
@@ -89,6 +107,42 @@ def vector_index_upsert(items: List[Dict[str, Any]]):
     logger.info(f"upsert count={total}")
     return {"count": total}
 
+def job_index_upsert(items: List[Dict[str, Any]]):
+    logger = get_logger("job_index")
+    if _job_collection is None or _sent is None:
+        for it in items or []:
+            jid = str(it.get("id"))
+            txt = str(it.get("text", ""))
+            if not jid or not txt:
+                continue
+            _job_memory_store.append({"id": jid, "text": txt})
+        logger.info(f"job_memory_upsert count={len(items or [])}")
+        return {"count": len(items or [])}
+    ids = []
+    docs = []
+    for it in items or []:
+        jid = str(it.get("id"))
+        txt = str(it.get("text", ""))
+        if not jid or not txt:
+            continue
+        ids.append(jid)
+        docs.append(txt)
+    if not ids:
+        return {"count": 0}
+    chunk = 128
+    total = 0
+    for i in range(0, len(ids), chunk):
+        c_ids = ids[i:i+chunk]
+        c_docs = docs[i:i+chunk]
+        c_embs = _sent.encode(c_docs)
+        try:
+            _job_collection.upsert(ids=c_ids, documents=c_docs, embeddings=list(c_embs))
+        except Exception:
+            _job_collection.add(ids=c_ids, documents=c_docs, embeddings=list(c_embs))
+        total += len(c_ids)
+    logger.info(f"job_upsert count={total}")
+    return {"count": total}
+
 def vector_search(job_desc: str, top_k: int = 50) -> List[Dict[str, Any]]:
     if _collection is None or _sent is None:
         scored = []
@@ -105,6 +159,30 @@ def vector_search(job_desc: str, top_k: int = 50) -> List[Dict[str, Any]]:
         return ent[0]
     q = _encode_cached(job_desc)
     res = _collection.query(query_embeddings=[q], n_results=max(1, top_k))
+    out = []
+    ids = res.get("ids", [[]])[0]
+    docs = res.get("documents", [[]])[0]
+    for i, d in zip(ids, docs):
+        out.append({"id": i, "text": d})
+    _vsearch_cache[key] = (out, now)
+    return out
+
+def job_vector_search_by_text(query_text: str, top_k: int = 20) -> List[Dict[str, Any]]:
+    if _job_collection is None or _sent is None:
+        scored = []
+        for it in _job_memory_store:
+            s = _score.base_similarity(it.get("text", ""), query_text or "")
+            scored.append((s, it))
+        scored.sort(key=lambda x: x[0], reverse=True)
+        out = [{"id": it.get("id"), "text": it.get("text") } for s, it in scored[:top_k]]
+        return out
+    now = time.time()
+    key = f"JOB::{top_k}::{hash(query_text)}"
+    ent = _vsearch_cache.get(key)
+    if ent and now - ent[1] < 30:
+        return ent[0]
+    q = _encode_cached(query_text)
+    res = _job_collection.query(query_embeddings=[q], n_results=max(1, top_k))
     out = []
     ids = res.get("ids", [[]])[0]
     docs = res.get("documents", [[]])[0]

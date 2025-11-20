@@ -54,6 +54,8 @@ quick_match = _load_func('04_matcher_model.py', 'quick_match')
 vector_index_upsert = _load_func_project('modules/funnel_filter.py', 'vector_index_upsert')
 three_stage_filter = _load_func_project('modules/funnel_filter.py', 'three_stage_filter')
 decision_recommend = _load_func_project('modules/decision_support.py', 'recommend')
+job_index_upsert = _load_func_project('modules/funnel_filter.py', 'job_index_upsert')
+job_vector_search_by_text = _load_func_project('modules/funnel_filter.py', 'job_vector_search_by_text')
 get_industry_templates = _load_func_project('modules/llm_utils.py', 'get_industry_templates')
 update_industry_templates = _load_func_project('modules/llm_utils.py', 'update_industry_templates')
 online_ingest = _load_func_project('modules/online_ingest.py', 'ingest_urls')
@@ -63,6 +65,11 @@ fetch_zhilian = _load_func_project('modules/adapters/zhilian.py', 'fetch_zhilian
 fetch_liepin = _load_func_project('modules/adapters/liepin.py', 'fetch_liepin')
 fetch_linkedin = _load_func_project('modules/adapters/linkedin.py', 'fetch_linkedin')
 set_llm_enabled = _load_func_project('modules/llm_utils.py', 'set_llm_enabled')
+generate_structured_jd = _load_func_project('modules/llm_utils.py', 'generate_structured_jd')
+optimize_resume = _load_func_project('modules/llm_utils.py', 'optimize_resume')
+generate_interview_questions_ctx = _load_func_project('modules/llm_utils.py', 'generate_interview_questions_ctx')
+base_similarity = _load_func_project('modules/scoring.py', 'base_similarity')
+generate_evaluation_report = _load_func_project('modules/llm_utils.py', 'generate_evaluation_report')
 
 
 app = FastAPI(title="Resume Screening API", version="0.1.0")
@@ -280,6 +287,28 @@ class TokenRequest(BaseModel):
     username: str
     password: str
 
+class JDGenerateRequest(BaseModel):
+    text: str
+
+class ResumeOptimizeRequest(BaseModel):
+    text: str
+
+class InterviewQuestionsRequest(BaseModel):
+    job_desc: str | None = None
+    resume_text: str
+
+class RecommendJobsRequest(BaseModel):
+    resume_text: str
+    jobs_dir: str | None = None
+    top_k: int = 5
+    industry: str | None = None
+    region: str | None = None
+    salary_min: float | None = None
+    salary_max: float | None = None
+    data_source: str | None = None
+    sqlite_path: str | None = None
+    fusion_weight: float | None = 0.7
+
 def _users_from_env_or_file() -> Dict[str, Dict[str, Any]]:
     db = {}
     cfg = os.getenv("USER_MAP", "")
@@ -312,9 +341,13 @@ def health() -> Dict[str, Any]:
     return {"status": "ok"}
 
 
+ADMIN_UI_ENABLED = False
+
 @app.get("/")
 def root():
-    return RedirectResponse(url="/ui")
+    if ADMIN_UI_ENABLED:
+        return RedirectResponse(url="/ui")
+    return RedirectResponse(url="/docs")
 
 
 @app.post("/predict")
@@ -325,11 +358,18 @@ def predict_api(req: PredictRequest) -> Dict[str, Any]:
     return {"entities": ents}
 
 
-@app.post("/match", dependencies=[Depends(require_perms(["match.read"]))])
-def match_api(req: MatchRequest) -> Dict[str, Any]:
-    res = quick_match(req.resume_text, req.job_text)
-    get_logger("api").info(f"match score={res.get('score')}")
-    return res
+if os.getenv("ALLOW_PUBLIC_MATCH", "0") == "1":
+    @app.post("/match")
+    def match_api(req: MatchRequest) -> Dict[str, Any]:
+        res = quick_match(req.resume_text, req.job_text)
+        get_logger("api").info(f"match score={res.get('score')}")
+        return res
+else:
+    @app.post("/match", dependencies=[Depends(require_perms(["match.read"]))])
+    def match_api(req: MatchRequest) -> Dict[str, Any]:
+        res = quick_match(req.resume_text, req.job_text)
+        get_logger("api").info(f"match score={res.get('score')}")
+        return res
 
 @app.post("/predict_en", dependencies=[Depends(require_perms(["match.read"]))])
 def predict_en_api(req: PredictEnRequest) -> Dict[str, Any]:
@@ -342,14 +382,20 @@ def vector_index_api(req: VectorIndexRequest) -> Dict[str, Any]:
     get_logger("api").info(f"vector_index count={count.get('count')}")
     return count
 
-@app.post("/filter", dependencies=[Depends(require_perms(["filter.read"]))])
-def filter_api(req: FilterRequest) -> Dict[str, Any]:
-    res = three_stage_filter(req.job_desc, req.custom_rules or [], req.top_k)
-    get_logger("api").info(f"filter results={len(res)}")
-    return {"results": res}
+if os.getenv("ALLOW_PUBLIC_FILTER", "0") == "1":
+    @app.post("/filter")
+    def filter_api(req: FilterRequest) -> Dict[str, Any]:
+        res = three_stage_filter(req.job_desc, req.custom_rules or [], req.top_k)
+        get_logger("api").info(f"filter results={len(res)}")
+        return {"results": res}
+else:
+    @app.post("/filter", dependencies=[Depends(require_perms(["filter.read"]))])
+    def filter_api(req: FilterRequest) -> Dict[str, Any]:
+        res = three_stage_filter(req.job_desc, req.custom_rules or [], req.top_k)
+        get_logger("api").info(f"filter results={len(res)}")
+        return {"results": res}
 
-@app.post("/decision", dependencies=[Depends(require_perms(["decision.read"]))])
-def decision_api(req: DecisionRequest) -> Dict[str, Any]:
+def _decision_impl(req: DecisionRequest) -> Dict[str, Any]:
     res = three_stage_filter(req.job_desc, req.custom_rules or [], req.top_k)
     rec = decision_recommend(req.job_desc, res)
     total = len(res)
@@ -361,8 +407,16 @@ def decision_api(req: DecisionRequest) -> Dict[str, Any]:
     get_logger("api").info(f"decision total={len(res)} picks={len(rec.get('recommended', []))}")
     return {"results": res, "page_results": page_res, "total": total, "page": p, "page_size": ps, "decision": rec}
 
-@app.post("/decision_batch", dependencies=[Depends(require_perms(["decision.read"]))])
-def decision_batch_api(req: DecisionBatchRequest) -> Dict[str, Any]:
+if os.getenv("ALLOW_PUBLIC_DECISION", "0") == "1":
+    @app.post("/decision")
+    def decision_api(req: DecisionRequest) -> Dict[str, Any]:
+        return _decision_impl(req)
+else:
+    @app.post("/decision", dependencies=[Depends(require_perms(["decision.read"]))])
+    def decision_api(req: DecisionRequest) -> Dict[str, Any]:
+        return _decision_impl(req)
+
+def _decision_batch_impl(req: DecisionBatchRequest) -> Dict[str, Any]:
     out = []
     for jd in req.job_descs:
         res = three_stage_filter(jd, req.custom_rules or [], req.top_k)
@@ -370,6 +424,15 @@ def decision_batch_api(req: DecisionBatchRequest) -> Dict[str, Any]:
         get_logger("api").info(f"decision_batch jd_len={len(jd)} total={len(res)} picks={len(rec.get('recommended', []))}")
         out.append({"job_desc": jd, "results": res, "decision": rec})
     return {"items": out}
+
+if os.getenv("ALLOW_PUBLIC_DECISION", "0") == "1":
+    @app.post("/decision_batch")
+    def decision_batch_api(req: DecisionBatchRequest) -> Dict[str, Any]:
+        return _decision_batch_impl(req)
+else:
+    @app.post("/decision_batch", dependencies=[Depends(require_perms(["decision.read"]))])
+    def decision_batch_api(req: DecisionBatchRequest) -> Dict[str, Any]:
+        return _decision_batch_impl(req)
 
 @app.get("/config/industry_templates", dependencies=[Depends(require_perms(["templates.read"]))])
 def get_industry_templates_api() -> Dict[str, Any]:
@@ -409,6 +472,110 @@ def ingest_linkedin_api(req: LinkedInRequest) -> Dict[str, Any]:
 def set_llm_enabled_api(req: LLMEnabled) -> Dict[str, Any]:
     set_llm_enabled(bool(req.enabled))
     return {"ok": True, "enabled": bool(req.enabled)}
+
+@app.post("/jd_generate")
+def jd_generate_api(req: JDGenerateRequest) -> Dict[str, Any]:
+    obj = generate_structured_jd(req.text)
+    return {"jd": obj}
+
+@app.post("/resume_optimize")
+def resume_optimize_api(req: ResumeOptimizeRequest) -> Dict[str, Any]:
+    obj = optimize_resume(req.text)
+    return obj
+
+@app.post("/interview_questions")
+def interview_questions_api(req: InterviewQuestionsRequest) -> Dict[str, Any]:
+    qs = generate_interview_questions_ctx(req.job_desc or "", req.resume_text)
+    return {"questions": qs}
+
+@app.post("/evaluation_report")
+def evaluation_report_api(req: MatchRequest) -> Dict[str, Any]:
+    return generate_evaluation_report(req.job_text, req.resume_text)
+
+def _recommend_jobs_impl(req: RecommendJobsRequest) -> Dict[str, Any]:
+    items: List[Dict[str, Any]] = []
+    if (req.data_source or "dir").lower() == "sqlite":
+        import sqlite3
+        sp = req.sqlite_path or os.getenv("RECOMMEND_JOBS_SQLITE", "")
+        if not sp or not os.path.isfile(sp):
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        conn = sqlite3.connect(sp)
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT id, text FROM jobs")
+            for jid, txt in cur.fetchall():
+                items.append({"id": str(jid), "text": str(txt or "")})
+        finally:
+            conn.close()
+    else:
+        jobs_dir = req.jobs_dir or os.getenv("RECOMMEND_JOBS_DIR", os.path.join("data", "raw_jobs"))
+        if not os.path.isdir(jobs_dir):
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        for name in os.listdir(jobs_dir):
+            low = name.lower()
+            if not low.endswith((".txt", ".md")):
+                continue
+            p = os.path.join(jobs_dir, name)
+            if not os.path.isfile(p):
+                continue
+            try:
+                with open(p, "r", encoding="utf-8", errors="ignore") as f:
+                    jt = f.read()
+            except Exception:
+                jt = ""
+            if not jt:
+                continue
+            items.append({"id": name, "text": jt})
+    if items:
+        job_index_upsert(items)
+    candidates = job_vector_search_by_text(req.resume_text, top_k=max(1, int(req.top_k) * 3))
+    ind = (req.industry or "").strip().lower()
+    reg = (req.region or "").strip().lower()
+    sal_min = float(req.salary_min) if req.salary_min is not None else None
+    sal_max = float(req.salary_max) if req.salary_max is not None else None
+    def _salary_hint(t: str) -> float | None:
+        import re
+        m = re.findall(r"(\d+[\.]?\d*)\s*[kK]?", t)
+        if not m:
+            return None
+        try:
+            v = float(m[0])
+            if "k" in t.lower():
+                v = v * 1000.0
+            return v
+        except Exception:
+            return None
+    rows = []
+    for c in candidates:
+        txt = c.get("text", "")
+        low = txt.lower()
+        if ind and ind not in low:
+            continue
+        if reg and reg not in low:
+            continue
+        s_hint = _salary_hint(txt)
+        if sal_min is not None and (s_hint is None or s_hint < sal_min):
+            continue
+        if sal_max is not None and (s_hint is None or s_hint > sal_max):
+            continue
+        res = quick_match(req.resume_text, txt)
+        score = float(res.get("score", 0.0))
+        sim = float(base_similarity(req.resume_text, txt))
+        alpha = float(req.fusion_weight or 0.7)
+        score = alpha * score + (1.0 - alpha) * sim
+        rows.append({"id": c.get("id"), "text": txt, "score": score, "details": res.get("details", {})})
+    rows = sorted(rows, key=lambda x: x.get("score", 0.0), reverse=True)
+    top = rows[: max(1, int(req.top_k))]
+    return {"items": [{"id": it.get("id"), "score": it.get("score"), "file": it.get("id")} for it in top]}
+
+if os.getenv("ALLOW_PUBLIC_RECOMMEND", "0") == "1":
+    @app.post("/recommend_jobs")
+    def recommend_jobs_api(req: RecommendJobsRequest) -> Dict[str, Any]:
+        return _recommend_jobs_impl(req)
+else:
+    @app.post("/recommend_jobs", dependencies=[Depends(require_perms(["match.read"]))])
+    def recommend_jobs_api(req: RecommendJobsRequest) -> Dict[str, Any]:
+        return _recommend_jobs_impl(req)
 
 TRAINING_RESUMES_JSON = os.getenv("TRAINING_RESUMES_JSON", os.path.join("data", "processed", "resumes_for_annotation.json"))
 UPLOADS_DIR = os.getenv("UPLOADS_DIR", os.path.join("data", "uploads"))
@@ -539,10 +706,12 @@ if __name__ == "__main__":
 
     port = choose_port(host)
     print(f"Starting API on {host}:{port} (env API_PORT={env_port})")
-    print(f"Management UI: http://127.0.0.1:{port}/ui")
     static_dir = os.path.join(PROJECT_ROOT, "static", "admin")
-    if os.path.isdir(static_dir):
+    disable_admin_ui = os.getenv("DISABLE_ADMIN_UI", "0") == "1"
+    if not disable_admin_ui and os.path.isdir(static_dir):
         app.mount("/ui", StaticFiles(directory=static_dir, html=True), name="ui")
+        ADMIN_UI_ENABLED = True
+        print(f"Management UI: http://127.0.0.1:{port}/ui")
     uvicorn.run(app, host=host, port=port)
 @app.post("/auth/token")
 def issue_token(req: TokenRequest) -> Dict[str, Any]:

@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Any
 import time
 import os
 try:
@@ -170,3 +170,126 @@ def set_llm_enabled(flag: bool) -> bool:
     global _use_llm
     _use_llm = bool(flag)
     return _use_llm
+
+def generate_structured_jd(text: str) -> Dict[str, Any]:
+    import re
+    jd = (text or "")
+    title = None
+    m = re.search(r"(?:岗位|职位|岗位名称|职位名称)[:：]?\s*(.+)", jd)
+    if m:
+        title = m.group(1).strip()
+    if not title:
+        m2 = re.search(r"^(.*?工程师|.*?开发|.*?产品|.*?算法|.*?数据|.*?测试|.*?运维|.*?经理|.*?主管)", jd)
+        title = m2.group(1).strip() if m2 else "未命名岗位"
+    duties = []
+    reqs = []
+    for line in [x.strip() for x in re.split(r"[\n\r]+", jd) if x.strip()]:
+        if any(k in line for k in ["负责", "参与", "搭建", "维护", "优化", "推进", "协作", "设计", "实施", "统筹", "跟进", "交付"]):
+            duties.append(line)
+        if any(k in line for k in ["熟悉", "精通", "掌握", "具备", "了解", "至少", "本科", "硕士", "博士", "经验", "能力", "要求", "资格"]):
+            reqs.append(line)
+    tokens = re.findall(r"[A-Za-z][A-Za-z0-9+#\.\-]{1,}", jd)
+    tokens = [t.lower() for t in tokens]
+    skills = list({t for t in tokens})[:30]
+    frameworks = [t for t in tokens if t in {"spring","springboot","django","flask","fastapi","vue","react","angular","rmq","kafka","spark","hadoop"}]
+    tools = [t for t in tokens if t in {"docker","k8s","kubernetes","git","jenkins","maven","gradle","terraform"}]
+    languages = [t for t in tokens if t in {"java","python","go","rust","c++","c#","js","ts","sql"}]
+    certs = re.findall(r"(PMP|CPA|CFA|ACP|RHCE)", jd, flags=re.I)
+    keywords = list({t for t in tokens if t not in frameworks + tools + languages})[:30]
+    deg_m = re.search(r"(博士|硕士|本科|大专)", jd)
+    degree_required = deg_m.group(1) if deg_m else ""
+    years_m = re.findall(r"(\d+)\s*年", jd)
+    min_years = None
+    if years_m:
+        try:
+            min_years = min(int(x) for x in years_m)
+        except Exception:
+            min_years = None
+    sal = re.findall(r"(\d+[\.]?\d*)\s*[kK]?\s*[-~到]\s*(\d+[\.]?\d*)\s*[kK]?", jd)
+    salary_min = None
+    salary_max = None
+    if sal:
+        try:
+            a, b = sal[0]
+            salary_min = float(a) * (1000.0 if re.search(r"[kK]", jd) else 1.0)
+            salary_max = float(b) * (1000.0 if re.search(r"[kK]", jd) else 1.0)
+        except Exception:
+            pass
+    emp_type_m = re.search(r"(全职|兼职|实习|合同)", jd)
+    employment_type = emp_type_m.group(1) if emp_type_m else ""
+    loc_m = re.findall(r"(北京|上海|广州|深圳|杭州|南京|成都|武汉|西安|苏州|天津|重庆|合肥|厦门|沈阳|大连|无锡|佛山|宁波|青岛)", jd)
+    location = list({x for x in loc_m})
+    industry_m = re.findall(r"(互联网|医疗|教育|金融|制造|物流|零售|地产|能源|汽车)", jd)
+    industry = list({x for x in industry_m})
+    soft_skills = []
+    for s in ["沟通","协作","学习","责任","抗压","逻辑","创新"]:
+        if s in jd:
+            soft_skills.append(s)
+    return {
+        "title": title,
+        "duties": duties[:20],
+        "requirements": reqs[:20],
+        "skills": skills,
+        "frameworks": frameworks,
+        "tools": tools,
+        "languages": languages,
+        "certifications": certs,
+        "keywords": keywords,
+        "degree_required": degree_required,
+        "min_years": min_years,
+        "salary_min": salary_min,
+        "salary_max": salary_max,
+        "employment_type": employment_type,
+        "location": location,
+        "industry": industry,
+        "soft_skills": soft_skills,
+    }
+
+def optimize_resume(text: str) -> Dict[str, Dict]:
+    import re
+    t = (text or "")
+    feats = {
+        "skills": list({s.lower() for s in re.findall(r"[A-Za-z+#\.\-]{2,}", t)})[:20],
+        "years": 0,
+        "degree": "",
+        "positions": []
+    }
+    ym = re.findall(r"(\d+)\s*年", t)
+    if ym:
+        try:
+            feats["years"] = max(int(x) for x in ym)
+        except Exception:
+            feats["years"] = 0
+    deg = re.findall(r"博士|硕士|本科|大专", t)
+    feats["degree"] = deg[0] if deg else ""
+    feats["positions"] = [p for p in re.findall(r"工程师|开发|数据|算法|产品|测试|运维|架构|经理|主管", t)][:10]
+    advice = []
+    if len(feats["skills"]) < 6:
+        advice.append("补充核心技能关键词，突出与目标岗位相关的工具与框架")
+    if feats["years"] == 0:
+        advice.append("明确总工作年限并量化项目结果（性能提升、成本下降、用户增长等）")
+    if not feats["degree"]:
+        advice.append("补充最高学历与毕业年份、学校、专业")
+    advice.append("为每段经历添加可量化成果与验证方式，避免泛化描述")
+    return {"profile": feats, "advice": advice}
+
+def generate_evaluation_report(job_desc: str, resume_text: str) -> Dict[str, str]:
+    jd = (job_desc or "")
+    rt = (resume_text or "")
+    import re
+    skills_j = list({s.lower() for s in re.findall(r"[A-Za-z+#\.\-]{2,}", jd)})[:12]
+    skills_r = list({s.lower() for s in re.findall(r"[A-Za-z+#\.\-]{2,}", rt)})
+    hit = len(set(skills_j) & set(skills_r))
+    advs = []
+    if hit < max(3, len(skills_j)//3 or 1):
+        advs.append("加强岗位核心技能的覆盖与案例描述")
+    ym = re.findall(r"(\d+)\s*年", rt)
+    if not ym:
+        advs.append("补充工作年限并量化关键成果")
+    deg = re.findall(r"博士|硕士|本科|大专", rt)
+    if not deg:
+        advs.append("补充最高学历与院校信息")
+    text = (
+        f"匹配度分析：命中技能 {hit} 项；建议：" + ("；".join(advs) if advs else "保持现有结构，进一步量化成果与影响")
+    )
+    return {"report": text}

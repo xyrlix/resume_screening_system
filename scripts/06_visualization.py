@@ -14,8 +14,8 @@ except Exception:
 
 
 def page_setup():
-    st.set_page_config(page_title="简历筛选系统", page_icon="📄", layout="wide")
-    st.title("📄 智能简历筛选可视化")
+    st.set_page_config(page_title="智能简历筛选系统", page_icon="📄", layout="wide")
+    st.title("📄 智能简历筛选系统")
     st.caption("简历与岗位匹配，可视化展示匹配结果")
 
 
@@ -136,16 +136,32 @@ def sidebar():
     if "api_base" not in st.session_state:
         st.session_state.api_base = detect_api_base()
     with st.sidebar:
+        st.subheader("身份与角色")
+        role_options = ["面向招聘方", "面向求职者", "管理员"]
+        current_role = st.session_state.get("role")
+        st.session_state["role"] = st.selectbox(
+            "当前角色",
+            options=role_options,
+            index=role_options.index(current_role) if current_role in role_options else 0
+        )
+        st.markdown("---")
+        service_overview()
+        st.markdown("---")
         st.header("⚙️ 配置")
         api_base = st.text_input("API地址", st.session_state.api_base)
         refresh = st.button("检测API健康")
         if refresh:
-            ok = try_health(api_base.rstrip("/") + "/health")
-            if ok:
+            base = api_base.rstrip("/")
+            if try_health(base + "/health"):
                 st.success("API健康正常")
-                st.session_state.api_base = api_base.rstrip("/")
+                st.session_state.api_base = base
             else:
-                st.error("API不可用，请检查后端服务或端口")
+                auto = detect_api_base()
+                if try_health(auto + "/health"):
+                    st.session_state.api_base = auto
+                    st.success(f"已自动切换到 {auto}")
+                else:
+                    st.error("API不可用，请检查后端服务或端口")
         st.caption("提示：可通过 API_HOST/API_PORT 控制后端监听；未设置时会自动在 8000–8005 中选择可用端口。")
         st.markdown("---")
         st.subheader("全局设置")
@@ -752,39 +768,73 @@ def _render_match_result(res: Dict):
 
 
 def _render_match_charts(details: Dict):
-    try:
-        import matplotlib.pyplot as plt
-        # 雷达图：技能、学历、年限、职位
-        labels = ["skills", "degree", "years", "position"]
-        values = [
-            float(details.get("skill_ratio", 0)),
-            float(details.get("degree_score", 0)),
-            float(details.get("years_score", 0)),
-            float(details.get("position_score", 0)),
-        ]
-        angles = [n / float(len(labels)) * 2 * math.pi for n in range(len(labels))]
-        values += values[:1]
-        angles += angles[:1]
-        fig = plt.figure(figsize=(4, 4))
-        ax = fig.add_subplot(111, polar=True)
-        ax.plot(angles, values, linewidth=2)
-        ax.fill(angles, values, alpha=0.2)
-        ax.set_xticks(angles[:-1])
-        ax.set_xticklabels(labels)
-        ax.set_yticklabels([])
-        st.pyplot(fig, use_container_width=False)
-    except Exception:
-        st.info("图表渲染失败，已跳过雷达图。")
-    # 条形图：技能命中数与岗位技能数（若能获取）
-    matched = len(details.get("matched_skills", []))
-    try:
-        import matplotlib.pyplot as plt
-        fig2, ax2 = plt.subplots(figsize=(4, 3))
-        ax2.bar(["matched"], [matched], color="#4caf50")
-        ax2.set_ylabel("count")
-        st.pyplot(fig2, use_container_width=False)
-    except Exception:
-        pass
+    dims = [
+        ("技能", float(details.get("skill_ratio", 0))),
+        ("学历", float(details.get("degree_score", 0))),
+        ("年限", float(details.get("years_score", 0))),
+        ("职位", float(details.get("position_score", 0))),
+        ("关键词", float(details.get("keyword_ratio", 0))),
+        ("证书", float(details.get("certs_score", 0))),
+        ("语言", float(details.get("languages_ratio", 0))),
+        ("格式", float(details.get("format_score", 0))),
+    ]
+    if st_echarts:
+        ind = [{"name": k, "max": 1.0} for k, _ in dims]
+        val = [v for _, v in dims]
+        opts = {
+            "legend": {"data": ["匹配维度"]},
+            "radar": {"indicator": ind},
+            "series": [{"type": "radar", "data": [{"value": val, "name": "匹配维度"}]}]
+        }
+        st_echarts(opts, height=360)
+        matched = len(details.get("matched_skills", []))
+        total_sk = int(details.get("total_job_skills", matched) or matched)
+        miss = max(total_sk - matched, 0)
+        p_opts = {
+            "tooltip": {"trigger": "item"},
+            "series": [{
+                "type": "pie",
+                "radius": "50%",
+                "data": [
+                    {"value": matched, "name": "命中"},
+                    {"value": miss, "name": "未命中"}
+                ]
+            }]
+        }
+        st_echarts(p_opts, height=300)
+    else:
+        import pandas as pd
+        st.bar_chart(pd.DataFrame({"score": [v for _, v in dims]}, index=[k for k, _ in dims]))
+        matched = len(details.get("matched_skills", []))
+        miss = max(int(details.get("total_job_skills", matched) or matched) - matched, 0)
+        st.write("技能命中/未命中：", matched, "/", miss)
+
+def _render_candidate_insights(details: Dict, rprof: Dict, jprof: Dict, resume_text: str, job_text: str, base: str):
+    _render_match_charts(details)
+    st.markdown("**能力结构占比**")
+    contrib = [
+        ("硬性", (float(details.get("degree_score", 0)) + float(details.get("years_score", 0)) + float(details.get("position_score", 0))) / 3.0),
+        ("软性", float(details.get("skill_ratio", 0))),
+        ("格式", float(details.get("format_score", 0)))
+    ]
+    if st_echarts:
+        p = {
+            "tooltip": {"trigger": "item"},
+            "series": [{"type": "pie", "radius": "55%", "data": [{"name": k, "value": v} for k, v in contrib]}]
+        }
+        st_echarts(p, height=300)
+    else:
+        import pandas as pd
+        st.bar_chart(pd.DataFrame({"value": [v for _, v in contrib]}, index=[k for k, _ in contrib]))
+    st.markdown("**面试题（自动生成）**")
+    qs, err = api_post(base, "/interview_questions", {"job_desc": job_text, "resume_text": resume_text}, timeout=8.0)
+    if not err and qs:
+        for i, q in enumerate(qs.get("questions", [])[:3]):
+            st.write(f"问{i+1}：{q}")
+    st.markdown("**综合分析（优势/风险）**")
+    rep, er2 = api_post(base, "/evaluation_report", {"resume_text": resume_text, "job_text": job_text}, timeout=6.0)
+    if not er2 and rep:
+        st.write(rep.get("report", ""))
 
 def _render_match_pipeline(details: Dict, final_score: float):
     hard = (
@@ -1099,33 +1149,616 @@ def page_ner_eval():
             st.dataframe([{"type": t, "text": v} for t, v in chosen.get("pred", [])], use_container_width=True)
 
 
+def _api_upload(base: str, file_obj, text: str | None, filename: str | None):
+    import requests
+    url = base.rstrip("/") + "/uploads"
+    files = None
+    data = {}
+    if file_obj is not None:
+        name = filename or getattr(file_obj, "name", None) or "upload.bin"
+        buf = file_obj.read()
+        files = {"file": (name, buf)}
+        data["filename"] = name
+    elif text is not None and text.strip():
+        data["text"] = text
+        if filename:
+            data["filename"] = filename
+    r = requests.post(url, files=files, data=data, timeout=float(st.session_state.get("api_timeout", 12.0)))
+    return r.json()
+
+def page_candidate_upload():
+    st.subheader("简历上传")
+    base = st.session_state.api_base
+    f = st.file_uploader("选择简历文件", type=["txt", "md", "docx", "pdf"]) 
+    text = st.text_area("或粘贴简历文本", height=180)
+    name = st.text_input("文件名(可选)")
+    run = st.button("提交")
+    if run:
+        try:
+            res = _api_upload(base, f, text, name)
+            st.success(f"上传成功：{res.get('path')} 大小 {res.get('size')}")
+        except Exception as e:
+            st.error(str(e))
+
+def _role_pages() -> list[tuple[str, callable]]:
+    r = st.session_state.get("role")
+    all_pages = [
+        ("实体预测", page_predict),
+        ("单次匹配", page_match_single),
+        ("批量匹配", page_match_batch),
+        ("岗位检索", page_job_search),
+        ("在线采集与入库", page_ingest),
+        ("三级漏斗", page_funnel),
+        ("公平性报告", page_fairness),
+        ("决策辅助", page_decision),
+        ("配置查看", page_config_view),
+        ("简历上传", page_candidate_upload),
+        ("NER评估", page_ner_eval),
+    ]
+    if r == "管理员":
+        return [("管理员流程向导", page_admin_wizard)]
+    if r == "面向招聘方":
+        return [("招聘流程向导", page_hr_wizard)]
+    if r == "面向求职者":
+        return [("求职者流程向导", page_jobseeker_wizard)]
+    return all_pages
+
 def main():
     page_setup()
     sidebar()
+    pages = _role_pages()
+    tabs = st.tabs([t for t, _ in pages])
+    for i, (_, fn) in enumerate(pages):
+        with tabs[i]:
+            fn()
 
-    tabs = st.tabs(["概览", "实体预测", "单次匹配", "批量匹配", "岗位检索", "在线采集与入库", "三级漏斗", "公平性报告", "决策辅助", "配置查看", "NER评估"])
+def service_overview():
+    st.subheader("服务概览")
+    base = st.session_state.api_base
+    ok = try_health(base.rstrip("/") + "/health")
+    st.metric("API健康", "正常" if ok else "异常")
+    st.write("API地址:", base)
+    cfg_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "matching.json")
+    if os.path.isfile(cfg_path):
+        with open(cfg_path, "r", encoding="utf-8") as f:
+            try:
+                import json
+                cfg = json.load(f)
+                st.expander("匹配配置预览").json(cfg)
+            except Exception:
+                st.info("配置读取失败")
+
+def page_jd_generate():
+    st.subheader("JD智能生成")
+    base = st.session_state.api_base
+    text = st.text_area("用自然语言描述招聘需求", height=200)
+    run = st.button("生成结构化JD")
+    if run and text.strip():
+        res, err = api_post(base, "/jd_generate", {"text": text}, timeout=6.0)
+        if err:
+            st.error(err)
+        else:
+            obj = res.get("jd", {})
+            st.json(obj)
+            import pandas as pd, io
+            rows = []
+            for k, v in obj.items():
+                if isinstance(v, list):
+                    rows.append({"field": k, "value": "; ".join([str(x) for x in v])})
+                else:
+                    rows.append({"field": k, "value": str(v)})
+            st.dataframe(rows, use_container_width=True)
+            try:
+                buf = io.BytesIO()
+                with pd.ExcelWriter(buf, engine="xlsxwriter") as w:
+                    pd.DataFrame(rows).to_excel(w, index=False, sheet_name="JD")
+                st.download_button("下载JD结构Excel", data=buf.getvalue(), file_name="structured_jd.xlsx")
+            except Exception:
+                csv = pd.DataFrame(rows).to_csv(index=False).encode("utf-8-sig")
+                st.download_button("下载JD结构CSV", data=csv, file_name="structured_jd.csv")
+
+def page_hr_wizard():
+    st.subheader("招聘流程向导")
+    base = st.session_state.api_base
+    st.markdown("步骤1：岗位需求")
+    jd_text = st.text_area("自然语言JD描述", height=160, key="hr_jd_text")
+    jd_file = st.file_uploader("或上传JD文件（txt/md）", type=["txt", "md"], key="hr_jd_file")
+    gen_jd = st.button("生成结构化JD", key="hr_gen_jd")
+    if gen_jd:
+        if jd_file is not None and not jd_text.strip():
+            jd_text = jd_file.read().decode("utf-8", errors="ignore")
+        res, err = api_post(base, "/jd_generate", {"text": jd_text or ""}, timeout=6.0)
+        if err:
+            st.error(err)
+        else:
+            st.session_state["hr_struct_jd"] = res.get("jd", {})
+            st.success("已生成结构化JD")
+    if st.session_state.get("hr_struct_jd"):
+        st.json(st.session_state["hr_struct_jd"])
+    st.markdown("步骤2：简历来源/在线采集")
+    t1, t2 = st.tabs(["简历来源", "在线采集合并岗位池"])
+    with t1:
+        mode = st.radio("来源", ["目录", "单文件"], index=0, key="hr_src_mode")
+        if mode == "目录":
+            resume_dir = st.text_input("简历目录", os.path.join("data", "raw_resumes"), key="hr_resume_dir")
+            scan = st.button("扫描并解析目录", key="hr_scan_dir")
+            if scan:
+                if not os.path.isdir(resume_dir):
+                    st.error("目录不存在")
+                else:
+                    items = []
+                    for name in os.listdir(resume_dir):
+                        p = os.path.join(resume_dir, name)
+                        if not os.path.isfile(p):
+                            continue
+                        low = name.lower()
+                        text = ""
+                        try:
+                            if low.endswith((".txt", ".md")):
+                                with open(p, "r", encoding="utf-8", errors="ignore") as f:
+                                    text = f.read()
+                            elif low.endswith(".docx") and _preprocess_mod is not None:
+                                text = _preprocess_mod.parse_word(p)
+                            elif low.endswith(".pdf") and _preprocess_mod is not None:
+                                text = _preprocess_mod.parse_pdf(p)
+                        except Exception:
+                            text = ""
+                        if text:
+                            items.append({"id": name, "text": text})
+                    st.session_state["hr_resumes"] = items
+                    st.success(f"已解析 {len(items)} 份简历")
+        else:
+            rf = st.file_uploader("上传简历文件（txt/md/docx/pdf）", type=["txt", "md", "docx", "pdf"], key="hr_resume_file")
+            if st.button("解析文件", key="hr_parse_file"):
+                if rf is None:
+                    st.warning("请上传文件")
+                else:
+                    text = _read_uploaded_text(rf)
+                    if text:
+                        st.session_state["hr_resumes"] = [{"id": getattr(rf, "name", "resume"), "text": text}]
+                        st.success("已解析 1 份简历")
+        resumes = st.session_state.get("hr_resumes") or []
+    with t2:
+        plat = st.selectbox("平台", ["通用URL", "Boss直聘", "智联招聘", "猎聘", "LinkedIn"], index=0, key="hr_ingest_platform")
+        urls_text = st.text_area("URL（每行一个）", height=120, key="hr_ingest_urls")
+        cookie = st.text_input("Cookie（需登录后Cookie）", value="", key="hr_ingest_cookie")
+        do_ingest = st.button("采集并合并到岗位池", key="hr_ingest_run")
+        if do_ingest:
+            urls = [u.strip() for u in (urls_text or "").split("\n") if u.strip()]
+            if urls:
+                if plat == "通用URL":
+                    res, err = _post_with_progress(base, "/ingest_online", {"urls": urls}, 12.0, "在线采集")
+                elif plat == "Boss直聘":
+                    if not cookie.strip():
+                        st.error("Boss直聘需要Cookie")
+                        res, err = (None, "cookie required")
+                    else:
+                        res, err = _post_with_progress(base, "/ingest_bosszhipin", {"urls": urls, "cookie": cookie}, 12.0, "在线采集")
+                elif plat == "智联招聘":
+                    if not cookie.strip():
+                        st.error("智联招聘需要Cookie")
+                        res, err = (None, "cookie required")
+                    else:
+                        res, err = _post_with_progress(base, "/ingest_zhilian", {"urls": urls, "cookie": cookie}, 12.0, "在线采集")
+                elif plat == "猎聘":
+                    if not cookie.strip():
+                        st.error("猎聘需要Cookie")
+                        res, err = (None, "cookie required")
+                    else:
+                        res, err = _post_with_progress(base, "/ingest_liepin", {"urls": urls, "cookie": cookie}, 12.0, "在线采集")
+                else:
+                    if not cookie.strip():
+                        st.error("LinkedIn需要Cookie")
+                        res, err = (None, "cookie required")
+                    else:
+                        res, err = _post_with_progress(base, "/ingest_linkedin", {"urls": urls, "cookie": cookie}, 12.0, "在线采集")
+                if not err and res:
+                    items = res.get("items", [])
+                    jobs_pool = st.session_state.get("hr_jobs_pool") or []
+                    for it in items:
+                        jobs_pool.append({"id": str(it.get("url") or len(jobs_pool)), "text": str(it.get("text", ""))})
+                    st.session_state["hr_jobs_pool"] = jobs_pool
+                    st.success(f"已采集并合并 {len(items)} 条岗位描述")
+        pool = st.session_state.get("hr_jobs_pool") or []
+        if pool:
+            opts = [p.get("id") for p in pool]
+            sel = st.selectbox("岗位ID", options=opts, index=0, key="hr_job_select")
+            chosen = next((x for x in pool if x.get("id") == sel), None)
+            st.session_state["hr_chosen_job_text"] = chosen.get("text") if chosen else None
+        else:
+            st.session_state["hr_chosen_job_text"] = None
+    if resumes:
+        st.markdown("步骤3：匹配与评分")
+        run = st.button("执行匹配", key="hr_do_match")
+        if run:
+            jd_text_use = jd_text or ""
+            if st.session_state.get("hr_struct_jd"):
+                sj = st.session_state["hr_struct_jd"]
+                jd_text_use = jd_text_use or ("\n".join((sj.get("title") or "", *sj.get("requirements", []))) )
+            chosen_text = st.session_state.get("hr_chosen_job_text")
+            if chosen_text:
+                jd_text_use = chosen_text
+            results = []
+            for r in resumes:
+                res, err = api_post(base, "/match", {"resume_text": r.get("text", ""), "job_text": jd_text_use}, timeout=float(st.session_state.get("api_timeout", 12.0)))
+                if err:
+                    continue
+                results.append({"id": r.get("id"), "score": res.get("score"), "details": res.get("details"), "resume_profile": res.get("resume_profile", {}), "job_profile": res.get("job_profile", {})})
+            results = sorted(results, key=lambda x: x.get("score", 0.0), reverse=True)
+            st.session_state["hr_match_results"] = results
+        rows = st.session_state.get("hr_match_results") or []
+        if rows:
+            st.dataframe([{ "id": x.get("id"), "score": x.get("score") } for x in rows], use_container_width=True)
+            _download_excel_or_csv_sheets({"results": rows}, "hr_match_results.xlsx", "hr_match_results", prefer_excel=True)
+            st.markdown("步骤4：特征评分可视化")
+            top = rows[:3]
+            if st_echarts and top:
+                inds = [
+                    ("技能", "skill_ratio"), ("学历", "degree_score"), ("年限", "years_score"), ("职位", "position_score"),
+                    ("关键词", "keyword_ratio"), ("证书", "certs_score"), ("语言", "languages_ratio"), ("格式", "format_score")
+                ]
+                indicator = [{"name": n, "max": 1.0} for n, _ in inds]
+                radar_data = []
+                names = []
+                for it in top:
+                    det = it.get("details", {})
+                    vals = [float(det.get(key, 0)) for _, key in inds]
+                    radar_data.append({"value": vals, "name": str(it.get("id"))})
+                    names.append(str(it.get("id")))
+                r_opts = {"legend": {"data": names}, "radar": {"indicator": indicator}, "series": [{"type": "radar", "data": radar_data}]}
+                st_echarts(r_opts, height=360)
+            sel_ids = [str(it.get("id")) for it in top]
+            if sel_ids:
+                sel = st.selectbox("查看候选人详情", options=sel_ids, index=0, key="hr_top_sel")
+                chosen = next((x for x in top if str(x.get("id")) == sel), None)
+                if chosen:
+                    _render_candidate_insights(
+                        chosen.get("details", {}),
+                        chosen.get("resume_profile", {}),
+                        chosen.get("job_profile", {}),
+                        next((x.get("text") for x in resumes if x.get("id") == chosen.get("id")), ""),
+                        jd_text,
+                        base,
+                    )
+            st.markdown("步骤5：面试题生成")
+            k = st.number_input("每份简历题目数量", min_value=1, value=3, step=1, key="hr_q_k")
+            genq = st.button("按TopK生成题目", key="hr_gen_q")
+            if genq:
+                qs_rows = []
+                for it in rows[:max(1, int(k))]:
+                    payload = {"job_desc": jd_text, "resume_text": next((x for x in resumes if x.get("id") == it.get("id")), {}).get("text", "")}
+                    resp, err = api_post(base, "/interview_questions", payload, timeout=8.0)
+                    if not err:
+                        qs_rows.append({"id": it.get("id"), "questions": resp.get("questions", [])})
+                st.dataframe([{ "id": r.get("id"), "q1": (r.get("questions") or [""])[0] } for r in qs_rows], use_container_width=True)
+                st.download_button("下载题库JSON", data=json.dumps(qs_rows, ensure_ascii=False, indent=2), file_name="hr_questions.json")
+
+def page_resume_optimize():
+    st.subheader("简历优化")
+    base = st.session_state.api_base
+    f = st.file_uploader("上传简历文件或粘贴文本", type=["txt", "md", "docx", "pdf"]) 
+    text = st.text_area("简历文本", height=200)
+    run = st.button("生成优化建议")
+    if run:
+        if f is not None and not text.strip():
+            text = _read_uploaded_text(f)
+        if not text.strip():
+            st.warning("请提供简历文本或上传文件")
+            return
+        res, err = api_post(base, "/resume_optimize", {"text": text}, timeout=6.0)
+        if err:
+            st.error(err)
+        else:
+            st.json(res)
+
+def page_interview_training():
+    st.subheader("面试训练")
+    base = st.session_state.api_base
+    jd = st.text_area("岗位描述（可选）", height=120, key="interview_training_job_desc")
+    resume_text = st.text_area("候选人简历文本", height=200, key="interview_training_resume_text")
+    run = st.button("生成面试题", key="interview_training_generate")
+    if run:
+        if not resume_text.strip():
+            st.warning("请先输入简历文本")
+            return
+        payload = {"job_desc": jd, "resume_text": resume_text}
+        res, err = api_post(base, "/interview_questions", payload, timeout=8.0)
+        if err:
+            st.error(err)
+        else:
+            qs = res.get("questions", [])
+            for i, q in enumerate(qs):
+                st.write(f"问{i+1}：{q}")
+
+def page_jobseeker_wizard():
+    st.subheader("求职者流程向导")
+    base = st.session_state.api_base
+    rf = st.file_uploader("上传简历文件（txt/md/docx/pdf）", type=["txt", "md", "docx", "pdf"], key="jobseeker_resume_file")
+    rtext = st.text_area("或粘贴简历文本", height=160, key="jobseeker_resume_text")
+    if st.button("解析简历", key="jobseeker_parse_resume"):
+        if rf is not None and not rtext.strip():
+            rtext = _read_uploaded_text(rf)
+        st.session_state["jobseeker_text"] = rtext
+        st.success("已解析简历文本")
+    text = st.session_state.get("jobseeker_text", "")
+    if text:
+        opt, err = api_post(base, "/resume_optimize", {"text": text}, timeout=8.0)
+        if not err and opt:
+            st.json(opt)
+        rec, er2 = api_post(base, "/recommend_jobs", {"resume_text": text, "top_k": 5}, timeout=12.0)
+        items = rec.get("items", []) if (not er2 and rec) else []
+        if items:
+            st.dataframe([{ "id": it.get("id"), "score": it.get("score") } for it in items], use_container_width=True)
+            for it in items[:3]:
+                mr, me = api_post(base, "/match", {"resume_text": text, "job_text": it.get("text", "")}, timeout=8.0)
+                if me:
+                    continue
+                _render_match_charts(mr.get("details", {}))
+            qs, qe = api_post(base, "/interview_questions", {"job_desc": "\n".join([i.get("text", "") for i in items[:3]]), "resume_text": text}, timeout=8.0)
+            if not qe and qs:
+                for i, q in enumerate(qs.get("questions", [])):
+                    st.write(f"问{i+1}：{q}")
+
+def page_candidate_analysis():
+    st.subheader("匹配度分析")
+    base = st.session_state.api_base
+    resume_text = st.text_area("简历文本", height=200, key="candidate_analysis_resume_text")
+    jobs_dir = st.text_input("岗位目录", os.path.join("data", "raw_jobs"), key="candidate_analysis_jobs_dir")
+    run = st.button("分析前三最匹配岗位")
+    if run:
+        if not resume_text.strip():
+            st.warning("请先填写简历文本")
+            return
+        res, err = api_post(base, "/recommend_jobs", {"resume_text": resume_text, "jobs_dir": jobs_dir, "top_k": 3}, timeout=12.0)
+        if err:
+            st.error(err)
+            return
+        items = res.get("items", [])
+        for it in items:
+            jt = it.get("file") or it.get("id")
+            st.info(f"岗位：{jt}")
+            mr, me = api_post(base, "/match", {"resume_text": resume_text, "job_text": it.get("text", "")})
+            if me:
+                continue
+            _render_match_charts(mr.get("details", {}))
+        gen = st.button("生成AI评估报告并下载", key="candidate_analysis_generate_report")
+        if gen:
+            rep, err = api_post(base, "/evaluation_report", {"resume_text": resume_text, "job_text": "\n".join([i.get("text", "") for i in items])})
+            if err:
+                st.error(err)
+            else:
+                txt = rep.get("report", "")
+                st.text_area("评估报告", value=txt, height=200, key="candidate_analysis_report_text")
+                st.download_button("下载评估报告TXT", data=txt.encode("utf-8"), file_name="candidate_evaluation.txt")
+                html = f"""
+                <html><head><meta charset='utf-8'><title>评估报告</title></head><body>
+                <h2>岗位Top3匹配度分析</h2>
+                <p>{txt}</p>
+                <h3>优势</h3>
+                <ul>
+                <li>技能命中：基于匹配细项的技能交集</li>
+                <li>学历/年限/职位关键词满足度</li>
+                </ul>
+                <h3>不足与建议</h3>
+                <ul>
+                <li>补充缺失的岗位核心技能案例与量化成果</li>
+                <li>完善学历/年限表述与验证方式</li>
+                </ul>
+                </body></html>
+                """
+                st.download_button("下载评估报告HTML", data=html.encode("utf-8"), file_name="candidate_evaluation.html")
+
+def page_job_recommend():
+    st.subheader("岗位推荐")
+    base = st.session_state.api_base
+    resume_text = st.text_area("候选人简历文本", height=200)
+    src = st.radio("数据源", ["目录", "SQLite"], index=0)
+    jobs_dir = (
+        st.text_input("岗位目录", os.path.join("data", "raw_jobs"), key="job_recommend_jobs_dir")
+        if src == "目录"
+        else st.text_input("SQLite路径", value=os.getenv("RECOMMEND_JOBS_SQLITE", ""), key="job_recommend_sqlite_path")
+    )
+    top_k = st.number_input("Top N", min_value=1, value=5, step=1)
+    fusion = st.slider("融合权重(匹配分α vs 语义相似度1-α)", 0.0, 1.0, 0.7, 0.05)
+    colf1, colf2, colf3 = st.columns(3)
+    with colf1:
+        industry = st.text_input("行业关键字", value="")
+    with colf2:
+        region = st.text_input("地区关键字", value="")
+    with colf3:
+        smin = st.number_input("最低薪资(￥)", min_value=0.0, value=0.0, step=1000.0)
+    smax = st.number_input("最高薪资(￥)", min_value=0.0, value=0.0, step=1000.0)
+    run = st.button("生成推荐")
+    if run:
+        if not resume_text.strip():
+            st.warning("请先填写简历文本")
+            return
+        payload = {"resume_text": resume_text, "top_k": int(top_k), "industry": industry, "region": region}
+        if smin > 0:
+            payload["salary_min"] = float(smin)
+        if smax > 0:
+            payload["salary_max"] = float(smax)
+        if src == "目录":
+            payload["jobs_dir"] = jobs_dir
+            payload["data_source"] = "dir"
+        else:
+            payload["sqlite_path"] = jobs_dir
+            payload["data_source"] = "sqlite"
+        payload["fusion_weight"] = float(fusion)
+        res, err = api_post(base, "/recommend_jobs", payload, timeout=12.0)
+        if err:
+            st.error(err)
+        else:
+            items = res.get("items", [])
+            rows = [{"id": it.get("id"), "score": it.get("score") } for it in items]
+            st.dataframe(rows, use_container_width=True)
+            _download_excel_or_csv_sheets({"recommended": rows}, "recommended_jobs.xlsx", "recommended_jobs", prefer_excel=True)
+
+def page_admin_monitor():
+    st.subheader("流程监控")
+    log_train = os.path.join("logs", "training_metrics.jsonl")
+    log_eval = os.path.join("logs", "ner_eval_metrics.jsonl")
+    tabs = st.tabs(["训练指标", "评估指标", "特征提取"]) 
     with tabs[0]:
-        page_health()
+        if os.path.isfile(log_train):
+            import json
+            xs, loss = [], []
+            prec, rec, f1 = [], [], []
+            with open(log_train, "r", encoding="utf-8") as f:
+                for i, line in enumerate(f):
+                    try:
+                        obj = json.loads(line)
+                        xs.append(obj.get("step", i))
+                        loss.append(float(obj.get("loss", 0)))
+                        prec.append(float(obj.get("precision", 0)))
+                        rec.append(float(obj.get("recall", 0)))
+                        f1.append(float(obj.get("f1", 0)))
+                    except Exception:
+                        pass
+            try:
+                if st_echarts:
+                    opts = {
+                        "tooltip": {"trigger": "axis"},
+                        "xAxis": {"type": "category", "data": xs},
+                        "yAxis": {"type": "value"},
+                        "series": [
+                            {"type": "line", "name": "loss", "data": loss},
+                            {"type": "line", "name": "precision", "data": prec},
+                            {"type": "line", "name": "recall", "data": rec},
+                            {"type": "line", "name": "f1", "data": f1},
+                        ]
+                    }
+                    st_echarts(opts, height=320)
+                else:
+                    import pandas as pd
+                    df = pd.DataFrame({"step": xs, "loss": loss, "precision": prec, "recall": rec, "f1": f1})
+                    st.line_chart(df.set_index("step"))
+            except Exception:
+                st.error("训练日志解析失败")
+        else:
+            st.info("未检测到训练日志：logs/training_metrics.jsonl")
     with tabs[1]:
-        page_predict()
+        if os.path.isfile(log_eval):
+            import json
+            xs, prec, rec, f1 = [], [], [], []
+            with open(log_eval, "r", encoding="utf-8") as f:
+                for i, line in enumerate(f):
+                    try:
+                        obj = json.loads(line)
+                        xs.append(obj.get("step", i))
+                        prec.append(float(obj.get("precision", 0)))
+                        rec.append(float(obj.get("recall", 0)))
+                        f1.append(float(obj.get("f1", 0)))
+                    except Exception:
+                        pass
+            try:
+                if st_echarts:
+                    opts = {
+                        "tooltip": {"trigger": "axis"},
+                        "xAxis": {"type": "category", "data": xs},
+                        "yAxis": {"type": "value"},
+                        "series": [
+                            {"type": "line", "name": "precision", "data": prec},
+                            {"type": "line", "name": "recall", "data": rec},
+                            {"type": "line", "name": "f1", "data": f1},
+                        ]
+                    }
+                    st_echarts(opts, height=320)
+                else:
+                    import pandas as pd
+                    df = pd.DataFrame({"step": xs, "precision": prec, "recall": rec, "f1": f1})
+                    st.line_chart(df.set_index("step"))
+            except Exception:
+                st.error("评估日志解析失败")
+        else:
+            st.info("未检测到评估日志：logs/ner_eval_metrics.jsonl")
     with tabs[2]:
-        page_match_single()
-    with tabs[3]:
-        page_match_batch()
-    with tabs[4]:
-        page_job_search()
-    with tabs[8]:
-        page_decision()
-    with tabs[9]:
-        page_config_view()
-    with tabs[10]:
-        page_ner_eval()
-    with tabs[6]:
-        page_funnel()
-    with tabs[7]:
-        page_fairness()
-    with tabs[5]:
-        page_ingest()
+        st.write("画像字段分布与覆盖率")
+        import json
+        data_path = os.path.join("data", "processed", "resumes_for_annotation.json")
+        if os.path.isfile(data_path):
+            try:
+                with open(data_path, "r", encoding="utf-8") as f:
+                    ds = json.load(f)
+                skills_cnt = {}
+                degree_cnt = {}
+                years_vals = []
+                for d in ds:
+                    ents = d.get("entities", []) or []
+                    text = d.get("text", "")
+                    import re
+                    deg_m = re.findall(r"博士|硕士|本科|大专", text)
+                    if deg_m:
+                        degree_cnt[deg_m[0]] = degree_cnt.get(deg_m[0], 0) + 1
+                    ym = re.findall(r"(\d+)\s*年", text)
+                    if ym:
+                        try:
+                            years_vals.append(int(ym[0]))
+                        except Exception:
+                            pass
+                    sk = list({s.lower() for s in re.findall(r"[A-Za-z+#\.\-]{2,}", text)})
+                    for s in sk:
+                        skills_cnt[s] = skills_cnt.get(s, 0) + 1
+                # 直方图与覆盖率
+                import pandas as pd
+                total = max(len(ds), 1)
+                deg_cov = sum(degree_cnt.values()) * 100.0 / total
+                years_cov = (len(years_vals) * 100.0 / total)
+                st.metric("学历覆盖率(%)", f"{deg_cov:.1f}")
+                st.metric("年限覆盖率(%)", f"{years_cov:.1f}")
+                df_deg = pd.DataFrame({"degree": list(degree_cnt.keys()), "count": list(degree_cnt.values())})
+                df_sk = pd.DataFrame(sorted(skills_cnt.items(), key=lambda x: x[1], reverse=True)[:20], columns=["skill", "count"]) 
+                st.write("学历分布")
+                st.bar_chart(df_deg.set_index("degree"))
+                st.write("Top20技能词分布")
+                st.bar_chart(df_sk.set_index("skill"))
+                if years_vals:
+                    import numpy as np, pandas as pd
+                    hist, bins = np.histogram(years_vals, bins=min(10, max(3, len(set(years_vals)))))
+                    centers = [f"{int(bins[i])}-{int(bins[i+1])}" for i in range(len(bins)-1)]
+                    df_hist = pd.DataFrame({"bucket": centers, "count": hist})
+                    st.bar_chart(df_hist.set_index("bucket"))
+                st.success(f"样本数：{len(ds)}；有学历标签样本：{sum(degree_cnt.values())}")
+            except Exception:
+                st.error("画像统计失败")
+        else:
+            st.info("未检测到处理后的简历数据集：data/processed/resumes_for_annotation.json")
+
+def _can_upload() -> bool:
+    perms = st.session_state.get("permissions") or []
+    return "uploads.write" in perms
+
+def page_interview_feedback():
+    st.subheader("评价记录")
+    if "feedback_rows" not in st.session_state:
+        st.session_state["feedback_rows"] = []
+    cid = st.text_input("候选人ID")
+    score = st.number_input("评分(0-100)", min_value=0, max_value=100, value=80, step=1)
+    notes = st.text_area("评价备注", height=160)
+    add = st.button("添加记录")
+    if add:
+        st.session_state["feedback_rows"].append({"id": cid, "score": int(score), "notes": notes, "ts": int(time.time())})
+        st.success("已添加")
+    rows = st.session_state.get("feedback_rows", [])
+    if rows:
+        import pandas as pd, json
+        df = pd.DataFrame(rows)
+        st.dataframe(df, use_container_width=True)
+        st.download_button("下载评价CSV", data=df.to_csv(index=False).encode("utf-8-sig"), file_name="interview_feedback.csv")
+        save_srv = st.button("保存到后端")
+        if save_srv:
+            if _can_upload():
+                try:
+                    payload = json.dumps(rows, ensure_ascii=False, indent=2)
+                    res, err = api_post(st.session_state.api_base, "/uploads", {"text": payload, "filename": "interview_feedback.json"})
+                    if err:
+                        st.error(f"上传失败：{err}")
+                    else:
+                        st.success("已保存到后端")
+                except Exception as e:
+                    st.error(str(e))
+            else:
+                st.warning("当前令牌无上传权限，已提供本地下载功能")
 
 
  
@@ -1343,6 +1976,209 @@ def page_decision():
         df = pd.DataFrame(res.get("results", []))
         csv = df.to_csv(index=False).encode("utf-8-sig")
         st.download_button("下载全量结果CSV", data=csv, file_name="decision_all_results.csv")
+
+def page_jobseeker_wizard():
+    st.subheader("求职者流程向导")
+    base = st.session_state.api_base
+    st.markdown("步骤1：上传简历")
+    rf = st.file_uploader("上传简历文件（txt/md/docx/pdf）", type=["txt", "md", "docx", "pdf"], key="jobseeker_resume_file")
+    rtext = st.text_area("或粘贴简历文本", height=160, key="jobseeker_resume_text")
+    if st.button("解析简历", key="jobseeker_parse_resume"):
+        if rf is not None and not rtext.strip():
+            rtext = _read_uploaded_text(rf)
+        st.session_state["jobseeker_text"] = rtext
+        st.success("已解析简历文本")
+    text = st.session_state.get("jobseeker_text", "")
+    if text:
+        st.markdown("步骤2：AI解析与优化")
+        opt, err = api_post(base, "/resume_optimize", {"text": text}, timeout=8.0)
+        if not err and opt:
+            st.json(opt)
+        st.markdown("步骤3：自动岗位推荐")
+        rec, er2 = api_post(base, "/recommend_jobs", {"resume_text": text, "top_k": 5}, timeout=12.0)
+        if not er2 and rec:
+            items = rec.get("items", [])
+            st.dataframe([{ "id": it.get("id"), "score": it.get("score") } for it in items], use_container_width=True)
+            st.markdown("步骤4：综合匹配度（Top3）")
+            for it in items[:3]:
+                mr, me = api_post(base, "/match", {"resume_text": text, "job_text": it.get("text", "")}, timeout=8.0)
+                if me:
+                    continue
+                _render_candidate_insights(
+                    mr.get("details", {}),
+                    mr.get("resume_profile", {}),
+                    mr.get("job_profile", {}),
+                    text,
+                    it.get("text", ""),
+                    base,
+                )
+            st.markdown("步骤5：面试准备建议")
+            qs, qe = api_post(base, "/interview_questions", {"job_desc": "\n".join([i.get("text", "") for i in items[:3]]), "resume_text": text}, timeout=8.0)
+            if not qe and qs:
+                for i, q in enumerate(qs.get("questions", [])):
+                    st.write(f"问{i+1}：{q}")
+def page_admin_wizard():
+    st.subheader("管理员流程向导")
+    base = st.session_state.api_base
+    processed_path = os.path.join("data", "processed", "resumes_for_annotation.json")
+    st.markdown("步骤1：数据预处理")
+    run_pp = st.button("运行预处理", key="admin_run_preprocess")
+    if run_pp:
+        try:
+            if _preprocess_mod is not None and hasattr(_preprocess_mod, "process_resumes"):
+                _preprocess_mod.process_resumes()
+                st.success("预处理完成")
+            else:
+                st.warning("预处理模块不可用")
+        except Exception as e:
+            st.error(f"预处理失败：{e}")
+    if os.path.isfile(processed_path):
+        with open(processed_path, "r", encoding="utf-8") as f:
+            try:
+                ds = json.load(f)
+                st.info(f"预处理样本数：{len(ds)}")
+                st.json((ds or [])[:1])
+            except Exception:
+                st.warning("预处理输出读取失败")
+
+    st.markdown("步骤2：模型特征提取")
+    show_feats = st.button("计算画像分布", key="admin_show_features")
+    if show_feats and os.path.isfile(processed_path):
+        try:
+            with open(processed_path, "r", encoding="utf-8") as f:
+                ds = json.load(f)
+            import re, pandas as pd
+            degree_cnt = {}
+            skills_cnt = {}
+            years_vals = []
+            for d in ds:
+                text = d.get("text", "")
+                deg_m = re.findall(r"博士|硕士|本科|大专", text)
+                if deg_m:
+                    degree_cnt[deg_m[0]] = degree_cnt.get(deg_m[0], 0) + 1
+                ym = re.findall(r"(\d+)\s*年", text)
+                if ym:
+                    try:
+                        years_vals.append(int(ym[0]))
+                    except Exception:
+                        pass
+                sk = list({s.lower() for s in re.findall(r"[A-Za-z+#\.\-]{2,}", text)})
+                for s in sk:
+                    skills_cnt[s] = skills_cnt.get(s, 0) + 1
+            total = max(len(ds), 1)
+            st.metric("学历覆盖率(%)", f"{(sum(degree_cnt.values())*100.0/total):.1f}")
+            st.metric("年限覆盖率(%)", f"{(len(years_vals)*100.0/total):.1f}")
+            df_deg = pd.DataFrame({"degree": list(degree_cnt.keys()), "count": list(degree_cnt.values())})
+            df_sk = pd.DataFrame(sorted(skills_cnt.items(), key=lambda x: x[1], reverse=True)[:20], columns=["skill", "count"])
+            st.bar_chart(df_deg.set_index("degree"))
+            st.bar_chart(df_sk.set_index("skill"))
+            try:
+                import matplotlib.pyplot as plt
+                fig, ax = plt.subplots(figsize=(5,3))
+                if years_vals:
+                    ax.boxplot(years_vals, vert=True)
+                ax.set_title("年限箱线图")
+                st.pyplot(fig, use_container_width=False)
+            except Exception:
+                pass
+        except Exception as e:
+            st.error(f"特征提取失败：{e}")
+
+    st.markdown("步骤3：模型特性向量化")
+    upsert = st.button("向量入库（简历）", key="admin_vector_upsert")
+    if upsert:
+        if not os.path.isfile(processed_path):
+            st.error("未检测到预处理输出")
+        else:
+            with open(processed_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            items = [{"id": str(i), "text": d.get("text", "")} for i, d in enumerate(data)]
+            res, err = _post_with_progress(base, "/vector_index", {"items": items}, 10.0, "向量入库")
+            if err:
+                st.error(err)
+            else:
+                st.success(f"入库完成：{res.get('count')} 条")
+
+    st.markdown("步骤4：实体模型生成过程（训练）")
+    st.info("一键启动实体模型训练，并实时写入 logs/training_metrics.jsonl")
+    start_train = st.button("开始训练实体模型", key="admin_start_training")
+    if start_train:
+        try:
+            import subprocess, sys
+            st.write("训练进度：")
+            prog = st.progress(0)
+            logbox = st.empty()
+            # 通过 -u 保证 stdout 行刷出
+            env = dict(os.environ)
+            env["PYTHONIOENCODING"] = env.get("PYTHONIOENCODING", "utf-8")
+            p = subprocess.Popen([sys.executable, "-u", "scripts/03_entity_model.py"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env)
+            lines = []
+            steps = 0
+            while True:
+                line = p.stdout.readline()
+                if not line:
+                    if p.poll() is not None:
+                        break
+                    continue
+                lines.append(line.rstrip())
+                steps += 1
+                logbox.text("\n".join(lines[-10:]))
+                prog.progress(min(steps/100.0, 1.0))
+            rc = p.poll()
+            if rc == 0:
+                st.success("训练完成")
+            else:
+                st.warning(f"训练进程退出码：{rc}")
+        except Exception as e:
+            st.error(f"启动训练失败：{e}")
+
+    st.markdown("步骤5：模型匹配过程")
+    c1, c2 = st.columns(2)
+    with c1:
+        rtext = st.text_area("简历文本", height=140, key="admin_match_resume")
+    with c2:
+        jtext = st.text_area("岗位文本", height=140, key="admin_match_job")
+    if st.button("执行匹配", key="admin_do_match"):
+        if not rtext.strip() or not jtext.strip():
+            st.warning("请填写简历与岗位文本")
+        else:
+            res, err = _post_with_progress(base, "/match", {"resume_text": rtext, "job_text": jtext}, 8.0, "匹配评估")
+            if err:
+                st.error(err)
+            else:
+                _render_match_result(res)
+
+    st.markdown("步骤6：模型训练过程与评估结果")
+    st.caption("从日志读取训练/评估曲线，详见‘流程监控’页签")
+    st.link_button("打开流程监控", "#")
+
+    st.markdown("步骤7：预测测试（手动上传）")
+    mode = st.radio("测试类型", ["NER实体预测", "匹配评分"], index=0, key="admin_test_mode")
+    tf = st.file_uploader("上传测试文件", type=["txt", "md", "docx", "pdf"], key="admin_test_file")
+    tt = st.text_area("或粘贴文本", height=140, key="admin_test_text")
+    if st.button("执行测试", key="admin_do_test"):
+        ttext = tt
+        if tf is not None and not ttext.strip():
+            ttext = _read_uploaded_text(tf)
+        if not ttext.strip():
+            st.warning("请提供测试文本")
+        else:
+            if mode == "NER实体预测":
+                res, err = api_post(base, "/predict", {"text": ttext}, timeout=6.0)
+                if err:
+                    st.error(err)
+                else:
+                    st.json(res)
+            else:
+                jt = st.text_area("岗位文本（匹配）", height=120, key="admin_test_job_text")
+                if not jt.strip():
+                    st.warning("请填写岗位文本")
+                else:
+                    res, err = api_post(base, "/match", {"resume_text": ttext, "job_text": jt}, timeout=8.0)
+                    if err:
+                        st.error(err)
+                    else:
+                        _render_match_result(res)
 
 if __name__ == "__main__":
     main()

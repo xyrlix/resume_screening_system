@@ -137,44 +137,50 @@ def sidebar():
         st.session_state.api_base = detect_api_base()
     with st.sidebar:
         st.subheader("身份与角色")
+        if "role" not in st.session_state:
+            st.session_state["role"] = "面向招聘方"
         role_options = ["面向招聘方", "面向求职者", "管理员"]
-        current_role = st.session_state.get("role")
-        st.session_state["role"] = st.selectbox(
-            "当前角色",
-            options=role_options,
-            index=role_options.index(current_role) if current_role in role_options else 0
-        )
+        sel = st.radio("选择角色", role_options, index=role_options.index(st.session_state["role"]) if st.session_state["role"] in role_options else 0, key="role_radio")
+        st.session_state["role"] = sel
+        st.markdown(f"<div style='margin-top:6px;padding:8px 10px;border-radius:6px;background:#1976d2;color:#fff;font-weight:600;display:inline-block;'>当前角色：{st.session_state['role']}</div>", unsafe_allow_html=True)
         st.markdown("---")
-        service_overview()
-        st.markdown("---")
-        st.header("⚙️ 配置")
+        st.subheader("⚙️ 服务与配置")
         api_base = st.text_input("API地址", st.session_state.api_base)
-        refresh = st.button("检测API健康")
-        if refresh:
-            base = api_base.rstrip("/")
-            if try_health(base + "/health"):
-                st.success("API健康正常")
-                st.session_state.api_base = base
-            else:
-                auto = detect_api_base()
-                if try_health(auto + "/health"):
-                    st.session_state.api_base = auto
-                    st.success(f"已自动切换到 {auto}")
-                else:
-                    st.error("API不可用，请检查后端服务或端口")
+        base = (api_base or st.session_state.api_base).rstrip("/")
+        ok = try_health(base + "/health")
+        st.metric("API健康", "正常" if ok else "异常")
+        st.link_button("查看API文档", base + "/docs")
+        cfg_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "matching.json")
+        if os.path.isfile(cfg_path):
+            with open(cfg_path, "r", encoding="utf-8") as f:
+                try:
+                    cfg = json.load(f)
+                    st.expander("匹配配置预览").json(cfg)
+                except Exception:
+                    st.info("配置读取失败")
+        if ok:
+            st.session_state.api_base = base
+        else:
+            auto = detect_api_base()
+            if try_health(auto + "/health"):
+                st.session_state.api_base = auto
+                st.info(f"已自动切换到 {auto}")
         st.caption("提示：可通过 API_HOST/API_PORT 控制后端监听；未设置时会自动在 8000–8005 中选择可用端口。")
         st.markdown("---")
         st.subheader("全局设置")
         api_to = st.slider("默认API超时(秒)", 2.0, 30.0, float(st.session_state.get("api_timeout", 12.0)), 0.5, key="sidebar_api_timeout")
         st.session_state["api_timeout"] = float(api_to)
         llm_enabled = st.checkbox("启用大模型面试题(全局)", value=bool(st.session_state.get("llm_global_enabled", False)), key="sidebar_llm_enabled")
-        api_token = st.text_input("API令牌(Bearer Token)", value=st.session_state.get("api_token", ""))
-        export_csv_default = st.checkbox("默认导出为CSV", value=bool(st.session_state.get("export_csv_default", False)), key="sidebar_export_csv")
-        apply = st.button("应用全局设置", key="sidebar_apply")
+        adv = st.expander("高级设置", expanded=False)
+        with adv:
+            api_token = st.text_input("API令牌 (可选)", value=st.session_state.get("api_token", ""), help="用于访问需要鉴权的接口，作为 Authorization: Bearer <token> 传递")
+            export_csv_default = st.checkbox("默认导出为CSV", value=bool(st.session_state.get("export_csv_default", False)), key="sidebar_export_csv")
+        apply = st.button("应用全局设置", key="sidebar_apply", type="secondary")
         if apply:
             st.session_state["export_csv_default"] = bool(export_csv_default)
             st.session_state["llm_global_enabled"] = bool(llm_enabled)
-            st.session_state["api_token"] = api_token
+            if "api_token" in locals():
+                st.session_state["api_token"] = api_token
             _ = api_post(st.session_state.api_base, "/config/llm_enabled", {"enabled": bool(llm_enabled)})
 
 
@@ -1673,56 +1679,95 @@ def page_admin_monitor():
         else:
             st.info("未检测到评估日志：logs/ner_eval_metrics.jsonl")
     with tabs[2]:
-        st.write("画像字段分布与覆盖率")
         import json
         data_path = os.path.join("data", "processed", "resumes_for_annotation.json")
-        if os.path.isfile(data_path):
+        if not os.path.isfile(data_path):
+            st.info("未检测到处理后的简历数据集：data/processed/resumes_for_annotation.json")
+        else:
             try:
                 with open(data_path, "r", encoding="utf-8") as f:
                     ds = json.load(f)
-                skills_cnt = {}
+                texts = [d.get("text", "") for d in ds]
+                total = max(len(texts), 1)
+                import re
                 degree_cnt = {}
                 years_vals = []
-                for d in ds:
-                    ents = d.get("entities", []) or []
-                    text = d.get("text", "")
-                    import re
-                    deg_m = re.findall(r"博士|硕士|本科|大专", text)
+                skills_cnt = {}
+                langs_cnt = {}
+                fw_cnt = {}
+                tools_cnt = {}
+                city_cnt = {}
+                langs = {"java","python","go","rust","c++","c#","js","ts","sql"}
+                fws = {"spring","springboot","django","flask","fastapi","vue","react","angular","spark","hadoop"}
+                tools = {"docker","k8s","kubernetes","git","jenkins","maven","gradle","terraform"}
+                cities = ["北京","上海","广州","深圳","杭州","南京","成都","武汉","西安","苏州","天津","重庆","合肥","厦门","沈阳","大连","无锡","佛山","宁波","青岛"]
+                for t in texts:
+                    deg_m = re.findall(r"博士|硕士|本科|大专", t)
                     if deg_m:
                         degree_cnt[deg_m[0]] = degree_cnt.get(deg_m[0], 0) + 1
-                    ym = re.findall(r"(\d+)\s*年", text)
+                    ym = re.findall(r"(\d+)\s*年", t)
                     if ym:
                         try:
                             years_vals.append(int(ym[0]))
                         except Exception:
                             pass
-                    sk = list({s.lower() for s in re.findall(r"[A-Za-z+#\.\-]{2,}", text)})
-                    for s in sk:
-                        skills_cnt[s] = skills_cnt.get(s, 0) + 1
-                # 直方图与覆盖率
-                import pandas as pd
-                total = max(len(ds), 1)
+                    toks = [x.lower() for x in re.findall(r"[A-Za-z][A-Za-z0-9+#\.\-]{1,}", t)]
+                    for tok in set(toks):
+                        skills_cnt[tok] = skills_cnt.get(tok, 0) + 1
+                        if tok in langs:
+                            langs_cnt[tok] = langs_cnt.get(tok, 0) + 1
+                        if tok in fws:
+                            fw_cnt[tok] = fw_cnt.get(tok, 0) + 1
+                        if tok in tools:
+                            tools_cnt[tok] = tools_cnt.get(tok, 0) + 1
+                    for c in cities:
+                        if c in t:
+                            city_cnt[c] = city_cnt.get(c, 0) + 1
+                import pandas as pd, numpy as np
                 deg_cov = sum(degree_cnt.values()) * 100.0 / total
                 years_cov = (len(years_vals) * 100.0 / total)
-                st.metric("学历覆盖率(%)", f"{deg_cov:.1f}")
-                st.metric("年限覆盖率(%)", f"{years_cov:.1f}")
+                avg_chars = sum(len(x) for x in texts) / float(total)
+                avg_words = sum(len(re.findall(r"\w+", x)) for x in texts) / float(total)
+                avg_skills = sum(len(set(re.findall(r"[A-Za-z][A-Za-z0-9+#\.\-]{1,}", x.lower()))) for x in texts) / float(total)
+                c1, c2, c3, c4 = st.columns(4)
+                c1.metric("样本数", f"{total}")
+                c2.metric("学历覆盖率(%)", f"{deg_cov:.1f}")
+                c3.metric("年限覆盖率(%)", f"{years_cov:.1f}")
+                c4.metric("平均技能词数", f"{avg_skills:.1f}")
                 df_deg = pd.DataFrame({"degree": list(degree_cnt.keys()), "count": list(degree_cnt.values())})
-                df_sk = pd.DataFrame(sorted(skills_cnt.items(), key=lambda x: x[1], reverse=True)[:20], columns=["skill", "count"]) 
-                st.write("学历分布")
-                st.bar_chart(df_deg.set_index("degree"))
-                st.write("Top20技能词分布")
-                st.bar_chart(df_sk.set_index("skill"))
+                if not df_deg.empty:
+                    st.write("学历分布")
+                    st.bar_chart(df_deg.set_index("degree"))
+                top_sk = sorted(skills_cnt.items(), key=lambda x: x[1], reverse=True)[:30]
+                if top_sk:
+                    df_sk = pd.DataFrame(top_sk, columns=["skill","count"])
+                    st.write("Top30技能词分布")
+                    st.bar_chart(df_sk.set_index("skill"))
+                if langs_cnt:
+                    df_lang = pd.DataFrame(sorted(langs_cnt.items(), key=lambda x: x[1], reverse=True), columns=["language","count"])
+                    st.write("编程语言分布")
+                    st.bar_chart(df_lang.set_index("language"))
+                if fw_cnt:
+                    df_fw = pd.DataFrame(sorted(fw_cnt.items(), key=lambda x: x[1], reverse=True), columns=["framework","count"])
+                    st.write("框架分布")
+                    st.bar_chart(df_fw.set_index("framework"))
+                if tools_cnt:
+                    df_tools = pd.DataFrame(sorted(tools_cnt.items(), key=lambda x: x[1], reverse=True), columns=["tool","count"])
+                    st.write("工具分布")
+                    st.bar_chart(df_tools.set_index("tool"))
                 if years_vals:
-                    import numpy as np, pandas as pd
                     hist, bins = np.histogram(years_vals, bins=min(10, max(3, len(set(years_vals)))))
                     centers = [f"{int(bins[i])}-{int(bins[i+1])}" for i in range(len(bins)-1)]
                     df_hist = pd.DataFrame({"bucket": centers, "count": hist})
+                    st.write("年限直方图")
                     st.bar_chart(df_hist.set_index("bucket"))
-                st.success(f"样本数：{len(ds)}；有学历标签样本：{sum(degree_cnt.values())}")
+                if city_cnt:
+                    df_city = pd.DataFrame(sorted(city_cnt.items(), key=lambda x: x[1], reverse=True), columns=["city","count"])
+                    st.write("城市提及分布")
+                    st.bar_chart(df_city.set_index("city"))
+                st.success("统计完成")
             except Exception:
                 st.error("画像统计失败")
-        else:
-            st.info("未检测到处理后的简历数据集：data/processed/resumes_for_annotation.json")
 
 def _can_upload() -> bool:
     perms = st.session_state.get("permissions") or []
@@ -2000,18 +2045,43 @@ def page_jobseeker_wizard():
             items = rec.get("items", [])
             st.dataframe([{ "id": it.get("id"), "score": it.get("score") } for it in items], use_container_width=True)
             st.markdown("步骤4：综合匹配度（Top3）")
-            for it in items[:3]:
+            # 综合雷达对比
+            top_items = items[:3]
+            radar_ready = []
+            for it in top_items:
                 mr, me = api_post(base, "/match", {"resume_text": text, "job_text": it.get("text", "")}, timeout=8.0)
                 if me:
                     continue
-                _render_candidate_insights(
-                    mr.get("details", {}),
-                    mr.get("resume_profile", {}),
-                    mr.get("job_profile", {}),
-                    text,
-                    it.get("text", ""),
-                    base,
-                )
+                radar_ready.append({"id": it.get("id"), "match": mr})
+            if st_echarts and radar_ready:
+                inds = [
+                    ("技能", "skill_ratio"), ("学历", "degree_score"), ("年限", "years_score"), ("职位", "position_score"),
+                    ("关键词", "keyword_ratio"), ("证书", "certs_score"), ("语言", "languages_ratio"), ("格式", "format_score")
+                ]
+                indicator = [{"name": n, "max": 1.0} for n, _ in inds]
+                radar_data = []
+                names = []
+                for rr in radar_ready:
+                    det = (rr.get("match") or {}).get("details", {})
+                    vals = [float(det.get(key, 0)) for _, key in inds]
+                    radar_data.append({"value": vals, "name": str(rr.get("id"))})
+                    names.append(str(rr.get("id")))
+                r_opts = {"legend": {"data": names}, "radar": {"indicator": indicator}, "series": [{"type": "radar", "data": radar_data}]}
+                st_echarts(r_opts, height=360)
+            # 单人详情选择
+            sel_ids = [str(rr.get("id")) for rr in radar_ready]
+            if sel_ids:
+                sel = st.selectbox("查看候选人详情", options=sel_ids, index=0, key="jobseeker_top_sel")
+                chosen = next((rr for rr in radar_ready if str(rr.get("id")) == sel), None)
+                if chosen:
+                    _render_candidate_insights(
+                        (chosen.get("match") or {}).get("details", {}),
+                        (chosen.get("match") or {}).get("resume_profile", {}),
+                        (chosen.get("match") or {}).get("job_profile", {}),
+                        text,
+                        next((it.get("text", "") for it in top_items if str(it.get("id")) == sel), ""),
+                        base,
+                    )
             st.markdown("步骤5：面试准备建议")
             qs, qe = api_post(base, "/interview_questions", {"job_desc": "\n".join([i.get("text", "") for i in items[:3]]), "resume_text": text}, timeout=8.0)
             if not qe and qs:
@@ -2037,7 +2107,18 @@ def page_admin_wizard():
             try:
                 ds = json.load(f)
                 st.info(f"预处理样本数：{len(ds)}")
-                st.json((ds or [])[:1])
+                rows = []
+                for i, d in enumerate(ds[:10]):
+                    rows.append({
+                        "idx": i,
+                        "id": d.get("id", i),
+                        "text_len": len(d.get("text", "")),
+                        "preview": (d.get("text", "")[:300] or ""),
+                        "entities": len(d.get("entities", []) or [])
+                    })
+                if rows:
+                    import pandas as pd
+                    st.dataframe(pd.DataFrame(rows), use_container_width=True)
             except Exception:
                 st.warning("预处理输出读取失败")
 
@@ -2100,8 +2181,14 @@ def page_admin_wizard():
                 st.success(f"入库完成：{res.get('count')} 条")
 
     st.markdown("步骤4：实体模型生成过程（训练）")
-    st.info("一键启动实体模型训练，并实时写入 logs/training_metrics.jsonl")
-    start_train = st.button("开始训练实体模型", key="admin_start_training")
+    model_path = os.path.join("models", "bert_entity", "model.safetensors")
+    if os.path.isfile(model_path):
+        st.success(f"检测到已训练模型：{model_path}")
+        retrain = st.checkbox("重新训练（覆盖现有模型）", value=False, key="admin_retrain_flag")
+        start_train = st.button("开始重新训练", key="admin_start_training_retrain") if retrain else None
+    else:
+        st.info("未检测到已训练模型，可一键启动训练，日志实时写入 logs/training_metrics.jsonl")
+        start_train = st.button("开始训练实体模型", key="admin_start_training")
     if start_train:
         try:
             import subprocess, sys
@@ -2136,9 +2223,15 @@ def page_admin_wizard():
     c1, c2 = st.columns(2)
     with c1:
         rtext = st.text_area("简历文本", height=140, key="admin_match_resume")
+        rfile = st.file_uploader("上传简历文件（txt/md/docx/pdf）", type=["txt", "md", "docx", "pdf"], key="admin_match_resume_file")
     with c2:
         jtext = st.text_area("岗位文本", height=140, key="admin_match_job")
+        jfile = st.file_uploader("上传岗位文件（txt/md/docx/pdf）", type=["txt", "md", "docx", "pdf"], key="admin_match_job_file")
     if st.button("执行匹配", key="admin_do_match"):
+        if rfile is not None and not rtext.strip():
+            rtext = _read_uploaded_text(rfile)
+        if jfile is not None and not jtext.strip():
+            jtext = _read_uploaded_text(jfile)
         if not rtext.strip() or not jtext.strip():
             st.warning("请填写简历与岗位文本")
         else:

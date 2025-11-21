@@ -145,7 +145,11 @@ def sidebar():
         st.markdown(f"<div style='margin-top:6px;padding:8px 10px;border-radius:6px;background:#1976d2;color:#fff;font-weight:600;display:inline-block;'>当前角色：{st.session_state['role']}</div>", unsafe_allow_html=True)
         st.markdown("---")
         st.subheader("⚙️ 服务与配置")
-        api_base = st.text_input("API地址", st.session_state.api_base)
+        c0, c1 = st.columns([3, 1])
+        with c0:
+            api_base = st.text_input("API地址", st.session_state.api_base)
+        with c1:
+            refresh = st.button("检测", key="btn_health_check", type="secondary")
         base = (api_base or st.session_state.api_base).rstrip("/")
         ok = try_health(base + "/health")
         st.metric("API健康", "正常" if ok else "异常")
@@ -158,13 +162,17 @@ def sidebar():
                     st.expander("匹配配置预览").json(cfg)
                 except Exception:
                     st.info("配置读取失败")
-        if ok:
-            st.session_state.api_base = base
-        else:
-            auto = detect_api_base()
-            if try_health(auto + "/health"):
-                st.session_state.api_base = auto
-                st.info(f"已自动切换到 {auto}")
+        if refresh:
+            if try_health(base + "/health"):
+                st.success("API健康正常")
+                st.session_state.api_base = base
+            else:
+                auto = detect_api_base()
+                if try_health(auto + "/health"):
+                    st.session_state.api_base = auto
+                    st.success(f"已自动切换到 {auto}")
+                else:
+                    st.error("API不可用，请检查后端服务或端口")
         st.caption("提示：可通过 API_HOST/API_PORT 控制后端监听；未设置时会自动在 8000–8005 中选择可用端口。")
         st.markdown("---")
         st.subheader("全局设置")

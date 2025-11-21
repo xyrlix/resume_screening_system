@@ -6,7 +6,9 @@
     "position": 0.1,
     "keywords": 0.07,
     "certs": 0.03,
-    "languages": 0.0
+    "languages": 0.0,
+    "proficiency": 0.0,
+    "metric": 0.0
   },
   "skills": [
     "python", "java", "c++", "c#", "go", "golang", "typescript", "javascript", "nodejs",
@@ -42,5 +44,18 @@
     "雅思", "托福", "英文流利", "英语可作为工作语言", "英语工作",
     "日语n1", "日语n2", "日语", "jlpt",
     "德语b2", "德语", "韩语topik", "韩语"
+  ]
+  ,
+  "domains": [
+    "金融", "电商", "医疗", "制造", "物联网"
+  ],
+  "methods": [
+    "transformer", "transformers", "rag", "ranking", "bert", "gpt"
+  ],
+  "proficiency_keywords": [
+    "熟练", "精通", "掌握"
+  ],
+  "metric_keywords": [
+    "提升", "降低", "增长", "减少"
   ]
 }

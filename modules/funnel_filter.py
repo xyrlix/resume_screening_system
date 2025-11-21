@@ -226,12 +226,146 @@ def three_stage_filter(job_desc: str, custom_rules: List[Dict[str, Any]] = None,
             skill_ratio = len(set(jprof.get("skills", [])) & set(rprof.get("skills", []))) / float(len(jprof.get("skills", [])))
         implicit_score = _llm.implicit_match_score(t, implicit)
         fmt_score = _score.format_score(t)
-        final = _score.composite_score(base_sim, skill_ratio, implicit_score, fmt_score)
+        prof_score = 0.0
+        metric_score = 0.0
+        kw = set(rprof.get("keywords", []))
+        methods = {"transformer","transformers","rag","ranking","bert","gpt"}
+        if any(k in methods for k in kw):
+            prof_score = 0.2
+        if any(ch.isdigit() for ch in t):
+            metric_score = min(1.0, 0.2 + 0.2 * sum(ch.isdigit() for ch in t) / 20.0)
+        final = _score.composite_score(base_sim, skill_ratio, implicit_score, fmt_score, prof_score, metric_score)
+        # v2 解释：根据关键词分类领域/方法，简单打分（不影响综合分）
+        kw = set(rprof.get("keywords", []))
+        domains = {"金融","电商","医疗","制造","物联网"}
+        methods = {"transformer","transformers","rag","ranking","bert","gpt"}
+        matched_domains = sorted(list(kw & domains))
+        matched_methods = sorted([k for k in kw if k in methods])
+        # 证书与语言命中（以岗位画像为基准）
+        matched_certs = sorted(list(set(jprof.get("certs", [])) & set(rprof.get("certs", []))))
+        matched_langs = sorted(list(set(jprof.get("languages", [])) & set(rprof.get("languages", []))))
+        prof_list = list(rprof.get("proficiency", []) or [])
+        prof_score = 0.0
+        metric_score = 0.0
+        # 以格式分与关键词命中简单近似（示例占位）
+        if matched_methods:
+            prof_score = min(1.0, 0.2 + 0.2 * len(matched_methods))
+        if any(x.isdigit() for x in t):
+            metric_score = min(1.0, 0.2 + 0.2 * sum(ch.isdigit() for ch in t) / 20.0)
         results.append({"id": c.get("id"), "score": final, "base": base_sim, "skill": round(skill_ratio, 4), "implicit": round(implicit_score, 4), "format": round(fmt_score, 4), "resume_profile": rprof, "job_profile": jprof})
     results = sorted(results, key=lambda x: x.get("score", 0.0), reverse=True)
     logger.info(f"job_desc_len={len(job_desc)} candidates={len(candidates)} results={len(results)}")
     _funnel_cache[key] = (results, now)
     return results
+def funnel_explain(job_desc: str, custom_rules: List[Dict[str, Any]] = None, top_k: int = 50) -> Dict[str, Any]:
+    logger = get_logger("funnel")
+    candidates = vector_search(job_desc, top_k=top_k)
+    jprof = _matcher.job_profile_from_text(job_desc)
+    items = []
+    passed = []
+    for c in candidates:
+        t = c.get("text", "")
+        rprof = _matcher.profile_from_text(t)
+        base_sim = _score.base_similarity(t, job_desc)
+        lang = detect_language(t)
+        thr = 0.5 if _sent is not None else 0.2
+        if _sent is not None:
+            if lang == "en":
+                thr = 0.55
+            elif lang == "zh":
+                thr = 0.5
+            else:
+                thr = 0.45
+        if base_sim < thr:
+            items.append({
+                "id": c.get("id"),
+                "rule_ok": False,
+                "rule_reason": "similarity_below_threshold",
+                "base": round(base_sim, 4),
+                "skill": 0.0,
+                "implicit": 0.0,
+                "format": 0.0,
+                "score": 0.0,
+                "resume_profile": rprof,
+                "job_profile": jprof
+            })
+            continue
+        ok, reason = _rule.apply_custom_rules(rprof, custom_rules or [])
+        if not ok:
+            items.append({
+                "id": c.get("id"),
+                "rule_ok": False,
+                "rule_reason": reason,
+                "base": round(base_sim, 4),
+                "skill": 0.0,
+                "implicit": 0.0,
+                "format": 0.0,
+                "score": 0.0,
+                "resume_profile": rprof,
+                "job_profile": jprof
+            })
+            continue
+        skill_ratio = 0.0
+        if len(jprof.get("skills", [])) > 0:
+            skill_ratio = len(set(jprof.get("skills", [])) & set(rprof.get("skills", []))) / float(len(jprof.get("skills", [])))
+        implicit_score = _llm.implicit_match_score(t, _llm.infer_implicit_demands(job_desc))
+        fmt_score = _score.format_score(t)
+        kw = set(rprof.get("keywords", []))
+        domains = {"金融","电商","医疗","制造","物联网"}
+        methods = {"transformer","transformers","rag","ranking","bert","gpt"}
+        matched_domains = sorted(list(kw & domains))
+        matched_methods = sorted([k for k in kw if k in methods])
+        matched_certs = sorted(list(set(jprof.get("certs", [])) & set(rprof.get("certs", []))))
+        matched_langs = sorted(list(set(jprof.get("languages", [])) & set(rprof.get("languages", []))))
+        prof_list = list(rprof.get("proficiency", []) or [])
+        prof_score = 0.0
+        metric_score = 0.0
+        if matched_methods:
+            prof_score = min(1.0, 0.2 + 0.2 * len(matched_methods))
+        if any(x.isdigit() for x in t):
+            metric_score = min(1.0, 0.2 + 0.2 * sum(ch.isdigit() for ch in t) / 20.0)
+        final = _score.composite_score(base_sim, skill_ratio, implicit_score, fmt_score, prof_score, metric_score)
+        expl = []
+        if matched_methods:
+            expl.append("方法:" + "/".join(matched_methods))
+        if matched_domains:
+            expl.append("领域:" + "/".join(matched_domains))
+        if matched_certs:
+            expl.append("证书:" + "/".join(matched_certs))
+        if matched_langs:
+            expl.append("语言:" + "/".join(matched_langs))
+        if prof_list:
+            expl.append("熟练度:" + "/".join(prof_list))
+        row = {
+            "id": c.get("id"),
+            "rule_ok": True,
+            "rule_reason": "ok",
+            "base": round(base_sim, 4),
+            "skill": round(skill_ratio, 4),
+            "implicit": round(implicit_score, 4),
+            "format": round(fmt_score, 4),
+            "score": final,
+            "resume_profile": rprof,
+            "job_profile": jprof,
+            "matched_domains": matched_domains,
+            "matched_methods": matched_methods,
+            "matched_certs": matched_certs,
+            "matched_lang_levels": matched_langs,
+            "proficiency_list": prof_list,
+            "proficiency_score": round(prof_score, 4),
+            "metric_score": round(metric_score, 4),
+            "explain": ";".join(expl)
+        }
+        items.append(row)
+        passed.append(row)
+    passed_sorted = sorted(passed, key=lambda x: x.get("score", 0.0), reverse=True)
+    logger.info(f"funnel_explain recall={len(candidates)} passed={len(passed_sorted)}")
+    return {
+        "recall_count": len(candidates),
+        "rule_passed_count": len(passed_sorted),
+        "items": items,
+        "passed": passed_sorted
+    }
 def _encode_cached(text: str):
     if _sent is None:
         return None

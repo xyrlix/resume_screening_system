@@ -53,13 +53,13 @@ def _ensure_ner():
 quick_match = _load_func('04_matcher_model.py', 'quick_match')
 vector_index_upsert = _load_func_project('modules/funnel_filter.py', 'vector_index_upsert')
 three_stage_filter = _load_func_project('modules/funnel_filter.py', 'three_stage_filter')
+funnel_explain = _load_func_project('modules/funnel_filter.py', 'funnel_explain')
 decision_recommend = _load_func_project('modules/decision_support.py', 'recommend')
 job_index_upsert = _load_func_project('modules/funnel_filter.py', 'job_index_upsert')
 job_vector_search_by_text = _load_func_project('modules/funnel_filter.py', 'job_vector_search_by_text')
 get_industry_templates = _load_func_project('modules/llm_utils.py', 'get_industry_templates')
 update_industry_templates = _load_func_project('modules/llm_utils.py', 'update_industry_templates')
 online_ingest = _load_func_project('modules/online_ingest.py', 'ingest_urls')
-extract_en_entities = _load_func_project('modules/en_entities.py', 'extract_en_entities')
 fetch_bosszhipin = _load_func_project('modules/adapters/bosszhipin.py', 'fetch_bosszhipin')
 fetch_zhilian = _load_func_project('modules/adapters/zhilian.py', 'fetch_zhilian')
 fetch_liepin = _load_func_project('modules/adapters/liepin.py', 'fetch_liepin')
@@ -70,6 +70,8 @@ optimize_resume = _load_func_project('modules/llm_utils.py', 'optimize_resume')
 generate_interview_questions_ctx = _load_func_project('modules/llm_utils.py', 'generate_interview_questions_ctx')
 base_similarity = _load_func_project('modules/scoring.py', 'base_similarity')
 generate_evaluation_report = _load_func_project('modules/llm_utils.py', 'generate_evaluation_report')
+llm_generate_questions = _load_func_project('modules/llm_providers.py', 'generate_questions')
+llm_generate_analysis = _load_func_project('modules/llm_providers.py', 'generate_analysis')
 
 
 app = FastAPI(title="Resume Screening API", version="0.1.0")
@@ -261,8 +263,6 @@ class IndustryTemplatesUpdate(BaseModel):
 class OnlineIngestRequest(BaseModel):
     urls: List[str]
 
-class PredictEnRequest(BaseModel):
-    text: str
 
 class BossZhipinRequest(BaseModel):
     urls: List[str]
@@ -296,6 +296,15 @@ class ResumeOptimizeRequest(BaseModel):
 class InterviewQuestionsRequest(BaseModel):
     job_desc: str | None = None
     resume_text: str
+    provider: str | None = None
+    model: str | None = None
+    top_n: int = 3
+
+class LLMSettings(BaseModel):
+    provider: str
+    api_url: str | None = None
+    api_key: str | None = None
+    model: str | None = None
 
 class RecommendJobsRequest(BaseModel):
     resume_text: str
@@ -371,16 +380,19 @@ else:
         get_logger("api").info(f"match score={res.get('score')}")
         return res
 
-@app.post("/predict_en", dependencies=[Depends(require_perms(["match.read"]))])
-def predict_en_api(req: PredictEnRequest) -> Dict[str, Any]:
-    ents = extract_en_entities(req.text)
-    return {"entities": ents}
 
-@app.post("/vector_index", dependencies=[Depends(require_perms(["index.write"]))])
-def vector_index_api(req: VectorIndexRequest) -> Dict[str, Any]:
-    count = vector_index_upsert([{"id": it.id, "text": it.text} for it in req.items])
-    get_logger("api").info(f"vector_index count={count.get('count')}")
-    return count
+if os.getenv("ALLOW_PUBLIC_INDEX", "0") == "1":
+    @app.post("/vector_index")
+    def vector_index_api(req: VectorIndexRequest) -> Dict[str, Any]:
+        count = vector_index_upsert([{"id": it.id, "text": it.text} for it in req.items])
+        get_logger("api").info(f"vector_index count={count.get('count')}")
+        return count
+else:
+    @app.post("/vector_index", dependencies=[Depends(require_perms(["index.write"]))])
+    def vector_index_api(req: VectorIndexRequest) -> Dict[str, Any]:
+        count = vector_index_upsert([{"id": it.id, "text": it.text} for it in req.items])
+        get_logger("api").info(f"vector_index count={count.get('count')}")
+        return count
 
 if os.getenv("ALLOW_PUBLIC_FILTER", "0") == "1":
     @app.post("/filter")
@@ -394,6 +406,17 @@ else:
         res = three_stage_filter(req.job_desc, req.custom_rules or [], req.top_k)
         get_logger("api").info(f"filter results={len(res)}")
         return {"results": res}
+
+if os.getenv("ALLOW_PUBLIC_FILTER", "0") == "1":
+    @app.post("/funnel_explain")
+    def funnel_explain_api(req: FilterRequest) -> Dict[str, Any]:
+        obj = funnel_explain(req.job_desc, req.custom_rules or [], req.top_k)
+        return obj
+else:
+    @app.post("/funnel_explain", dependencies=[Depends(require_perms(["filter.read"]))])
+    def funnel_explain_api(req: FilterRequest) -> Dict[str, Any]:
+        obj = funnel_explain(req.job_desc, req.custom_rules or [], req.top_k)
+        return obj
 
 def _decision_impl(req: DecisionRequest) -> Dict[str, Any]:
     res = three_stage_filter(req.job_desc, req.custom_rules or [], req.top_k)
@@ -468,10 +491,16 @@ def ingest_linkedin_api(req: LinkedInRequest) -> Dict[str, Any]:
     items = fetch_linkedin(req.urls, req.cookie)
     return {"count": len(items), "items": items}
 
-@app.post("/config/llm_enabled", dependencies=[Depends(require_perms(["config.write"]))])
-def set_llm_enabled_api(req: LLMEnabled) -> Dict[str, Any]:
-    set_llm_enabled(bool(req.enabled))
-    return {"ok": True, "enabled": bool(req.enabled)}
+if os.getenv("ALLOW_PUBLIC_CONFIG", "0") == "1":
+    @app.post("/config/llm_enabled")
+    def set_llm_enabled_api(req: LLMEnabled) -> Dict[str, Any]:
+        set_llm_enabled(bool(req.enabled))
+        return {"ok": True, "enabled": bool(req.enabled)}
+else:
+    @app.post("/config/llm_enabled", dependencies=[Depends(require_perms(["config.write"]))])
+    def set_llm_enabled_api(req: LLMEnabled) -> Dict[str, Any]:
+        set_llm_enabled(bool(req.enabled))
+        return {"ok": True, "enabled": bool(req.enabled)}
 
 @app.post("/jd_generate")
 def jd_generate_api(req: JDGenerateRequest) -> Dict[str, Any]:
@@ -485,12 +514,64 @@ def resume_optimize_api(req: ResumeOptimizeRequest) -> Dict[str, Any]:
 
 @app.post("/interview_questions")
 def interview_questions_api(req: InterviewQuestionsRequest) -> Dict[str, Any]:
-    qs = generate_interview_questions_ctx(req.job_desc or "", req.resume_text)
+    qs = llm_generate_questions(req.job_desc or "", req.resume_text, req.provider, req.model, int(req.top_n or 3))
     return {"questions": qs}
 
 @app.post("/evaluation_report")
 def evaluation_report_api(req: MatchRequest) -> Dict[str, Any]:
-    return generate_evaluation_report(req.job_text, req.resume_text)
+    txt = llm_generate_analysis(req.job_text, req.resume_text)
+    return {"report": txt}
+
+if os.getenv("ALLOW_PUBLIC_CONFIG", "0") == "1":
+    @app.post("/config/llm_settings")
+    def set_llm_settings(req: LLMSettings) -> Dict[str, Any]:
+        import json, os
+        base_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config")
+        path = os.path.join(base_dir, "llm.json")
+        os.makedirs(base_dir, exist_ok=True)
+        data = {}
+        if os.path.isfile(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except Exception:
+                data = {}
+        sect = data.get(req.provider.lower(), {})
+        if req.api_url is not None:
+            sect["api_url"] = req.api_url
+        if req.api_key is not None:
+            sect["api_key"] = req.api_key
+        if req.model is not None:
+            sect["model"] = req.model
+        data[req.provider.lower()] = sect
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(json.dumps(data, ensure_ascii=False, indent=2))
+        return {"ok": True, "provider": req.provider.lower(), "saved": sect}
+else:
+    @app.post("/config/llm_settings", dependencies=[Depends(require_perms(["config.write"]))])
+    def set_llm_settings(req: LLMSettings) -> Dict[str, Any]:
+        import json, os
+        base_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config")
+        path = os.path.join(base_dir, "llm.json")
+        os.makedirs(base_dir, exist_ok=True)
+        data = {}
+        if os.path.isfile(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except Exception:
+                data = {}
+        sect = data.get(req.provider.lower(), {})
+        if req.api_url is not None:
+            sect["api_url"] = req.api_url
+        if req.api_key is not None:
+            sect["api_key"] = req.api_key
+        if req.model is not None:
+            sect["model"] = req.model
+        data[req.provider.lower()] = sect
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(json.dumps(data, ensure_ascii=False, indent=2))
+        return {"ok": True, "provider": req.provider.lower(), "saved": sect}
 
 def _recommend_jobs_impl(req: RecommendJobsRequest) -> Dict[str, Any]:
     items: List[Dict[str, Any]] = []
@@ -580,9 +661,6 @@ else:
 TRAINING_RESUMES_JSON = os.getenv("TRAINING_RESUMES_JSON", os.path.join("data", "processed", "resumes_for_annotation.json"))
 UPLOADS_DIR = os.getenv("UPLOADS_DIR", os.path.join("data", "uploads"))
 
-@app.get("/config/paths", dependencies=[Depends(require_perms(["config.read"]))])
-def get_paths() -> Dict[str, Any]:
-    return {"training_resumes_json": TRAINING_RESUMES_JSON, "uploads_dir": UPLOADS_DIR}
 
 @app.post("/uploads", dependencies=[Depends(require_perms(["uploads.write"]))])
 async def uploads_api(file: UploadFile | None = File(None), text: str | None = Form(None), filename: str | None = Form(None)) -> Dict[str, Any]:
@@ -673,6 +751,17 @@ def uploads_index(req: UploadsIndexRequest | None = None) -> Dict[str, Any]:
     count = vector_index_upsert(items)
     return {"count": count.get("count", 0)}
 
+@app.post("/auth/token")
+def issue_token(req: TokenRequest) -> Dict[str, Any]:
+    users = _users_from_env_or_file()
+    if not users:
+        raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED)
+    u = users.get(req.username)
+    if not u or u.get("password") != req.password:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    payload = {"sub": req.username, "roles": u.get("roles", []), "permissions": u.get("permissions", [])}
+    tok = _jwt_encode(payload)
+    return {"access_token": tok, "token_type": "bearer", "roles": u.get("roles", []), "permissions": u.get("permissions", [])}
 
 if __name__ == "__main__":
     import uvicorn
@@ -713,14 +802,3 @@ if __name__ == "__main__":
         ADMIN_UI_ENABLED = True
         print(f"Management UI: http://127.0.0.1:{port}/ui")
     uvicorn.run(app, host=host, port=port)
-@app.post("/auth/token")
-def issue_token(req: TokenRequest) -> Dict[str, Any]:
-    users = _users_from_env_or_file()
-    if not users:
-        raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED)
-    u = users.get(req.username)
-    if not u or u.get("password") != req.password:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-    payload = {"sub": req.username, "roles": u.get("roles", []), "permissions": u.get("permissions", [])}
-    tok = _jwt_encode(payload)
-    return {"access_token": tok, "token_type": "bearer", "roles": u.get("roles", []), "permissions": u.get("permissions", [])}

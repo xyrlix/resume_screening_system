@@ -1,4 +1,6 @@
 from typing import Dict
+import os
+import json
 try:
     from sentence_transformers import SentenceTransformer
 except Exception:
@@ -48,5 +50,27 @@ def format_score(text: str) -> float:
     density = n_digits / n_lines
     return float(max(0.0, min(1.0, density / 5.0)))
 
-def composite_score(base: float, skill: float, implicit: float, fmt: float) -> float:
-    return round(base * 0.6 + skill * 0.2 + implicit * 0.15 + fmt * 0.05, 4)
+_W_PROF = 0.0
+_W_METRIC = 0.0
+def _load_weights():
+    global _W_PROF, _W_METRIC
+    try:
+        cfg = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "matching.json")
+        if os.path.isfile(cfg):
+            with open(cfg, "r", encoding="utf-8") as f:
+                obj = json.load(f)
+            w = obj.get("weights", {})
+            _W_PROF = float(w.get("proficiency", 0.0) or 0.0)
+            _W_METRIC = float(w.get("metric", 0.0) or 0.0)
+    except Exception:
+        _W_PROF = 0.0
+        _W_METRIC = 0.0
+_load_weights()
+
+def composite_score(base: float, skill: float, implicit: float, fmt: float, prof: float | None = None, metric: float | None = None) -> float:
+    s = base * 0.6 + skill * 0.2 + implicit * 0.15 + fmt * 0.05
+    if prof is not None:
+        s += _W_PROF * float(prof)
+    if metric is not None:
+        s += _W_METRIC * float(metric)
+    return round(max(0.0, min(1.0, s)), 4)

@@ -182,6 +182,11 @@ pip install -r requirements.txt
 - 前端流程（`scripts/06_visualization.py`）
   - 自动发现 API 地址：优先 `API_BASE_URL`，否则轮询 `127.0.0.1:8000–8005/health`。
   - 多页功能：概览、JD智能生成、简历来源与采集、单次/批量匹配、岗位检索与岗位推荐、三级漏斗、决策辅助、配置查看、面试训练、评价记录、NER评估、流程监控。
+  - 招聘流程导向：
+    - 步骤1：上传JD→自然语言输入（含示例）→结构化JD分组展示（硬性/软性/实体特征）
+    - 步骤2：简历来源指定目录与在线采集合并岗位池
+    - 步骤3：匹配与评分（Top10）
+    - 步骤4：综合匹配输出（雷达/饼图/细项分），并生成面试题与优势/风险分析；支持导出HTML/PDF/Excel
   - 实体预测页调用 `/predict`；匹配页调用 `/match` 或在前端本地使用临时权重直接匹配（不依赖后端权重）。
 
 - 数据流与算法
@@ -254,3 +259,36 @@ pip install -r requirements.txt
 
 ### 附录：实体类型建议
 - 建议统一为：`SCHOOL`、`MAJOR`、`DEGREE`、`YEARS`、`SKILL`、`POSITION`，并在标注时保持表述一致，避免多写/少写导致偏移。
+### 大模型与配置
+
+- Provider 支持：`local`、`qwen`（阿里云百炼/通义千问）、`ark`（火山方舟）、`volc`（字节火山）、`hunyuan`（腾讯混元）、`qianfan`（百度千帆/文心）、`kimi`（Moonshot/Kimi）、`openai`、`gemini`（Google）、`tavily`（检索生成问题）。
+- 开关与生效范围：
+  - 前端侧栏“启用大模型(全局)”控制是否调用外部 Provider；不启用时回退到本地生成（`local`）。
+  - 后端路由：`POST /interview_questions`、`POST /evaluation_report` 使用所选 Provider。
+- 动态配置与持久化：
+  - `POST /config/llm_settings` 保存 Provider 的 `api_url`、`api_key`、`model` 到 `config/llm.json`，按 Provider 小节分别持久化。
+  - `POST /config/llm_enabled` 切换是否启用 LLM 功能（主要影响面试题生成）。
+  - 允许匿名配置开关：设置 `ALLOW_PUBLIC_CONFIG=1` 时上述两个路由不需鉴权；生产建议关闭。
+- `config/llm.json` 示例：
+  ```json
+  {
+    "openai": { "api_url": "https://api.openai.com/v1/chat/completions", "api_key": "xxx", "model": "gpt-4o-mini" },
+    "ark":    { "api_url": "https://ark.cn-beijing.volces.com/api/v3/chat/completions", "api_key": "xxx", "model": "Doubao-pro" },
+    "volc":   { "api_url": "https://api.volcengine.com/compatible-mode/v1/chat/completions", "api_key": "xxx", "model": "xxx" },
+    "hunyuan":{ "api_url": "https://api.hunyuan.tencent.com/v1/chat/completions", "api_key": "xxx", "model": "xxx" },
+    "qianfan":{ "api_url": "https://qianfan.baidu.com/v1/chat/completions", "api_key": "xxx", "model": "ERNIE-Speed-128k" },
+    "kimi":   { "api_url": "https://api.moonshot.cn/v1/chat/completions", "api_key": "xxx", "model": "kimi-2.0" },
+    "gemini": { "api_key": "xxx", "model": "gemini-1.5-flash" },
+    "tavily": { "api_key": "xxx" },
+    "qwen":   { "api_url": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", "api_key": "xxx", "model": "qwen2.5-instruct" }
+  }
+  ```
+  - 未在 `llm.json` 提供的值可通过环境变量临时覆盖（如 `OPENAI_API_URL`、`OPENAI_API_KEY`、`OPENAI_MODEL`）。
+
+### 权限与令牌
+
+- 角色与权限：后端按角色控制路由访问（`admin/hr/interviewer/candidate`）。可通过环境变量 `RBAC_TOKEN_MAP` 或 `AUTH_TOKEN_*` 提供静态令牌与角色映射。
+- 令牌签发：`POST /auth/token` 支持本地用户签发 JWT（需设置 `USER_MAP` 或 `USER_DB_PATH`），前端或管理页可将令牌置于 `Authorization: Bearer ...`。
+- 开放开关：
+  - `ALLOW_PUBLIC_MATCH/FILTER/DECISION/RECOMMEND/CONFIG` 分别控制匹配、漏斗、决策、岗位推荐、配置的匿名访问，默认关闭。
+  - 管理页（`/ui`）在存在静态目录时启用，支持行业模板、LLM 开关、入库预热与上传目录入库等操作。

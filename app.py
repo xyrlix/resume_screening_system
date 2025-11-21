@@ -8,6 +8,8 @@ def main():
     env.setdefault("ALLOW_PUBLIC_FILTER", "1")
     env.setdefault("ALLOW_PUBLIC_DECISION", "1")
     env.setdefault("ALLOW_PUBLIC_RECOMMEND", "1")
+    env.setdefault("ALLOW_PUBLIC_CONFIG", "1")
+    env.setdefault("ALLOW_PUBLIC_INDEX", "1")
     env.setdefault("DISABLE_ADMIN_UI", "1")
     api_process = subprocess.Popen([sys.executable, "scripts/05_api.py"], env=env)
     disable_streamlit = os.getenv("DISABLE_STREAMLIT", "0") == "1"

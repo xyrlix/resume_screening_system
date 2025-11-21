@@ -71,4 +71,16 @@ def apply_custom_rules(profile: Dict[str, Any], rules: List[Dict[str, Any]]) -> 
         elif op == 'contains':
             if not _contains(v, val):
                 return False, f'{field} not contains {val}'
+        elif op == 'contains_any':
+            if isinstance(val, list):
+                ok_any = False
+                for x in val:
+                    if _contains(v, x):
+                        ok_any = True
+                        break
+                if not ok_any:
+                    return False, f'{field} not contains any of {val}'
+            else:
+                if not _contains(v, val):
+                    return False, f'{field} not contains {val}'
     return True, 'ok'

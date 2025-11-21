@@ -17,6 +17,32 @@ def page_setup():
     st.set_page_config(page_title="智能简历筛选系统", page_icon="📄", layout="wide")
     st.title("📄 智能简历筛选系统")
     st.caption("简历与岗位匹配，可视化展示匹配结果")
+    st.markdown(
+        """
+        <style>
+        .stTabs [role="tab"] {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1976d2;
+        }
+        .stTabs [role="tab"][aria-selected="true"] {
+            color: #1976d2;
+            border-bottom: 3px solid #1976d2;
+        }
+        .step-title {
+            padding: 6px 10px;
+            border-left: 4px solid #1976d2;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        h3 {
+            color: #1976d2;
+            font-weight: 700;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def try_health(url: str, timeout: float = 0.8) -> bool:
@@ -178,18 +204,27 @@ def sidebar():
         st.subheader("全局设置")
         api_to = st.slider("默认API超时(秒)", 2.0, 30.0, float(st.session_state.get("api_timeout", 12.0)), 0.5, key="sidebar_api_timeout")
         st.session_state["api_timeout"] = float(api_to)
-        llm_enabled = st.checkbox("启用大模型面试题(全局)", value=bool(st.session_state.get("llm_global_enabled", False)), key="sidebar_llm_enabled")
+        llm_enabled = st.checkbox("启用大模型(全局)", value=bool(st.session_state.get("llm_global_enabled", False)), key="sidebar_llm_enabled")
         adv = st.expander("高级设置", expanded=False)
         with adv:
             api_token = st.text_input("API令牌 (可选)", value=st.session_state.get("api_token", ""), help="用于访问需要鉴权的接口，作为 Authorization: Bearer <token> 传递")
             export_csv_default = st.checkbox("默认导出为CSV", value=bool(st.session_state.get("export_csv_default", False)), key="sidebar_export_csv")
+            llm_provider = st.selectbox("LLM Provider", options=["local", "qwen", "openai", "ark", "hunyuan", "qianfan", "kimi", "gemini", "tavily"], index=["local", "qwen", "openai", "ark", "hunyuan", "qianfan", "kimi", "gemini", "tavily"].index(st.session_state.get("llm_provider", "local")), key="llm_provider_sel")
+            llm_model = st.text_input("LLM模型名", value=st.session_state.get("llm_model", ""), key="llm_model_name")
+            llm_api_url = st.text_input("LLM API URL", value=st.session_state.get("llm_api_url", ""), key="llm_api_url")
+            llm_api_key = st.text_input("LLM API KEY", value=st.session_state.get("llm_api_key", ""), key="llm_api_key")
+            prov_status = "云端就绪" if llm_provider != "local" and (llm_api_key or os.getenv(f"{llm_provider.upper()}_API_KEY", "")) else "本地回退"
+            st.metric("LLM Provider", f"{llm_provider} - {prov_status}")
         apply = st.button("应用全局设置", key="sidebar_apply", type="secondary")
         if apply:
             st.session_state["export_csv_default"] = bool(export_csv_default)
             st.session_state["llm_global_enabled"] = bool(llm_enabled)
             if "api_token" in locals():
                 st.session_state["api_token"] = api_token
+            st.session_state["llm_provider"] = llm_provider
+            st.session_state["llm_model"] = llm_model
             _ = api_post(st.session_state.api_base, "/config/llm_enabled", {"enabled": bool(llm_enabled)})
+            _ = api_post(st.session_state.api_base, "/config/llm_settings", {"provider": llm_provider, "api_url": llm_api_url, "api_key": llm_api_key, "model": llm_model})
 
 
 def page_health():
@@ -840,15 +875,20 @@ def _render_candidate_insights(details: Dict, rprof: Dict, jprof: Dict, resume_t
     else:
         import pandas as pd
         st.bar_chart(pd.DataFrame({"value": [v for _, v in contrib]}, index=[k for k, _ in contrib]))
-    st.markdown("**面试题（自动生成）**")
-    qs, err = api_post(base, "/interview_questions", {"job_desc": job_text, "resume_text": resume_text}, timeout=8.0)
-    if not err and qs:
-        for i, q in enumerate(qs.get("questions", [])[:3]):
-            st.write(f"问{i+1}：{q}")
-    st.markdown("**综合分析（优势/风险）**")
-    rep, er2 = api_post(base, "/evaluation_report", {"resume_text": resume_text, "job_text": job_text}, timeout=6.0)
-    if not er2 and rep:
-        st.write(rep.get("report", ""))
+    # 面试题与分析由外层页面统一排版与生成，避免此处重复
+    try:
+        import pandas as pd, io
+        cols = ["skill_ratio","degree_score","years_score","position_score","keyword_ratio","certs_score","languages_ratio","format_score"]
+        df1 = pd.DataFrame([{"维度": c, "分数": float(details.get(c, 0))} for c in cols])
+        ms = details.get("matched_skills", []) or []
+        df2 = pd.DataFrame([{"技能": s} for s in ms])
+        buf = io.BytesIO()
+        with pd.ExcelWriter(buf, engine="xlsxwriter") as w:
+            df1.to_excel(w, index=False, sheet_name="维度分数")
+            df2.to_excel(w, index=False, sheet_name="命中技能")
+        st.download_button("导出候选人详情Excel", data=buf.getvalue(), file_name="candidate_detail.xlsx")
+    except Exception:
+        pass
 
 def _render_match_pipeline(details: Dict, final_score: float):
     hard = (
@@ -1272,11 +1312,20 @@ def page_jd_generate():
                 st.download_button("下载JD结构CSV", data=csv, file_name="structured_jd.csv")
 
 def page_hr_wizard():
-    st.subheader("招聘流程向导")
     base = st.session_state.api_base
-    st.markdown("步骤1：岗位需求")
+    st.markdown("<div class='step-title'>步骤1：岗位需求</div>", unsafe_allow_html=True)
+    st.caption("先上传JD文件或输入文本，生成结构化JD；可临时调节匹配权重")
+    jd_file = st.file_uploader("上传JD文件（txt/md/docx/pdf）", type=["txt", "md", "docx", "pdf"], key="hr_jd_file")
+    if jd_file is not None:
+        try:
+            st.session_state["hr_jd_preview"] = (_read_uploaded_text(jd_file) or "")[:800]
+        except Exception:
+            st.session_state["hr_jd_preview"] = ""
+    if st.button("填入示例JD", key="hr_jd_example", type="secondary"):
+        example = "招聘AI开发工程师，负责模型训练与部署，要求本科及以上，3年以上相关经验，熟悉Python、Docker、K8s，具备云平台经验（AWS/Azure/GCP）。"
+        st.session_state["hr_jd_text"] = example
+        st.session_state["hr_jd_preview"] = example
     jd_text = st.text_area("自然语言JD描述", height=160, key="hr_jd_text")
-    jd_file = st.file_uploader("或上传JD文件（txt/md）", type=["txt", "md"], key="hr_jd_file")
     gen_jd = st.button("生成结构化JD", key="hr_gen_jd")
     if gen_jd:
         if jd_file is not None and not jd_text.strip():
@@ -1288,8 +1337,57 @@ def page_hr_wizard():
             st.session_state["hr_struct_jd"] = res.get("jd", {})
             st.success("已生成结构化JD")
     if st.session_state.get("hr_struct_jd"):
-        st.json(st.session_state["hr_struct_jd"])
-    st.markdown("步骤2：简历来源/在线采集")
+        obj = st.session_state["hr_struct_jd"]
+        import pandas as pd
+        cn = {
+            "degree_required": "学历要求",
+            "min_years": "最低年限",
+            "salary_min": "最低薪资",
+            "salary_max": "最高薪资",
+            "employment_type": "雇佣类型",
+            "location": "地点",
+            "industry": "行业",
+            "skills": "技能",
+            "frameworks": "框架",
+            "tools": "工具",
+            "languages": "编程语言",
+            "soft_skills": "软技能",
+            "keywords": "关键词",
+            "certifications": "证书"
+        }
+        hard_keys = ["degree_required","min_years","salary_min","salary_max","employment_type","location","industry"]
+        soft_keys = ["skills","frameworks","tools","languages","soft_skills"]
+        entity_keys = ["keywords","certifications"]
+        hard = {cn.get(k, k): obj.get(k) for k in hard_keys}
+        soft = {cn.get(k, k): obj.get(k) for k in soft_keys}
+        entity = {cn.get(k, k): obj.get(k) for k in entity_keys}
+        preview = st.session_state.get("hr_jd_preview", "")
+        tabs = st.tabs(["表格", "JSON"])
+        with tabs[0]:
+            st.subheader("硬性要求")
+            st.dataframe(pd.DataFrame([{"字段": k, "值": v if not isinstance(v, list) else "; ".join(v or [])} for k, v in hard.items()]), use_container_width=True)
+            st.subheader("软性要求")
+            st.dataframe(pd.DataFrame([{"字段": k, "值": v if not isinstance(v, list) else "; ".join(v or [])} for k, v in soft.items()]), use_container_width=True)
+            st.subheader("实体特征")
+            ent_rows = [{"字段": k, "值": v if not isinstance(v, list) else "; ".join(v or [])} for k, v in entity.items()]
+            if preview:
+                ent_rows.insert(0, {"字段": "预览", "值": preview[:300]})
+            st.dataframe(pd.DataFrame(ent_rows), use_container_width=True)
+            if preview:
+                with st.expander("JD预览文本"):
+                    st.text_area("预览", value=preview, height=180, key="hr_jd_preview_area")
+        with tabs[1]:
+            st.json(obj)
+        wcol = st.columns(4)
+        with wcol[0]:
+            st.write("匹配权重临时调节")
+        keys = ["skill_ratio","degree_score","years_score","position_score","keyword_ratio","certs_score","languages_ratio","format_score"]
+        sliders = {}
+        for k in keys:
+            sliders[k] = st.slider(k, 0.0, 1.0, float(st.session_state.get("hr_weights", {}).get(k, 0.1 if k!="skill_ratio" else 0.3)), 0.05, key=f"hr_w_{k}")
+        st.session_state["hr_weights"] = sliders
+    st.markdown("<div class='step-title'>步骤2：简历来源/在线采集</div>", unsafe_allow_html=True)
+    st.caption("选择目录解析或在线采集合并岗位池，形成候选集合")
     t1, t2 = st.tabs(["简历来源", "在线采集合并岗位池"])
     with t1:
         mode = st.radio("来源", ["目录", "单文件"], index=0, key="hr_src_mode")
@@ -1379,11 +1477,67 @@ def page_hr_wizard():
             sel = st.selectbox("岗位ID", options=opts, index=0, key="hr_job_select")
             chosen = next((x for x in pool if x.get("id") == sel), None)
             st.session_state["hr_chosen_job_text"] = chosen.get("text") if chosen else None
+            st.markdown("**三级漏斗量化输出**")
+            top_k = st.number_input("召回TopK", min_value=10, value=50, step=10, key="hr_funnel_topk")
+            rules_text = st.text_area("自定义规则(JSON)", value="[]", height=80, key="hr_funnel_rules")
+            if st.button("入库并解释（一步）", key="hr_do_funnel_index_explain"):
+                items = []
+                resumes = st.session_state.get("hr_resumes") or []
+                for r in resumes:
+                    items.append({"id": str(r.get("id")), "text": str(r.get("text", ""))})
+                if items:
+                    api_post(base, "/vector_index", {"items": items}, timeout=8.0)
+                try:
+                    rules = json.loads(rules_text) if rules_text.strip() else []
+                except Exception:
+                    rules = []
+                payload = {"job_desc": st.session_state.get("hr_chosen_job_text") or "", "top_k": int(top_k), "custom_rules": rules}
+                res, err = _post_with_progress(base, "/funnel_explain", payload, 12.0, "执行漏斗")
+                if err:
+                    st.error(err)
+                else:
+                    st.metric("语义召回数", str(res.get("recall_count", 0)))
+                    st.metric("规则通过数", str(res.get("rule_passed_count", 0)))
+                    passed = res.get("passed", [])
+                    items = res.get("items", [])
+                    if passed:
+                        st.markdown("**通过候选（综合排序）**")
+                        st.dataframe([
+                            {
+                                "id": it.get("id"),
+                                "base": it.get("base"),
+                                "skill": it.get("skill"),
+                                "implicit": it.get("implicit"),
+                                "format": it.get("format"),
+                                "score": it.get("score"),
+                                "matched_domains": it.get("matched_domains", []),
+                                "matched_methods": it.get("matched_methods", []),
+                                "matched_certs": it.get("matched_certs", []),
+                                "matched_lang_levels": it.get("matched_lang_levels", []),
+                                "proficiency_list": it.get("proficiency_list", []),
+                                "proficiency_score": it.get("proficiency_score", 0.0),
+                                "metric_score": it.get("metric_score", 0.0),
+                                "explain": it.get("explain", "")
+                            }
+                        for it in passed
+                        ], use_container_width=True)
+                    fails = [it for it in items if not it.get("rule_ok")]
+                    if fails:
+                        st.markdown("**被过滤候选（原因）**")
+                        st.dataframe([
+                            {"id": it.get("id"), "reason": it.get("rule_reason"), "base": it.get("base")}
+                            for it in fails
+                        ], use_container_width=True)
+                    st.markdown("**计算过程说明**")
+                    st.info("综合分 = 0.6×基础相似度 + 0.2×技能覆盖比例 + 0.15×隐性需求匹配度 + 0.05×格式质量；学历/年限/职位为匹配细项（用于候选画像展示，不计入综合分）")
         else:
             st.session_state["hr_chosen_job_text"] = None
     if resumes:
-        st.markdown("步骤3：匹配与评分")
-        run = st.button("执行匹配", key="hr_do_match")
+        st.markdown("<div class='step-title'>步骤3：匹配与评分</div>", unsafe_allow_html=True)
+        st.caption("基于JD与候选简历执行匹配并输出三级漏斗量化过程")
+        rules_text_step3 = st.text_area("自定义规则(JSON)", value="[]", height=80, key="hr_match_rules")
+        top_k_step3 = st.number_input("召回TopK", min_value=10, value=50, step=10, key="hr_match_topk")
+        run = st.button("执行匹配并展示过程", key="hr_do_match")
         if run:
             jd_text_use = jd_text or ""
             if st.session_state.get("hr_struct_jd"):
@@ -1397,34 +1551,133 @@ def page_hr_wizard():
                 res, err = api_post(base, "/match", {"resume_text": r.get("text", ""), "job_text": jd_text_use}, timeout=float(st.session_state.get("api_timeout", 12.0)))
                 if err:
                     continue
-                results.append({"id": r.get("id"), "score": res.get("score"), "details": res.get("details"), "resume_profile": res.get("resume_profile", {}), "job_profile": res.get("job_profile", {})})
-            results = sorted(results, key=lambda x: x.get("score", 0.0), reverse=True)
+                d = res.get("details", {})
+                w = st.session_state.get("hr_weights", {})
+                s_adj = sum(float(d.get(k, 0)) * float(w.get(k, 0)) for k in w.keys())
+                results.append({"id": r.get("id"), "score": res.get("score"), "score_adj": s_adj, "details": d, "resume_profile": res.get("resume_profile", {}), "job_profile": res.get("job_profile", {})})
+            results = sorted(results, key=lambda x: x.get("score_adj", x.get("score", 0.0)), reverse=True)[:10]
             st.session_state["hr_match_results"] = results
+            items = []
+            for r in resumes:
+                items.append({"id": str(r.get("id")), "text": str(r.get("text", ""))})
+            if items:
+                api_post(base, "/vector_index", {"items": items}, timeout=8.0)
+            try:
+                rules = json.loads(rules_text_step3) if rules_text_step3.strip() else []
+            except Exception:
+                rules = []
+            payload = {"job_desc": jd_text_use, "top_k": int(top_k_step3), "custom_rules": rules}
+            funnel, ferr = _post_with_progress(base, "/funnel_explain", payload, 12.0, "执行漏斗")
+            st.session_state["hr_funnel_explain"] = funnel if not ferr else None
         rows = st.session_state.get("hr_match_results") or []
         if rows:
-            st.dataframe([{ "id": x.get("id"), "score": x.get("score") } for x in rows], use_container_width=True)
+            st.dataframe([{ "id": x.get("id"), "score": x.get("score"), "score_adj": x.get("score_adj") } for x in rows], use_container_width=True)
             _download_excel_or_csv_sheets({"results": rows}, "hr_match_results.xlsx", "hr_match_results", prefer_excel=True)
-            st.markdown("步骤4：特征评分可视化")
-            top = rows[:3]
-            if st_echarts and top:
-                inds = [
-                    ("技能", "skill_ratio"), ("学历", "degree_score"), ("年限", "years_score"), ("职位", "position_score"),
-                    ("关键词", "keyword_ratio"), ("证书", "certs_score"), ("语言", "languages_ratio"), ("格式", "format_score")
-                ]
-                indicator = [{"name": n, "max": 1.0} for n, _ in inds]
-                radar_data = []
-                names = []
-                for it in top:
-                    det = it.get("details", {})
-                    vals = [float(det.get(key, 0)) for _, key in inds]
-                    radar_data.append({"value": vals, "name": str(it.get("id"))})
-                    names.append(str(it.get("id")))
-                r_opts = {"legend": {"data": names}, "radar": {"indicator": indicator}, "series": [{"type": "radar", "data": radar_data}]}
-                st_echarts(r_opts, height=360)
-            sel_ids = [str(it.get("id")) for it in top]
+            st.markdown("**三级漏斗量化过程（统一展示）**")
+            fe = st.session_state.get("hr_funnel_explain") or {}
+            if fe:
+                st.metric("语义召回数", str(fe.get("recall_count", 0)))
+                st.metric("规则通过数", str(fe.get("rule_passed_count", 0)))
+                passed = fe.get("passed", [])
+                # 合并匹配细项（学历/年限/职位）
+                match_map = {str(x.get("id")): x for x in rows}
+                merged = []
+                for it in passed:
+                    rid = str(it.get("id"))
+                    det = match_map.get(rid, {}).get("details", {})
+                    merged.append({
+                        "id": rid,
+                        "base": it.get("base"),
+                        "skill": it.get("skill"),
+                        "implicit": it.get("implicit"),
+                        "format": it.get("format"),
+                        "score": it.get("score"),
+                        "degree": float(det.get("degree_score", 0)),
+                        "years": float(det.get("years_score", 0)),
+                        "position": float(det.get("position_score", 0)),
+                        "matched_skills_count": len(det.get("matched_skills", [])),
+                        "matched_skills": det.get("matched_skills", []),
+                        "matched_domains": it.get("matched_domains", []),
+                        "matched_methods": it.get("matched_methods", []),
+                        "proficiency_score": float(it.get("proficiency_score", 0.0)),
+                        "metric_score": float(it.get("metric_score", 0.0)),
+                    })
+                st.dataframe(merged, use_container_width=True)
+                st.markdown("**计算过程说明**")
+                st.info("综合分 = 0.6×基础相似度 + 0.2×技能覆盖比例 + 0.15×隐性需求匹配度 + 0.05×格式质量；学历/年限/职位为匹配细项（用于候选画像展示，不计入综合分）")
+            # 补充图表：Top3雷达 + 能力占比饼图（Top3平均）
+            if st_echarts and rows:
+                c1, c2 = st.columns(2)
+                with c1:
+                    st.markdown("**Top3 综合雷达对比**")
+                    top = rows[:3]
+                    if top:
+                        inds = [
+                            ("技能", "skill_ratio"), ("学历", "degree_score"), ("年限", "years_score"), ("职位", "position_score"),
+                            ("关键词", "keyword_ratio"), ("证书", "certs_score"), ("语言", "languages_ratio"), ("格式", "format_score")
+                        ]
+                        indicator = [{"name": n, "max": 1.0} for n, _ in inds]
+                        radar_data = []
+                        names = []
+                        for it in top:
+                            det = it.get("details", {})
+                            vals = [float(det.get(key, 0)) for _, key in inds]
+                            radar_data.append({"value": vals, "name": str(it.get("id"))})
+                            names.append(str(it.get("id")))
+                        r_opts = {"legend": {"data": names}, "radar": {"indicator": indicator}, "series": [{"type": "radar", "data": radar_data, "itemStyle": {"color": "#1976d2"}}]}
+                        st_echarts(r_opts, height=360)
+                with c2:
+                    st.markdown("**Top3 平均能力结构占比**")
+                    top = rows[:3]
+                    if top:
+                        hard_sum = 0.0
+                        soft_sum = 0.0
+                        fmt_sum = 0.0
+                        for it in top:
+                            d = it.get("details", {})
+                            hard_sum += (float(d.get("degree_score", 0)) + float(d.get("years_score", 0)) + float(d.get("position_score", 0))) / 3.0
+                            soft_sum += float(d.get("skill_ratio", 0))
+                            fmt_sum += float(d.get("format_score", 0))
+                        cnt = max(1, len(top))
+                        pie_data = [
+                            {"name": "硬性", "value": round(hard_sum / cnt, 4)},
+                            {"name": "软性", "value": round(soft_sum / cnt, 4)},
+                            {"name": "格式", "value": round(fmt_sum / cnt, 4)},
+                        ]
+                        p_opts = {"tooltip": {"trigger": "item"}, "series": [{"type": "pie", "radius": "55%", "data": pie_data}]}
+                        st_echarts(p_opts, height=360)
+            else:
+                import pandas as pd
+                top = rows[:3]
+                if top:
+                    inds = [
+                        ("技能", "skill_ratio"), ("学历", "degree_score"), ("年限", "years_score"), ("职位", "position_score"),
+                        ("关键词", "keyword_ratio"), ("证书", "certs_score"), ("语言", "languages_ratio"), ("格式", "format_score")
+                    ]
+                    data = {}
+                    for it in top:
+                        det = it.get("details", {})
+                        data[str(it.get("id"))] = [float(det.get(key, 0)) for _, key in inds]
+                    df_radar = pd.DataFrame(data, index=[n for n, _ in inds])
+                    st.bar_chart(df_radar)
+                    hard_sum = 0.0
+                    soft_sum = 0.0
+                    fmt_sum = 0.0
+                    for it in top:
+                        d = it.get("details", {})
+                        hard_sum += (float(d.get("degree_score", 0)) + float(d.get("years_score", 0)) + float(d.get("position_score", 0))) / 3.0
+                        soft_sum += float(d.get("skill_ratio", 0))
+                        fmt_sum += float(d.get("format_score", 0))
+                    cnt = max(1, len(top))
+                    df_pie = pd.DataFrame({"value": [round(hard_sum / cnt, 4), round(soft_sum / cnt, 4), round(fmt_sum / cnt, 4)]}, index=["硬性", "软性", "格式"])
+                    st.bar_chart(df_pie)
+            
+            # 候选人详情选择（Top10）
+            st.markdown("**候选人详情（Top10）**")
+            sel_ids = [str(it.get("id")) for it in rows[:10]]
             if sel_ids:
-                sel = st.selectbox("查看候选人详情", options=sel_ids, index=0, key="hr_top_sel")
-                chosen = next((x for x in top if str(x.get("id")) == sel), None)
+                sel = st.selectbox("查看候选人详情（Top10）", options=sel_ids, index=0, key="hr_top_sel")
+                chosen = next((x for x in rows[:10] if str(x.get("id")) == sel), None)
                 if chosen:
                     _render_candidate_insights(
                         chosen.get("details", {}),
@@ -1434,18 +1687,59 @@ def page_hr_wizard():
                         jd_text,
                         base,
                     )
-            st.markdown("步骤5：面试题生成")
-            k = st.number_input("每份简历题目数量", min_value=1, value=3, step=1, key="hr_q_k")
-            genq = st.button("按TopK生成题目", key="hr_gen_q")
-            if genq:
-                qs_rows = []
-                for it in rows[:max(1, int(k))]:
-                    payload = {"job_desc": jd_text, "resume_text": next((x for x in resumes if x.get("id") == it.get("id")), {}).get("text", "")}
-                    resp, err = api_post(base, "/interview_questions", payload, timeout=8.0)
-                    if not err:
-                        qs_rows.append({"id": it.get("id"), "questions": resp.get("questions", [])})
-                st.dataframe([{ "id": r.get("id"), "q1": (r.get("questions") or [""])[0] } for r in qs_rows], use_container_width=True)
-                st.download_button("下载题库JSON", data=json.dumps(qs_rows, ensure_ascii=False, indent=2), file_name="hr_questions.json")
+            
+            
+            
+            # 步骤4：仅综合分析
+            st.markdown("<div class='step-title'>步骤4：综合结果建议</div>", unsafe_allow_html=True)
+            st.caption("输出综合分析（优势/风险）")
+            # 先展示综合分析
+            if sel:
+                st.markdown("**综合分析（优势/风险）**")
+                provider = st.session_state.get("llm_provider", "local")
+                model = st.session_state.get("llm_model", "")
+                rt = next((x for x in resumes if str(x.get("id")) == str(sel)), {})
+                rep, er2 = api_post(base, "/evaluation_report", {"resume_text": rt.get("text", ""), "job_text": jd_text, "provider": provider, "model": model}, timeout=6.0)
+                if er2:
+                    st.error(er2)
+                else:
+                    txt = rep.get("report", "")
+                    adv_txt = ""
+                    risk_txt = ""
+                    if txt:
+                        import re
+                        m_adv = re.search(r"优势[:：]", txt)
+                        m_risk = re.search(r"风险[:：]", txt)
+                        if m_adv and m_risk:
+                            a_start = m_adv.end()
+                            r_start = m_risk.end()
+                            if a_start <= m_risk.start():
+                                adv_txt = txt[a_start:m_risk.start()].strip()
+                                risk_txt = txt[r_start:].strip()
+                            else:
+                                risk_txt = txt[r_start:m_adv.start()].strip()
+                                adv_txt = txt[a_start:].strip()
+                        elif m_adv:
+                            a_start = m_adv.end()
+                            seg = txt[a_start:]
+                            adv_txt = re.split(r"[\n。；;]", seg)[0].strip()
+                        elif m_risk:
+                            r_start = m_risk.end()
+                            seg = txt[r_start:]
+                            risk_txt = re.split(r"[\n。；;]", seg)[0].strip()
+                        else:
+                            parts = [p.strip() for p in re.split(r"[\n。；;]", txt) if p.strip()]
+                            adv_txt = parts[0] if parts else ""
+                            risk_txt = parts[1] if len(parts) > 1 else ""
+                        adv_txt = re.sub(r"风险[:：].*", "", adv_txt).strip()
+                        risk_txt = re.sub(r"优势[:：].*", "", risk_txt).strip()
+                    st.markdown("**优势：**")
+                    st.write(adv_txt or "无")
+                    st.write("---")
+                    st.markdown("**风险：**")
+                    st.write(risk_txt or "无")
+            
+            
 
 def page_resume_optimize():
     st.subheader("简历优化")
@@ -1858,7 +2152,7 @@ def page_funnel():
                     "tooltip": {"trigger": "axis"},
                     "xAxis": {"type": "category", "data": xs},
                     "yAxis": {"type": "value", "name": "score"},
-                    "series": [{"type": "bar", "data": ys, "itemStyle": {"color": "#4caf50"}}]
+            "series": [{"type": "bar", "data": ys, "itemStyle": {"color": "#1976d2"}}]
                 }
                 st_echarts(opts, height=320)
             ids_all = [str(r.get("id")) for r in results]
@@ -1874,7 +2168,7 @@ def page_funnel():
                 radar_data = []
                 for r in chosen:
                     radar_data.append({"value": [float(r.get("base",0)), float(r.get("skill",0)), float(r.get("implicit",0)), float(r.get("format",0))], "name": str(r.get("id"))})
-                r_opts = {"legend": {"data": [str(r.get("id")) for r in chosen]}, "radar": {"indicator": ind_cfg}, "series": [{"type": "radar", "data": radar_data}]}
+                r_opts = {"legend": {"data": [str(r.get("id")) for r in chosen]}, "radar": {"indicator": ind_cfg}, "series": [{"type": "radar", "data": radar_data, "itemStyle": {"color": "#1976d2"}}]}
                 st_echarts(r_opts, height=360)
             import pandas as pd
             df = pd.DataFrame(rows)
@@ -1913,7 +2207,7 @@ def page_fairness():
             "tooltip": {"trigger": "axis"},
             "xAxis": {"type": "category", "data": list(g_pct.keys())},
             "yAxis": {"type": "value", "name": "通过率(%)"},
-            "series": [{"type": "bar", "data": list(g_pct.values()), "itemStyle": {"color": "#4caf50"}}],
+            "series": [{"type": "bar", "data": list(g_pct.values()), "itemStyle": {"color": "#1976d2"}}],
             "markLine": {"data": [{"yAxis": dev_thr}]}
         }
         st_echarts(opts_g, height=300)
@@ -1921,7 +2215,7 @@ def page_fairness():
             "tooltip": {"trigger": "axis"},
             "xAxis": {"type": "category", "data": list(t_pct.keys())},
             "yAxis": {"type": "value", "name": "通过率(%)"},
-            "series": [{"type": "bar", "data": list(t_pct.values()), "itemStyle": {"color": "#ff9800"}}],
+            "series": [{"type": "bar", "data": list(t_pct.values()), "itemStyle": {"color": "#1976d2"}}],
             "markLine": {"data": [{"yAxis": dev_thr}]}
         }
         st_echarts(opts_t, height=300)
@@ -1984,12 +2278,42 @@ def page_decision():
                 st.metric("动态分数线", f"{threshold}")
                 st.dataframe([{"id": p.get("id"), "score": p.get("score")} for p in picks], use_container_width=True)
             overview_rows = []
+            explain_rows = []
             for it in items:
                 decision = it.get("decision", {})
                 threshold = decision.get("threshold")
                 picks = decision.get("recommended", [])
                 overview_rows.append({"job_desc": it.get("job_desc"), "threshold": threshold, "recommended_count": len(picks)})
-            _download_excel_or_csv_sheets({"overview": overview_rows}, "decision_batch_results.xlsx", "decision_batch", prefer_excel=(not csv_flag))
+                try:
+                    fe, fe_err = api_post(base, "/funnel_explain", {"job_desc": it.get("job_desc"), "top_k": int(top_k), "custom_rules": rules}, timeout=12.0)
+                    passed = fe.get("passed", []) if fe and not fe_err else []
+                    mm = {str(x.get("id")): x for x in passed}
+                    for p in picks:
+                        rid = str(p.get("id"))
+                        ex = mm.get(rid, {})
+                        explain_rows.append({
+                            "job_desc": it.get("job_desc"),
+                            "id": rid,
+                            "score": p.get("score"),
+                            "base": ex.get("base"),
+                            "skill": ex.get("skill"),
+                            "implicit": ex.get("implicit"),
+                            "format": ex.get("format"),
+                            "matched_domains": ex.get("matched_domains", []),
+                            "matched_methods": ex.get("matched_methods", []),
+                            "matched_certs": ex.get("matched_certs", []),
+                            "matched_lang_levels": ex.get("matched_lang_levels", []),
+                            "proficiency_list": ex.get("proficiency_list", []),
+                            "proficiency_score": ex.get("proficiency_score", 0.0),
+                            "metric_score": ex.get("metric_score", 0.0),
+                            "explain": ex.get("explain", "")
+                        })
+                except Exception:
+                    pass
+            sheets = {"overview": overview_rows}
+            if explain_rows:
+                sheets["explain"] = explain_rows
+            _download_excel_or_csv_sheets(sheets, "decision_batch_results.xlsx", "decision_batch", prefer_excel=(not csv_flag))
             return
         payload = {"job_desc": job_desc, "top_k": int(top_k), "custom_rules": rules, "page": int(page), "page_size": int(page_size)}
         res, err = _post_with_progress(base, "/decision", payload, 20.0, "生成推荐与分数线")
@@ -2031,9 +2355,9 @@ def page_decision():
         st.download_button("下载全量结果CSV", data=csv, file_name="decision_all_results.csv")
 
 def page_jobseeker_wizard():
-    st.subheader("求职者流程向导")
     base = st.session_state.api_base
-    st.markdown("步骤1：上传简历")
+    st.markdown("<div class='step-title'>步骤1：上传简历</div>", unsafe_allow_html=True)
+    st.caption("上传文件或粘贴文本后解析，作为后续推荐与匹配的基础")
     rf = st.file_uploader("上传简历文件（txt/md/docx/pdf）", type=["txt", "md", "docx", "pdf"], key="jobseeker_resume_file")
     rtext = st.text_area("或粘贴简历文本", height=160, key="jobseeker_resume_text")
     if st.button("解析简历", key="jobseeker_parse_resume"):
@@ -2043,16 +2367,19 @@ def page_jobseeker_wizard():
         st.success("已解析简历文本")
     text = st.session_state.get("jobseeker_text", "")
     if text:
-        st.markdown("步骤2：AI解析与优化")
+        st.markdown("<div class='step-title'>步骤2：AI解析与优化</div>", unsafe_allow_html=True)
+        st.caption("调用后端生成简历优化建议，提升岗位匹配度")
         opt, err = api_post(base, "/resume_optimize", {"text": text}, timeout=8.0)
         if not err and opt:
             st.json(opt)
-        st.markdown("步骤3：自动岗位推荐")
+        st.markdown("<div class='step-title'>步骤3：自动岗位推荐</div>", unsafe_allow_html=True)
+        st.caption("根据简历画像推荐岗位并展示评分，可作为匹配候选")
         rec, er2 = api_post(base, "/recommend_jobs", {"resume_text": text, "top_k": 5}, timeout=12.0)
         if not er2 and rec:
             items = rec.get("items", [])
             st.dataframe([{ "id": it.get("id"), "score": it.get("score") } for it in items], use_container_width=True)
-            st.markdown("步骤4：综合匹配度（Top3）")
+            st.markdown("<div class='step-title'>步骤4：综合匹配度（Top3）</div>", unsafe_allow_html=True)
+            st.caption("展示Top3综合雷达对比，选择候选人查看详细匹配与建议")
             # 综合雷达对比
             top_items = items[:3]
             radar_ready = []
@@ -2074,7 +2401,7 @@ def page_jobseeker_wizard():
                     vals = [float(det.get(key, 0)) for _, key in inds]
                     radar_data.append({"value": vals, "name": str(rr.get("id"))})
                     names.append(str(rr.get("id")))
-                r_opts = {"legend": {"data": names}, "radar": {"indicator": indicator}, "series": [{"type": "radar", "data": radar_data}]}
+                r_opts = {"legend": {"data": names}, "radar": {"indicator": indicator}, "series": [{"type": "radar", "data": radar_data, "itemStyle": {"color": "#1976d2"}}]}
                 st_echarts(r_opts, height=360)
             # 单人详情选择
             sel_ids = [str(rr.get("id")) for rr in radar_ready]
@@ -2090,16 +2417,17 @@ def page_jobseeker_wizard():
                         next((it.get("text", "") for it in top_items if str(it.get("id")) == sel), ""),
                         base,
                     )
-            st.markdown("步骤5：面试准备建议")
+            st.markdown("<div class='step-title'>步骤5：面试准备建议</div>", unsafe_allow_html=True)
+            st.caption("基于匹配结果与简历内容生成面试题，辅助备考")
             qs, qe = api_post(base, "/interview_questions", {"job_desc": "\n".join([i.get("text", "") for i in items[:3]]), "resume_text": text}, timeout=8.0)
             if not qe and qs:
                 for i, q in enumerate(qs.get("questions", [])):
                     st.write(f"问{i+1}：{q}")
 def page_admin_wizard():
-    st.subheader("管理员流程向导")
     base = st.session_state.api_base
     processed_path = os.path.join("data", "processed", "resumes_for_annotation.json")
-    st.markdown("步骤1：数据预处理")
+    st.markdown("<div class='step-title'>步骤1：数据预处理</div>", unsafe_allow_html=True)
+    st.caption("运行预处理生成标准化样本，输出前10条摘要便于核查")
     run_pp = st.button("运行预处理", key="admin_run_preprocess")
     if run_pp:
         try:
@@ -2130,7 +2458,8 @@ def page_admin_wizard():
             except Exception:
                 st.warning("预处理输出读取失败")
 
-    st.markdown("步骤2：模型特征提取")
+    st.markdown("<div class='step-title'>步骤2：模型特征提取</div>", unsafe_allow_html=True)
+    st.caption("统计画像分布与覆盖率，生成基础特征图表以便监控")
     show_feats = st.button("计算画像分布", key="admin_show_features")
     if show_feats and os.path.isfile(processed_path):
         try:
@@ -2173,7 +2502,8 @@ def page_admin_wizard():
         except Exception as e:
             st.error(f"特征提取失败：{e}")
 
-    st.markdown("步骤3：模型特性向量化")
+    st.markdown("<div class='step-title'>步骤3：模型特性向量化</div>", unsafe_allow_html=True)
+    st.caption("将简历文本向量入库，供后续检索与匹配使用")
     upsert = st.button("向量入库（简历）", key="admin_vector_upsert")
     if upsert:
         if not os.path.isfile(processed_path):
@@ -2188,7 +2518,8 @@ def page_admin_wizard():
             else:
                 st.success(f"入库完成：{res.get('count')} 条")
 
-    st.markdown("步骤4：实体模型生成过程（训练）")
+    st.markdown("<div class='step-title'>步骤4：实体模型生成过程（训练）</div>", unsafe_allow_html=True)
+    st.caption("检测已训练模型，选择重训或直接开始训练并实时记录日志")
     model_path = os.path.join("models", "bert_entity", "model.safetensors")
     if os.path.isfile(model_path):
         st.success(f"检测到已训练模型：{model_path}")
@@ -2227,7 +2558,8 @@ def page_admin_wizard():
         except Exception as e:
             st.error(f"启动训练失败：{e}")
 
-    st.markdown("步骤5：模型匹配过程")
+    st.markdown("<div class='step-title'>步骤5：模型匹配过程</div>", unsafe_allow_html=True)
+    st.caption("支持上传文件或输入文本，对简历与岗位进行匹配评估")
     c1, c2 = st.columns(2)
     with c1:
         rtext = st.text_area("简历文本", height=140, key="admin_match_resume")
@@ -2249,11 +2581,12 @@ def page_admin_wizard():
             else:
                 _render_match_result(res)
 
-    st.markdown("步骤6：模型训练过程与评估结果")
+    st.markdown("<div class='step-title'>步骤6：模型训练过程与评估结果</div>", unsafe_allow_html=True)
     st.caption("从日志读取训练/评估曲线，详见‘流程监控’页签")
     st.link_button("打开流程监控", "#")
 
-    st.markdown("步骤7：预测测试（手动上传）")
+    st.markdown("<div class='step-title'>步骤7：预测测试（手动上传）</div>", unsafe_allow_html=True)
+    st.caption("选择实体预测或匹配评分，上传测试文本进行验证")
     mode = st.radio("测试类型", ["NER实体预测", "匹配评分"], index=0, key="admin_test_mode")
     tf = st.file_uploader("上传测试文件", type=["txt", "md", "docx", "pdf"], key="admin_test_file")
     tt = st.text_area("或粘贴文本", height=140, key="admin_test_text")

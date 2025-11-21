@@ -18,12 +18,23 @@ WEIGHTS = {
 
 DEGREE_ORDER = {
     "博士": 4,
+    "phd": 4,
+    "doctorate": 4,
     "硕士": 3,
     "研究生": 3,
+    "master": 3,
+    "msc": 3,
+    "m.s.": 3,
     "本科": 2,
     "学士": 2,
+    "bachelor": 2,
+    "bsc": 2,
+    "b.s.": 2,
     "大专": 1,
     "专科": 1,
+    "associate": 1,
+    "aa": 1,
+    "as": 1,
 }
 
 
@@ -58,9 +69,12 @@ CERT_DICT = {
 LANG_DICT = {
     "英语四级", "英语六级", "cet-4", "cet4", "cet-6", "cet6",
     "雅思", "托福", "英文流利", "英语可作为工作语言", "英语工作",
+    "ielts", "toefl", "english fluent", "fluent english", "native english", "working proficiency",
     "日语n1", "日语n2", "日语", "jlpt",
     "德语b2", "德语", "韩语topik", "韩语",
 }
+PROFI_KEYWORDS = {"熟练", "精通", "掌握"}
+METRIC_KEYWORDS = {"提升", "降低", "增长", "减少"}
 
 
 def _load_matching_config():
@@ -93,20 +107,34 @@ def _load_matching_config():
         # 领域关键词
         if isinstance(cfg.get("keywords"), list) and len(cfg["keywords"]) > 0:
             KEYWORD_DICT = {str(x).lower().strip() for x in cfg["keywords"] if str(x).strip()}
+        if isinstance(cfg.get("domains"), list) and len(cfg["domains"]) > 0:
+            KEYWORD_DICT = KEYWORD_DICT | {str(x).lower().strip() for x in cfg["domains"] if str(x).strip()}
+        if isinstance(cfg.get("methods"), list) and len(cfg["methods"]) > 0:
+            KEYWORD_DICT = KEYWORD_DICT | {str(x).lower().strip() for x in cfg["methods"] if str(x).strip()}
         # 证书关键词
         if isinstance(cfg.get("certs"), list) and len(cfg["certs"]) > 0:
             CERT_DICT = {str(x).lower().strip() for x in cfg["certs"] if str(x).strip()}
         # 语言关键词
         if isinstance(cfg.get("languages"), list) and len(cfg["languages"]) > 0:
             LANG_DICT = {str(x).lower().strip() for x in cfg["languages"] if str(x).strip()}
-        print(
-            f"[Matcher] Loaded config from {cfg_path}. Weights={WEIGHTS}, skills={len(SKILL_DICT)}, keywords={len(KEYWORD_DICT)}, certs={len(CERT_DICT)}, languages={len(LANG_DICT)}"
-        )
+        if isinstance(cfg.get("proficiency_keywords"), list) and len(cfg["proficiency_keywords"]) > 0:
+            global PROFI_KEYWORDS
+            PROFI_KEYWORDS = {str(x).strip() for x in cfg["proficiency_keywords"] if str(x).strip()}
+        if isinstance(cfg.get("metric_keywords"), list) and len(cfg["metric_keywords"]) > 0:
+            global METRIC_KEYWORDS
+            METRIC_KEYWORDS = {str(x).strip() for x in cfg["metric_keywords"] if str(x).strip()}
+        global _CONFIG_LOADED_LOGGED
+        if not _CONFIG_LOADED_LOGGED:
+            print(
+                f"[Matcher] Loaded config from {cfg_path}. Weights={WEIGHTS}, skills={len(SKILL_DICT)}, keywords={len(KEYWORD_DICT)}, certs={len(CERT_DICT)}, languages={len(LANG_DICT)}"
+            )
+            _CONFIG_LOADED_LOGGED = True
     except Exception as e:
         print(f"[Matcher] Load config failed: {e}")
 
 
 # 模块导入时尝试加载配置
+_CONFIG_LOADED_LOGGED = False
 _load_matching_config()
 
 
@@ -141,6 +169,18 @@ def extract_keywords(text: str) -> List[str]:
             found.add(kw)
     return sorted(found)
 
+def extract_proficiency(text: str) -> List[str]:
+    t = normalize(text)
+    out = []
+    for k in PROFI_KEYWORDS:
+        if k in t:
+            out.append(k)
+    return sorted(set(out))
+
+def extract_metrics(text: str) -> List[str]:
+    m = re.findall(r"(提升|降低|增长|减少)\s*(\d+[\.]?\d*\s*%?)", text)
+    return ["".join(x) for x in m]
+
 
 def extract_certs(text: str) -> List[str]:
     t = normalize(text)
@@ -169,11 +209,11 @@ def extract_languages(text: str) -> List[str]:
 
 
 def extract_degree(text: str) -> str:
-    # 根据出现的最高学历返回映射
     max_deg = 0
     best = ""
+    t = normalize(text)
     for k, v in DEGREE_ORDER.items():
-        if k in text:
+        if k in t:
             if v > max_deg:
                 max_deg = v
                 best = k
@@ -181,10 +221,10 @@ def extract_degree(text: str) -> str:
 
 
 def extract_years(text: str) -> int:
-    # 匹配“X年工作/开发/经验”，避免年龄误匹配
     m = re.findall(r"(\d+)\s*年(?:(?:工作|开发|项目)?经验)?", text)
+    m_en = re.findall(r"(\d+)\s*\+?\s*(?:years?|yrs?).{0,40}?(?:experience|work|exp)", text, flags=re.I)
     years = 0
-    for g in m:
+    for g in m + m_en:
         try:
             y = int(g)
             years = max(years, y)
@@ -194,17 +234,16 @@ def extract_years(text: str) -> int:
 
 
 def extract_position(text: str) -> str:
-    # 简易职位提取：捕获“担任XXX”或末尾的职位词
     m = re.search(r"担任([\u4e00-\u9fa5A-Za-z0-9_\-]+)", text)
     if m:
         return m.group(1).strip()
-    # 常见职位关键词
     keywords = [
         "工程师", "开发", "后端", "前端", "算法", "数据", "架构", "产品", "测试", "运维",
-        "scientist", "developer", "engineer", "architect"
+        "scientist", "data scientist", "developer", "software engineer", "engineer", "architect", "manager", "analyst"
     ]
+    t = normalize(text)
     for kw in keywords:
-        if kw in text:
+        if kw in t:
             return kw
     return ""
 
@@ -218,6 +257,8 @@ def profile_from_text(text: str) -> Dict:
         "keywords": extract_keywords(text),
         "certs": extract_certs(text),
         "languages": extract_languages(text),
+        "proficiency": extract_proficiency(text),
+        "metrics": extract_metrics(text),
     }
 
 
@@ -318,6 +359,8 @@ def job_profile_from_text(job_text: str) -> Dict:
         "keywords": extract_keywords(job_text),
         "certs": extract_certs(job_text),
         "languages": extract_languages(job_text),
+        "proficiency": extract_proficiency(job_text),
+        "metrics": extract_metrics(job_text),
     }
 
 

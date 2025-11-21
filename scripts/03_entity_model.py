@@ -18,8 +18,20 @@ warnings.filterwarnings(
 )
 import time
 
-# 定义实体标签
-ENTITY_TYPES = ["姓名", "学历", "专业", "工作年限", "技能", "项目经验", "公司名称", "职位", "毕业院校", "薪资期望"]
+# 定义实体标签（支持从配置读取扩展）
+def _load_entity_types():
+    try:
+        cfg = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "entities.json")
+        if os.path.isfile(cfg):
+            with open(cfg, "r", encoding="utf-8") as f:
+                obj = json.load(f)
+            arr = obj.get("entity_types") or obj.get("types")
+            if isinstance(arr, list) and len(arr) > 0:
+                return [str(x) for x in arr if str(x).strip()]
+    except Exception:
+        pass
+    return ["姓名", "学历", "专业", "工作年限", "技能", "项目经验", "公司名称", "职位", "毕业院校", "薪资期望"]
+ENTITY_TYPES = _load_entity_types()
 LABEL_TO_ID = {"O": 0}
 for entity in ENTITY_TYPES:
     LABEL_TO_ID[f"B-{entity}"] = len(LABEL_TO_ID)
@@ -121,7 +133,7 @@ def train(model, dataloader, optimizer, device):
     print(f"训练损失: {total_loss / len(dataloader)}")
 
 if __name__ == "__main__":
-    MODEL_NAME = 'bert-base-chinese'
+    MODEL_NAME = os.getenv('NER_MODEL_ZH', 'bert-base-chinese')
     DATA_PATH = 'data/processed/entity_train.json'
     MODEL_SAVE_PATH = 'models/bert_entity'
 

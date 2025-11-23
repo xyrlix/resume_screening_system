@@ -1,3 +1,7 @@
+# 镜像源配置说明:
+# 国内推荐使用清华源: pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
+# 国外使用默认源: pip install -r requirements.txt
+
 torch==2.2.0
 transformers==4.40.1
 torchcrf==1.1.0
@@ -23,3 +27,6 @@ bitsandbytes==0.43.0
 requests==2.32.3
 PyJWT==2.9.0
 python-multipart==0.0.9
+pytesseract==0.3.13
+Pillow==10.4.0
+FlagEmbedding==1.2.11

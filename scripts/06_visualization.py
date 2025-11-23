@@ -7,6 +7,26 @@ import urllib.request
 import urllib.error
 import importlib.util
 from typing import Tuple, List, Dict
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.font_manager
+
+# 设置matplotlib支持中文字体
+# 检查系统中可用的中文字体
+chinese_fonts = ['SimHei', 'Microsoft YaHei', 'STHeiti', 'Arial Unicode MS', 'DejaVu Sans']
+available_fonts = []
+for font in chinese_fonts:
+    try:
+        matplotlib.font_manager.findfont(matplotlib.font_manager.FontProperties(family=font))
+        available_fonts.append(font)
+    except:
+        pass
+
+# 设置可用的中文字体
+if available_fonts:
+    matplotlib.rcParams['font.sans-serif'] = available_fonts + ['sans-serif']
+matplotlib.rcParams['axes.unicode_minus'] = False
+
 try:
     from streamlit_echarts import st_echarts
 except Exception:
@@ -1365,11 +1385,11 @@ def page_hr_wizard():
         tabs = st.tabs(["表格", "JSON"])
         with tabs[0]:
             st.subheader("硬性要求")
-            st.dataframe(pd.DataFrame([{"字段": k, "值": v if not isinstance(v, list) else "; ".join(v or [])} for k, v in hard.items()]), use_container_width=True)
+            st.dataframe(pd.DataFrame([{"字段": k, "值": str(v) if not isinstance(v, list) else "; ".join(str(x) for x in v or [])} for k, v in hard.items()]), use_container_width=True)
             st.subheader("软性要求")
-            st.dataframe(pd.DataFrame([{"字段": k, "值": v if not isinstance(v, list) else "; ".join(v or [])} for k, v in soft.items()]), use_container_width=True)
+            st.dataframe(pd.DataFrame([{"字段": k, "值": str(v) if not isinstance(v, list) else "; ".join(str(x) for x in v or [])} for k, v in soft.items()]), use_container_width=True)
             st.subheader("实体特征")
-            ent_rows = [{"字段": k, "值": v if not isinstance(v, list) else "; ".join(v or [])} for k, v in entity.items()]
+            ent_rows = [{"字段": k, "值": str(v) if not isinstance(v, list) else "; ".join(str(x) for x in v or [])} for k, v in entity.items()]
             if preview:
                 ent_rows.insert(0, {"字段": "预览", "值": preview[:300]})
             st.dataframe(pd.DataFrame(ent_rows), use_container_width=True)

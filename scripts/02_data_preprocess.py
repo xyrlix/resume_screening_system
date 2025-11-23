@@ -7,7 +7,6 @@ import sys
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
-from utils.parse_tools import parse_pdf as _parse_pdf_util, parse_word as _parse_word_util, parse_image as _parse_image_util, parse_excel as _parse_excel_util
 from utils.clean_tools import clean_text as _clean_text_util
 from modules.debias import mask_sensitive, collect_fairness_tags
 from utils.logger import get_logger
@@ -20,28 +19,40 @@ os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
 
 def parse_pdf(pdf_path):
     try:
-        return _parse_pdf_util(pdf_path)
+        # 使用utils.parse_tools中的parse_resume函数
+        from utils.parse_tools import parse_resume
+        result = parse_resume(pdf_path)
+        return result["text"]
     except Exception as e:
         print(f"解析PDF文件失败: {pdf_path}, 原因: {e}")
         return ""
 
 def parse_word(docx_path):
     try:
-        return _parse_word_util(docx_path)
+        # 使用utils.parse_tools中的parse_resume函数
+        from utils.parse_tools import parse_resume
+        result = parse_resume(docx_path)
+        return result["text"]
     except Exception as e:
         print(f"解析Word文件失败: {docx_path}, 原因: {e}")
         return ""
 
 def parse_image(image_path):
     try:
-        return _parse_image_util(image_path)
+        # 使用utils.parse_tools中的parse_resume函数
+        from utils.parse_tools import parse_resume
+        result = parse_resume(image_path)
+        return result["text"]
     except Exception as e:
         print(f"解析图片失败: {image_path}, 原因: {e}")
         return ""
 
 def parse_excel(xlsx_path):
     try:
-        return _parse_excel_util(xlsx_path)
+        # 使用utils.parse_tools中的parse_resume函数
+        from utils.parse_tools import parse_resume
+        result = parse_resume(xlsx_path)
+        return result["text"]
     except Exception as e:
         print(f"解析Excel失败: {xlsx_path}, 原因: {e}")
         return ""
@@ -73,6 +84,12 @@ def process_resumes():
         if text:
             clean_text = clean_resume_text(text)
             lang = detect_language(clean_text)
+            
+            # 只处理中文简历
+            if lang != "zh":
+                logger.info(f"skipped {filename} lang={lang} (not Chinese)")
+                continue
+                
             masked = mask_sensitive(clean_text)
             fairness = collect_fairness_tags(clean_text)
             processed_data = {

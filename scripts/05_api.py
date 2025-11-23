@@ -52,7 +52,7 @@ def _ensure_ner():
             ner_predict = _fallback
 quick_match = _load_func('04_matcher_model.py', 'quick_match')
 vector_index_upsert = _load_func_project('modules/funnel_filter.py', 'vector_index_upsert')
-three_stage_filter = _load_func_project('modules/funnel_filter.py', 'three_stage_filter')
+three_stage_filter = _load_func_project('modules/funnel_filter.py', 'three_stage_filter_v2')
 funnel_explain = _load_func_project('modules/funnel_filter.py', 'funnel_explain')
 decision_recommend = _load_func_project('modules/decision_support.py', 'recommend')
 job_index_upsert = _load_func_project('modules/funnel_filter.py', 'job_index_upsert')
@@ -695,61 +695,115 @@ try:
 except Exception:
     parse_pdf = None
 
-@app.post("/vector_index_warmup", dependencies=[Depends(require_perms(["index.write"]))])
-def vector_index_warmup() -> Dict[str, Any]:
-    if not os.path.isfile(TRAINING_RESUMES_JSON):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    import json
-    with open(TRAINING_RESUMES_JSON, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    items = [{"id": str(i), "text": d.get("text", "")} for i, d in enumerate(data)]
-    count = vector_index_upsert(items)
-    return {"count": count.get("count", 0)}
+if os.getenv("ALLOW_PUBLIC_INDEX", "0") == "1":
+    @app.post("/vector_index_warmup")
+    def vector_index_warmup() -> Dict[str, Any]:
+        if not os.path.isfile(TRAINING_RESUMES_JSON):
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        import json
+        with open(TRAINING_RESUMES_JSON, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        items = [{"id": str(i), "text": d.get("text", "")} for i, d in enumerate(data)]
+        count = vector_index_upsert(items)
+        return {"count": count.get("count", 0)}
+else:
+    @app.post("/vector_index_warmup", dependencies=[Depends(require_perms(["index.write"]))])
+    def vector_index_warmup() -> Dict[str, Any]:
+        if not os.path.isfile(TRAINING_RESUMES_JSON):
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        import json
+        with open(TRAINING_RESUMES_JSON, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        items = [{"id": str(i), "text": d.get("text", "")} for i, d in enumerate(data)]
+        count = vector_index_upsert(items)
+        return {"count": count.get("count", 0)}
 
 class UploadsIndexRequest(BaseModel):
     hours: int | None = None
     name_pattern: str | None = None
 
-@app.post("/uploads_index", dependencies=[Depends(require_perms(["index.write"]))])
-def uploads_index(req: UploadsIndexRequest | None = None) -> Dict[str, Any]:
-    os.makedirs(UPLOADS_DIR, exist_ok=True)
-    items = []
-    import re, time
-    now = time.time()
-    hours = int(req.hours) if req and req.hours else None
-    pattern = str(req.name_pattern) if req and req.name_pattern else None
-    reg = re.compile(pattern) if pattern else None
-    for name in os.listdir(UPLOADS_DIR):
-        p = os.path.join(UPLOADS_DIR, name)
-        if not os.path.isfile(p):
-            continue
-        if reg and not reg.search(name):
-            continue
-        if hours is not None:
-            try:
-                mtime = os.path.getmtime(p)
-                if (now - mtime) > (hours * 3600):
-                    continue
-            except Exception:
-                pass
-        low = name.lower()
-        txt = ""
-        try:
-            if low.endswith(('.txt', '.md')):
-                with open(p, 'r', encoding='utf-8', errors='ignore') as f:
-                    txt = f.read()
-            elif low.endswith('.docx') and parse_word:
-                txt = parse_word(p)
-            elif low.endswith('.pdf') and parse_pdf:
-                txt = parse_pdf(p)
-        except Exception:
+if os.getenv("ALLOW_PUBLIC_INDEX", "0") == "1":
+    @app.post("/uploads_index")
+    def uploads_index(req: UploadsIndexRequest | None = None) -> Dict[str, Any]:
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        items = []
+        import re, time
+        now = time.time()
+        hours = int(req.hours) if req and req.hours else None
+        pattern = str(req.name_pattern) if req and req.name_pattern else None
+        reg = re.compile(pattern) if pattern else None
+        for name in os.listdir(UPLOADS_DIR):
+            p = os.path.join(UPLOADS_DIR, name)
+            if not os.path.isfile(p):
+                continue
+            if reg and not reg.search(name):
+                continue
+            if hours is not None:
+                try:
+                    mtime = os.path.getmtime(p)
+                    if (now - mtime) > (hours * 3600):
+                        continue
+                except Exception:
+                    pass
+            low = name.lower()
             txt = ""
-        if txt:
-            items.append({"id": name, "text": txt})
-    if not items:
-        return {"count": 0}
-    count = vector_index_upsert(items)
-    return {"count": count.get("count", 0)}
+            try:
+                if low.endswith(('.txt', '.md')):
+                    with open(p, 'r', encoding='utf-8', errors='ignore') as f:
+                        txt = f.read()
+                elif low.endswith('.docx') and parse_word:
+                    txt = parse_word(p)
+                elif low.endswith('.pdf') and parse_pdf:
+                    txt = parse_pdf(p)
+            except Exception:
+                txt = ""
+            if txt:
+                items.append({"id": name, "text": txt})
+        if not items:
+            return {"count": 0}
+        count = vector_index_upsert(items)
+        return {"count": count.get("count", 0)}
+else:
+    @app.post("/uploads_index", dependencies=[Depends(require_perms(["index.write"]))])
+    def uploads_index(req: UploadsIndexRequest | None = None) -> Dict[str, Any]:
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        items = []
+        import re, time
+        now = time.time()
+        hours = int(req.hours) if req and req.hours else None
+        pattern = str(req.name_pattern) if req and req.name_pattern else None
+        reg = re.compile(pattern) if pattern else None
+        for name in os.listdir(UPLOADS_DIR):
+            p = os.path.join(UPLOADS_DIR, name)
+            if not os.path.isfile(p):
+                continue
+            if reg and not reg.search(name):
+                continue
+            if hours is not None:
+                try:
+                    mtime = os.path.getmtime(p)
+                    if (now - mtime) > (hours * 3600):
+                        continue
+                except Exception:
+                    pass
+            low = name.lower()
+            txt = ""
+            try:
+                if low.endswith(('.txt', '.md')):
+                    with open(p, 'r', encoding='utf-8', errors='ignore') as f:
+                        txt = f.read()
+                elif low.endswith('.docx') and parse_word:
+                    txt = parse_word(p)
+                elif low.endswith('.pdf') and parse_pdf:
+                    txt = parse_pdf(p)
+            except Exception:
+                txt = ""
+            if txt:
+                items.append({"id": name, "text": txt})
+        if not items:
+            return {"count": 0}
+        count = vector_index_upsert(items)
+        return {"count": count.get("count", 0)}
 
 @app.post("/auth/token")
 def issue_token(req: TokenRequest) -> Dict[str, Any]:

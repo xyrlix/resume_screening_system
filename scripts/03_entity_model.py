@@ -7,8 +7,13 @@ import os
 import sys
 import warnings
 os.environ.setdefault('PYTHONIOENCODING', 'utf-8')
+# 设置HuggingFace镜像源，支持国内外访问
+# 国内镜像源: https://hf-mirror.com
+# 国外默认源: https://huggingface.co
+os.environ.setdefault('HF_ENDPOINT', 'https://hf-mirror.com')
+
 try:
-    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')  # type: ignore
 except Exception:
     pass
 warnings.filterwarnings(
@@ -133,18 +138,30 @@ def train(model, dataloader, optimizer, device):
     print(f"训练损失: {total_loss / len(dataloader)}")
 
 if __name__ == "__main__":
-    MODEL_NAME = os.getenv('NER_MODEL_ZH', 'bert-base-chinese')
+    # 使用本地模型而不是从网上下载
+    MODEL_NAME = os.getenv('NER_MODEL_ZH', 'models/bert_entity')
     DATA_PATH = 'data/processed/entity_train.json'
     MODEL_SAVE_PATH = 'models/bert_entity'
 
+    print(f"正在从 {MODEL_NAME} 加载模型和分词器...")
     tokenizer = BertTokenizerFast.from_pretrained(MODEL_NAME)
+    print("模型和分词器加载完成。")
+    
+    print(f"正在从 {DATA_PATH} 加载训练数据...")
     train_data = load_data(DATA_PATH)
+    print(f"训练数据加载完成，共 {len(train_data)} 条记录。")
+    
     train_dataset = NERDataset(train_data, tokenizer, LABEL_TO_ID)
     train_dataloader = DataLoader(train_dataset, batch_size=2, shuffle=True)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = BertForTokenClassification.from_pretrained(MODEL_NAME, num_labels=len(LABEL_TO_ID)).to(device)
+    print(f"使用设备: {device}")
+    
+    print(f"正在创建模型...")
+    model = BertForTokenClassification.from_pretrained(MODEL_NAME, num_labels=len(LABEL_TO_ID))
+    model = model.to(device)  # type: ignore
     optimizer = AdamW(model.parameters(), lr=5e-5)
+    print("模型创建完成。")
 
     print("开始训练...")
     # 实际项目中，您需要增加更多的训练轮次

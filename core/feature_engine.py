@@ -143,6 +143,13 @@ class FeatureEngine:
             # 添加向量特征到简历信息中
             resume["vector"] = resume_vector
 
+        if "segment_texts" in resume and "segment_vectors" not in resume:
+            segs = resume["segment_texts"]
+            segment_vectors = {}
+            for k, v in segs.items():
+                segment_vectors[k] = self.vectorize_text(v or "")
+            resume["segment_vectors"] = segment_vectors
+
         return resume
 
     def extract_features_from_jd(self, jd: Dict[str, Any]) -> Dict[str, Any]:
@@ -161,6 +168,13 @@ class FeatureEngine:
             jd_vector = self.vectorize_text(jd["cleaned_text"])
             # 添加向量特征到JD信息中
             jd["vector"] = jd_vector
+
+        if "segment_texts" in jd and "segment_vectors" not in jd:
+            segs = jd["segment_texts"]
+            segment_vectors = {}
+            for k, v in segs.items():
+                segment_vectors[k] = self.vectorize_text(v or "")
+            jd["segment_vectors"] = segment_vectors
 
         return jd
 

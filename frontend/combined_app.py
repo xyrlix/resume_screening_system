@@ -17,6 +17,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from services.recruiter_service import RecruiterService
 from services.candidate_service import CandidateService
+from core.file_processor import FileProcessor
 
 
 # 日志捕获类
@@ -92,6 +93,7 @@ with st.sidebar:
 
     # Base URL输入（可选）
     base_url = st.text_input("API Base URL（可选）", key="llm_base_url_global")
+    st.caption("提示：阿里云百炼（DashScope）OpenAI兼容地址为 https://dashscope.aliyuncs.com/compatible-mode/v1 ，模型建议选择 Qwen3-Max 或 qwen-plus")
 
     # 保存配置按钮
     if st.button("保存模型配置", key="save_llm_config_global"):
@@ -136,6 +138,33 @@ with st.sidebar:
     else:
         st.info("暂无已配置的模型")
 
+    st.divider()
+
+    # 区域与优先级
+    st.subheader("区域与优先级")
+    current_region = llm_config_manager.get_region()
+    region_choice = st.radio("选择调用区域", ["domestic", "international"], index=0 if current_region=="domestic" else 1, horizontal=True, key="llm_region_select")
+    if st.button("保存区域", key="save_llm_region"):
+        if llm_config_manager.set_region(region_choice):
+            st.success(f"✅ 已切换到 {region_choice} 区域")
+        else:
+            st.error("❌ 区域设置失败")
+
+    preferred_order = llm_config_manager.get_preferred_order_by_region(region_choice)
+    st.write(f"当前优先顺序: {', '.join(preferred_order)}")
+    st.caption("提示：国内推荐 Qwen/Moonshot/Doubao/DeepSeek；国际推荐 OpenAI/OpenRouter")
+    opt_short = ["openai", "openrouter", "qwen", "moonshot", "doubao", "deepseek"]
+    new_order = st.multiselect("设置优先顺序（最多选3，按选择顺序生效）", opt_short, default=preferred_order[:3], key="llm_preferred_order")
+    if st.button("保存优先顺序", key="save_llm_preferred_order"):
+        if new_order:
+            ok = llm_config_manager.set_preferred_order(region_choice, new_order + [x for x in opt_short if x not in new_order])
+            if ok:
+                st.success("✅ 优先顺序已更新")
+            else:
+                st.error("❌ 优先顺序更新失败")
+        else:
+            st.error("❌ 请至少选择一个提供者")
+
 # 角色选择选项卡
 role_tabs = st.tabs(["👥 招聘方", "👤 求职者"])
 
@@ -152,14 +181,44 @@ with role_tabs[0]:
 
     if st.button("上传JD", key="recruiter_upload_jd"):
         jd_content = ""
+        meta = {}
         if jd_file:
-            jd_content = jd_file.getvalue().decode("utf-8")
+            fp = FileProcessor()
+            import tempfile, os
+            with tempfile.NamedTemporaryFile(delete=False, suffix=f".{jd_file.name.split('.')[-1]}") as tmp:
+                data = jd_file.getvalue()
+                tmp.write(data)
+                tmp_path = tmp.name
+            processed = fp.process_file(tmp_path)
+            jd_content = processed.get('content', '')
+            root = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
+            save_dir = os.path.join(root, 'uploads', 'jds')
+            os.makedirs(save_dir, exist_ok=True)
+            import time, uuid
+            fname = f"jd_{int(time.time())}_{uuid.uuid4().hex}.{jd_file.name.split('.')[-1]}"
+            save_path = os.path.join(save_dir, fname)
+            with open(save_path, 'wb') as f:
+                f.write(data)
+            meta = {'source_file_path': save_path, 'source_file_type': processed.get('file_type', '')}
+            try:
+                os.unlink(tmp_path)
+            except Exception:
+                pass
         elif jd_text.strip():
             jd_content = jd_text.strip()
+            import os, time, uuid
+            root = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
+            save_dir = os.path.join(root, 'uploads', 'jds')
+            os.makedirs(save_dir, exist_ok=True)
+            fname = f"jd_{int(time.time())}_{uuid.uuid4().hex}.txt"
+            save_path = os.path.join(save_dir, fname)
+            with open(save_path, 'w', encoding='utf-8') as f:
+                f.write(jd_content)
+            meta = {'source_file_path': save_path, 'source_file_type': 'Text文件'}
 
         if jd_content:
             with st.spinner("处理JD中..."):
-                jd = recruiter_service.add_job(jd_content)
+                jd = recruiter_service.add_job(jd_content, meta=meta)
                 st.success(f"✅ JD上传成功！")
                 st.info(f"JD ID: {jd['job_id']}")
 
@@ -202,6 +261,9 @@ with role_tabs[0]:
             with st.expander(f"JD ID: {job['job_id']} - 职位描述"):
                 st.write(job['cleaned_text'][:150] + "...")
                 st.write(f"技能要求: {', '.join(job['skills'])}")
+                if 'source_file_type' in job or 'source_file_path' in job:
+                    st.write(f"来源类型: {job.get('source_file_type','')}")
+                    st.write(f"来源路径: {job.get('source_file_path','')}")
 
                 # 显示解析的实体结构
                 st.write("**解析的实体结构**:")
@@ -261,18 +323,43 @@ with role_tabs[0]:
                 uploaded_count = 0
                 if resume_files:
                     with st.spinner(f"处理 {len(resume_files)} 份简历中..."):
+                        fp = FileProcessor()
+                        import tempfile
                         for i, resume_file in enumerate(resume_files, 1):
                             try:
-                                file_content = resume_file.getvalue().decode(
-                                    "utf-8", errors="ignore")
-                                resume = recruiter_service.upload_resume(
-                                    file_content)
+                                with tempfile.NamedTemporaryFile(delete=False, suffix=f".{resume_file.name.split('.')[-1]}") as tmp:
+                                    tmp.write(resume_file.getvalue())
+                                    tmp_path = tmp.name
+                                processed = fp.process_file(tmp_path)
+                                content = processed.get('content', '')
+                                import os, time, uuid
+                                root = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
+                                save_dir = os.path.join(root, 'uploads', 'resumes')
+                                os.makedirs(save_dir, exist_ok=True)
+                                fname = f"resume_{int(time.time())}_{uuid.uuid4().hex}.{resume_file.name.split('.')[-1]}"
+                                save_path = os.path.join(save_dir, fname)
+                                with open(save_path, 'wb') as f:
+                                    f.write(resume_file.getvalue())
+                                meta_r = {'source_file_path': save_path, 'source_file_type': processed.get('file_type', '')}
+                                resume = recruiter_service.upload_resume(content, meta=meta_r)
                                 uploaded_count += 1
+                                try:
+                                    os.unlink(tmp_path)
+                                except Exception:
+                                    pass
                             except Exception as e:
                                 st.error(f"❌ 处理第 {i} 份简历失败: {str(e)}")
                 elif resume_text.strip():
                     with st.spinner("处理简历中..."):
-                        resume = recruiter_service.upload_resume(resume_text)
+                        import os, time, uuid
+                        root = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
+                        save_dir = os.path.join(root, 'uploads', 'resumes')
+                        os.makedirs(save_dir, exist_ok=True)
+                        fname = f"resume_{int(time.time())}_{uuid.uuid4().hex}.txt"
+                        save_path = os.path.join(save_dir, fname)
+                        with open(save_path, 'w', encoding='utf-8') as f:
+                            f.write(resume_text)
+                        resume = recruiter_service.upload_resume(resume_text, meta={'source_file_path': save_path, 'source_file_type': 'Text文件'})
                         uploaded_count = 1
 
                 if uploaded_count > 0:
@@ -302,6 +389,13 @@ with role_tabs[0]:
                                      value=5,
                                      key="recruiter_resume_count")
 
+            col_auth1, col_auth2 = st.columns(2)
+            with col_auth1:
+                username = st.text_input("用户名", key="recruiter_site_username")
+                password = st.text_input("密码", type="password", key="recruiter_site_password")
+            with col_auth2:
+                cookie_string = st.text_area("Cookie字符串(可选)", height=100, key="recruiter_site_cookie")
+
             if st.button("开始线上导入", key="recruiter_import_resume"):
                 if keywords:
                     with st.spinner(f"从{selected_site}导入简历中..."):
@@ -317,15 +411,33 @@ with role_tabs[0]:
                             else:  # 智联招聘
                                 scraper = zhaopin_scraper.ZhaopinScraper()
 
-                            # 搜索并导入简历
-                            imported_resumes = scraper.search_resumes(
-                                keywords, import_count)
+                            if cookie_string.strip():
+                                scraper.set_cookie(cookie_string.strip())
+                            elif username and password:
+                                scraper.login(username, password)
 
-                            # 上传导入的简历
+                            imported_ids = scraper.search_resumes(keywords, page=1, page_size=import_count)
+
                             uploaded_count = 0
-                            for resume in imported_resumes:
+                            for rid in imported_ids:
                                 try:
-                                    recruiter_service.upload_resume(resume)
+                                    detail = scraper.get_resume_detail(rid)
+                                    parts = []
+                                    if getattr(detail, 'name', None):
+                                        parts.append(str(detail.name))
+                                    if getattr(detail, 'work_experience', None):
+                                        for we in detail.work_experience or []:
+                                            parts.append(" ".join([str(v) for v in we.values()]))
+                                    if getattr(detail, 'education', None):
+                                        for ed in detail.education or []:
+                                            parts.append(" ".join([str(v) for v in ed.values()]))
+                                    if getattr(detail, 'skills', None):
+                                        parts.append(",".join(detail.skills or []))
+                                    if getattr(detail, 'projects', None):
+                                        for pr in detail.projects or []:
+                                            parts.append(" ".join([str(v) for v in pr.values()]))
+                                    text_payload = "\n".join([p for p in parts if p])
+                                    recruiter_service.upload_resume(text_payload)
                                     uploaded_count += 1
                                 except Exception as e:
                                     print(f"[ERROR] 上传简历失败: {str(e)}")
@@ -348,6 +460,9 @@ with role_tabs[0]:
                              expanded=False):
                 st.write(f"**简历内容**: {resume['cleaned_text'][:150]}...")
                 st.write(f"**技能**: {', '.join(resume['skills'])}")
+                if 'source_file_type' in resume or 'source_file_path' in resume:
+                    st.write(f"来源类型: {resume.get('source_file_type','')}")
+                    st.write(f"来源路径: {resume.get('source_file_path','')}")
     else:
         st.info("暂无已上传的简历")
 
@@ -456,6 +571,15 @@ with role_tabs[0]:
             else:
                 st.info("自定义筛选规则已关闭，将不参与匹配")
 
+        with st.expander("⚙️ 匹配参数配置（可选）", expanded=False):
+            stage1_threshold = st.slider("一级向量阈值", 0.0, 1.0, 0.3, 0.01, key="cfg_stage1")
+            skills_min_rate = st.slider("技能最小匹配率", 0.0, 1.0, 0.3, 0.01, key="cfg_skills_rate")
+            required_years = st.number_input("工作年限下限", min_value=0, max_value=30, value=3, step=1, key="cfg_years")
+            llm_enabled = st.checkbox("启用LLM补筛", value=True, key="cfg_llm")
+            llm_boundary = st.slider("LLM补筛边界区间", 0.0, 1.0, (0.55, 0.65), 0.01, key="cfg_llm_boundary")
+            seg_exp = st.slider("段权重-经验", 0.0, 1.0, 0.5, 0.01, key="cfg_seg_exp")
+            seg_skill = st.slider("段权重-技能", 0.0, 1.0, 0.3, 0.01, key="cfg_seg_skill")
+            seg_edu = st.slider("段权重-教育", 0.0, 1.0, 0.2, 0.01, key="cfg_seg_edu")
         if st.button("开始匹配", key="recruiter_match"):
             resumes = recruiter_service.get_resume_list()
             if not resumes:
@@ -481,9 +605,20 @@ with role_tabs[0]:
                         st.error("❌ 没有符合筛选规则的简历")
                         results = []
                     else:
-                        # 使用recruiter_service中已经初始化的matcher实例
+                        cfg = {
+                            'stage1_threshold': stage1_threshold,
+                            'skills_min_rate': skills_min_rate,
+                            'required_years': required_years,
+                            'llm_enabled': llm_enabled,
+                            'llm_boundary': llm_boundary,
+                            'segment_weights': {
+                                'experience': seg_exp,
+                                'skills': seg_skill,
+                                'education': seg_edu
+                            }
+                        }
                         results = recruiter_service.matcher.match_resumes_to_jd_with_llm(
-                            filtered_resumes, selected_job, top_k)
+                            filtered_resumes, selected_job, top_k, config=cfg)
 
                     st.success(f"✅ 匹配完成！共找到 {len(results)} 份匹配简历")
 
@@ -964,22 +1099,43 @@ with role_tabs[1]:
                 # 优先处理文件上传
                 if resume_files:
                     with st.spinner(f"处理 {len(resume_files)} 份简历中..."):
+                        fp = FileProcessor()
+                        import tempfile
                         for i, resume_file in enumerate(resume_files, 1):
                             try:
-                                # 读取文件内容
-                                file_content = resume_file.getvalue().decode(
-                                    "utf-8", errors="ignore")
-
-                                # 上传简历
-                                resume = candidate_service.upload_resume(
-                                    file_content)
+                                with tempfile.NamedTemporaryFile(delete=False, suffix=f".{resume_file.name.split('.')[-1]}") as tmp:
+                                    tmp.write(resume_file.getvalue())
+                                    tmp_path = tmp.name
+                                processed = fp.process_file(tmp_path)
+                                content = processed.get('content', '')
+                                import os, time, uuid
+                                root = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
+                                save_dir = os.path.join(root, 'uploads', 'resumes')
+                                os.makedirs(save_dir, exist_ok=True)
+                                fname = f"resume_{int(time.time())}_{uuid.uuid4().hex}.{resume_file.name.split('.')[-1]}"
+                                save_path = os.path.join(save_dir, fname)
+                                with open(save_path, 'wb') as f:
+                                    f.write(resume_file.getvalue())
+                                meta_r = {'source_file_path': save_path, 'source_file_type': processed.get('file_type', '')}
+                                resume = candidate_service.upload_resume(content, meta=meta_r)
                                 uploaded_count += 1
+                                try:
+                                    os.unlink(tmp_path)
+                                except Exception:
+                                    pass
                             except Exception as e:
                                 st.error(f"❌ 处理第 {i} 份简历失败: {str(e)}")
                 elif resume_text.strip():
                     with st.spinner("处理简历中..."):
-                        # 上传简历
-                        resume = candidate_service.upload_resume(resume_text)
+                        import os, time, uuid
+                        root = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
+                        save_dir = os.path.join(root, 'uploads', 'resumes')
+                        os.makedirs(save_dir, exist_ok=True)
+                        fname = f"resume_{int(time.time())}_{uuid.uuid4().hex}.txt"
+                        save_path = os.path.join(save_dir, fname)
+                        with open(save_path, 'w', encoding='utf-8') as f:
+                            f.write(resume_text)
+                        resume = candidate_service.upload_resume(resume_text, meta={'source_file_path': save_path, 'source_file_type': 'Text文件'})
                         uploaded_count = 1
 
                 if uploaded_count > 0:
@@ -1052,6 +1208,9 @@ with role_tabs[1]:
                              expanded=False):
                 st.write(f"**简历内容**: {resume['cleaned_text'][:150]}...")
                 st.write(f"**技能**: {', '.join(resume['skills'])}")
+                if 'source_file_type' in resume or 'source_file_path' in resume:
+                    st.write(f"来源类型: {resume.get('source_file_type','')}")
+                    st.write(f"来源路径: {resume.get('source_file_path','')}")
     else:
         st.info("暂无已上传的简历")
 
@@ -1124,19 +1283,15 @@ with role_tabs[1]:
             format_func=lambda x: f"{x}: {resume_options[x]}",
             key="candidate_portrait_resume")
 
-        # 生成画像按钮
+        jd_portrait_text = st.text_area("输入用于画像的目标JD文本", height=150, key="candidate_portrait_jd")
         if st.button("生成简历画像", key="candidate_generate_portrait"):
             with st.spinner("正在生成简历画像..."):
-                # 简化实现，实际项目中应该使用LLM生成
-                st.success("✅ 简历画像生成完成！")
-
-                # 显示简历画像
-                st.info("**简历画像**")
-                st.write("- **核心技能**: Python, Java, SQL, 机器学习")
-                st.write("- **工作经验**: 3-5年")
-                st.write("- **教育背景**: 本科及以上")
-                st.write("- **行业倾向**: 互联网, 人工智能")
-                st.write("- **岗位倾向**: 算法工程师, 数据分析师")
+                from core.visualizer import Visualizer
+                selected_resume = next(r for r in resumes if r['resume_id'] == selected_resume_id)
+                jd_struct = candidate_service.data_processor.process_jd_text(jd_portrait_text or selected_resume['cleaned_text'])
+                jd_struct = candidate_service.feature_engine.extract_features_from_jd(jd_struct)
+                fig = Visualizer().generate_radar_chart(selected_resume, jd_struct)
+                st.plotly_chart(fig, use_container_width=True)
                 st.write("- **薪资期望**: 20-30K")
 
     st.divider()
@@ -1220,33 +1375,72 @@ with role_tabs[1]:
 
     # 5. 模拟面试
     st.subheader("🎭 模拟面试")
-
-    # 岗位选择
-    job_options = ["算法工程师", "电池研发工程师", "芯片设计工程师", "产品经理", "跨境电商"]
-    selected_job = st.selectbox("选择面试岗位",
-                                job_options,
-                                key="candidate_interview_job")
-
-    # 生成面试题按钮
+    resumes_for_interview = candidate_service.get_resume_list()
+    resume_options_iv = {r['resume_id']: r['cleaned_text'][:50] + "..." for r in resumes_for_interview} if resumes_for_interview else {}
+    selected_resume_iv = st.selectbox("选择简历", list(resume_options_iv.keys()) if resume_options_iv else [""], format_func=lambda x: f"{x}: {resume_options_iv.get(x,'')}" if x else "", key="candidate_iv_resume")
+    jd_iv_text = st.text_area("输入目标JD文本", height=120, key="candidate_iv_jd")
     if st.button("生成面试题", key="candidate_generate_interview"):
-        with st.spinner("正在生成面试题..."):
-            # 简化实现，实际项目中应该使用LLM生成
-            st.success("✅ 面试题生成完成！")
+        if selected_resume_iv and jd_iv_text.strip():
+            with st.spinner("正在生成面试题..."):
+                res = next(r for r in resumes_for_interview if r['resume_id'] == selected_resume_iv)
+                qs = candidate_service.llm_chain.generate_interview_questions(res['cleaned_text'], jd_iv_text)
+                st.subheader("面试题")
+                for i, q in enumerate(qs, 1):
+                    st.write(f"{i}. {q}")
+        else:
+            st.error("❌ 请选择简历并输入JD文本")
+    answer_text = st.text_area("输入你的回答以评估（可选）", height=120, key="candidate_iv_answer")
+    if st.button("评估回答", key="candidate_evaluate_answer"):
+        if selected_resume_iv and jd_iv_text.strip() and answer_text.strip():
+            res = next(r for r in resumes_for_interview if r['resume_id'] == selected_resume_iv)
+            eval_res = candidate_service.llm_chain.evaluate_interview_answer(res['cleaned_text'], jd_iv_text, answer_text)
+            st.write(f"评分: {eval_res.get('score', 0):.2f}")
+            st.write("优势:")
+            for s in eval_res.get('strengths', []):
+                st.success(s)
+            st.write("劣势:")
+            for w in eval_res.get('weaknesses', []):
+                st.warning(w)
+            st.write("建议:")
+            for sg in eval_res.get('suggestions', []):
+                st.info(sg)
+        else:
+            st.error("❌ 请完善输入")
 
-            # 示例面试题
-            sample_questions = [
-                f"1. 请介绍一下您对{selected_job}岗位的理解和认识。",
-                f"2. 请描述您在{selected_job}相关领域的项目经验。",
-                f"3. 您认为{selected_job}需要具备哪些核心技能？",
-                f"4. 请分享一个您在工作中遇到的挑战以及您是如何解决的。", f"5. 您对行业发展趋势有什么看法？",
-                f"6. 请介绍一下您的技术栈和熟练程度。", f"7. 您如何处理工作中的压力和挑战？",
-                f"8. 请描述一个您成功完成的项目案例。", f"9. 您的职业规划是什么？", f"10. 您为什么选择我们公司？"
-            ]
+    st.divider()
 
-            # 显示面试题
-            st.subheader(f"{selected_job}面试题（共10道）")
-            for question in sample_questions:
-                st.write(question)
+    st.subheader("📬 投递看板")
+    resumes_for_apply = candidate_service.get_resume_list()
+    jobs_for_apply = candidate_service.get_job_list()
+    if resumes_for_apply and jobs_for_apply:
+        sel_res_apply = st.selectbox("选择简历进行投递", [r['resume_id'] for r in resumes_for_apply], key="apply_resume")
+        sel_job_apply = st.selectbox("选择职位进行投递", [j['job_id'] for j in jobs_for_apply], key="apply_job")
+        if st.button("一键投递", key="do_apply"):
+            app = candidate_service.submit_application(sel_res_apply, sel_job_apply)
+            st.success(f"投递成功，ID: {app['application_id']}")
+    apps = candidate_service.get_applications()
+    if apps:
+        for app in apps:
+            with st.expander(f"投递 {app['application_id']} - {app['resume_id']} -> {app['job_id']} 状态: {app['status']}"):
+                new_status = st.selectbox("更新状态", ["submitted", "read", "interview", "rejected", "offer"], key=f"status_{app['application_id']}")
+                rejection_text = st.text_area("拒信文本（可选）", height=100, key=f"rej_{app['application_id']}")
+                if st.button("更新", key=f"upd_{app['application_id']}"):
+                    updated = candidate_service.update_application_status(app['application_id'], new_status, rejection_text if new_status=="rejected" else None)
+                    st.success("已更新")
+                    if updated['history'] and 'rejection_analysis' in updated['history'][-1]:
+                        st.json(updated['history'][-1]['rejection_analysis'])
+
+    st.subheader("🧭 学习成长路径")
+    resumes_lp = candidate_service.get_resume_list()
+    if resumes_lp:
+        sel_res_lp = st.selectbox("选择简历生成学习路径", [r['resume_id'] for r in resumes_lp], key="lp_resume")
+        jd_lp_text = st.text_area("输入目标JD文本", height=120, key="lp_jd_text")
+        if st.button("生成学习路径", key="generate_lp"):
+            if jd_lp_text.strip():
+                plan = candidate_service.generate_learning_path(sel_res_lp, jd_lp_text)
+                st.json(plan)
+            else:
+                st.error("❌ 请输入JD文本")
 
 # 页脚
 st.markdown("---")

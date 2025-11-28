@@ -41,7 +41,7 @@ class RecruiterService:
         self.resumes = []  # 存储简历信息
         self.matching_results = []  # 存储匹配结果
 
-    def add_job(self, jd_text: str, job_id: str = None) -> Dict[str, Any]:
+    def add_job(self, jd_text: str, job_id: str = None, meta: Dict[str, Any] = None) -> Dict[str, Any]:
         """
         添加新的JD
         
@@ -65,6 +65,9 @@ class RecruiterService:
 
         # 设置JD ID
         featured_jd['job_id'] = job_id or f"job_{len(self.jobs) + 1}"
+        if meta:
+            for k, v in meta.items():
+                featured_jd[k] = v
         logger.info(f"生成JD ID: {featured_jd['job_id']}")
 
         # 添加到JD列表
@@ -75,7 +78,8 @@ class RecruiterService:
 
     def upload_resume(self,
                       resume_text: str,
-                      resume_id: str = None) -> Dict[str, Any]:
+                      resume_id: str = None,
+                      meta: Dict[str, Any] = None) -> Dict[str, Any]:
         """
         上传简历
         
@@ -100,6 +104,9 @@ class RecruiterService:
         # 设置简历ID
         featured_resume[
             'resume_id'] = resume_id or f"resume_{len(self.resumes) + 1}"
+        if meta:
+            for k, v in meta.items():
+                featured_resume[k] = v
         logger.info(f"生成简历ID: {featured_resume['resume_id']}")
 
         # 添加到简历列表
@@ -111,7 +118,8 @@ class RecruiterService:
     def match_resumes_to_job(
             self,
             job_id: str,
-            top_k: int = 10) -> List[Tuple[Dict[str, Any], float]]:
+            top_k: int = 10,
+            config: Dict[str, Any] = None) -> List[Tuple[Dict[str, Any], float]]:
         """
         将简历与指定JD进行匹配
         
@@ -133,7 +141,11 @@ class RecruiterService:
 
         # 匹配简历
         logger.info(f"开始匹配简历，共 {len(self.resumes)} 份简历")
-        results = self.matcher.match_resumes_to_jd(self.resumes, job, top_k)
+        if config:
+            _results = self.matcher.three_stage_filter(self.resumes, job, top_k, config)
+            results = [(resume, score) for resume, score, _, _ in _results]
+        else:
+            results = self.matcher.match_resumes_to_jd(self.resumes, job, top_k)
         logger.info(f"简历匹配完成，找到 {len(results)} 份匹配简历")
 
         # 存储匹配结果

@@ -122,55 +122,32 @@ class DataProcessor:
                 # 创建LLMChain实例
                 llm_chain = LLMChain()
 
-                # 构建提取JD实体的prompt
-                prompt = f"""请从以下职位描述(JD)中提取完整的实体信息，返回JSON格式。
+                from core.llm_config_manager import LLMConfigManager
+                tmpl = LLMConfigManager().get_prompt('jd_extract_entities')
+                prompt = tmpl.replace('{text}', text).replace('{entity_list}', ', '.join(entity_list))
 
-JD文本：{text}
-
-需要提取的实体包括：{', '.join(entity_list)}
-
-返回格式：
-{{
-    "职位名称": "",
-    "公司名称": "",
-    "学历要求": "",
-    "工作年限要求": "",
-    "薪资范围": "",
-    "工作地点": "",
-    "技能要求": "",
-    "岗位职责": "",
-    "任职要求": "",
-    "行业": "",
-    "招聘人数": "",
-    "发布时间": "",
-    "截止时间": "",
-    "职位类型": "",
-    "语言要求": "",
-    "证书要求": "",
-    "福利": "",
-    "团队情况": ""
-}}
-
-请确保提取所有可能的实体，不要遗漏任何信息。如果某个实体不存在，请留空字符串。"""
-
-                # 使用LLM提取实体
-                provider = llm_chain.llm_providers.get('openai') or next(
-                    iter(llm_chain.llm_providers.values()))
-                response = provider._call_llm(prompt)
-
-                # 解析LLM响应
+                providers = [
+                    llm_chain.llm_providers[name]
+                    for name in getattr(llm_chain, 'active_provider_names', [])
+                    if name in llm_chain.llm_providers
+                ] or list(llm_chain.llm_providers.values())
                 import json
-                llm_entities = json.loads(response)
-
-                # 更新实体字典
-                for key, value in llm_entities.items():
-                    if key in entities:
-                        entities[key] = value
-
-                logger.info(
-                    f"使用LLM成功提取JD实体，共提取 {sum(1 for v in entities.values() if v)} 个非空实体"
-                )
-                return entities
+                for p in providers:
+                    try:
+                        response = p._call_llm(prompt)
+                        llm_entities = json.loads(response)
+                        for key, value in llm_entities.items():
+                            if key in entities:
+                                entities[key] = value
+                        logger.info(
+                            f"使用LLM成功提取JD实体，共提取 {sum(1 for v in entities.values() if v)} 个非空实体"
+                        )
+                        return entities
+                    except Exception as e:
+                        logger.error(f"使用LLM提取实体失败: {str(e)}")
+                        continue
+                
+                
             except Exception as e:
                 logger.error(f"使用LLM提取实体失败: {str(e)}")
                 logger.info("回退到正则表达式提取实体")
@@ -379,7 +356,12 @@ JD文本：{text}
             "skills": skills,
             "experience": experience,
             "education": education,
-            "entities": entities
+            "entities": entities,
+            "segment_texts": {
+                "skills": ", ".join(skills),
+                "experience": "\n".join(experience),
+                "education": ", ".join(education)
+            }
         }
 
         logger.info(f"📄 简历处理完成")
@@ -439,7 +421,12 @@ JD文本：{text}
             "cleaned_text": cleaned_text,
             "skills": skills,
             "requirements": requirements,
-            "entities": entities
+            "entities": entities,
+            "segment_texts": {
+                "skills": ", ".join(skills),
+                "requirements": "\n".join(requirements),
+                "education": entities.get("学历要求", "")
+            }
         }
 
         logger.info(f"📄 JD处理完成")

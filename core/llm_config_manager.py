@@ -46,11 +46,15 @@ class LLMConfigManager:
             "deepseek-llm-7b-chat", "moonshot-v1-8k", "Doubao-Seed-1.6"
         ]
 
+        # 区域与优先级配置
+        self.default_region = 'domestic'
+
         # 初始化加密器
         self.cipher_suite = self._init_encryption(encryption_key)
 
         # 加载配置
         self.config = self._load_config()
+        self._ensure_prompts()
 
     def _init_encryption(self, encryption_key: str = None) -> Fernet:
         """
@@ -151,7 +155,107 @@ class LLMConfigManager:
                 print(f"加载LLM配置文件失败: {e}")
 
         # 默认配置
-        return {'models': {}, 'chains': [], 'default_model': None}
+        return {
+            'models': {},
+            'chains': [],
+            'default_model': None,
+            'region': self.default_region,
+            'preferred_orders': {
+                'domestic': ['qwen', 'moonshot', 'doubao', 'deepseek', 'openrouter'],
+                'international': ['openai', 'openrouter', 'deepseek', 'moonshot', 'doubao']
+            },
+            'prompts': {}
+        }
+
+    def _ensure_prompts(self) -> None:
+        try:
+            prompts = self.config.get('prompts') or {}
+            defaults = {
+                'extract_entities': (
+                    "请从以下职位描述(JD)和简历中提取实体信息，返回JSON格式。\n\n"
+                    "JD文本：{jd_text}\n\n"
+                    "简历文本：{resume_text}\n\n"
+                    "需要提取的JD实体包括：技能、学历要求、工作年限要求、职位名称\n"
+                    "需要提取的简历实体包括：技能、教育背景、工作经验、职位\n\n"
+                    "返回格式：\n{\n    \"jd_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"学历要求\"],\n        \"experience\": [\"工作年限要求\"],\n        \"position\": \"职位名称\"\n    },\n    \"resume_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"教育背景\"],\n        \"experience\": [\"工作经验\"],\n        \"position\": \"职位\"\n    }\n}"
+                ),
+                'validate_entities': (
+                    "请验证并修正以下提取的实体信息，确保信息准确无误。\n\n"
+                    "提取的实体信息：\n{extracted_json}\n\n"
+                    "请检查：\n1. 技能是否准确\n2. 学历要求和教育背景是否合理\n3. 工作年限要求和工作经验是否匹配\n4. 职位名称是否准确\n\n"
+                    "返回修正后的JSON格式：\n{\n    \"jd_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"学历要求\"],\n        \"experience\": [\"工作年限要求\"],\n        \"position\": \"职位名称\"\n    },\n    \"resume_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"教育背景\"],\n        \"experience\": [\"工作经验\"],\n        \"position\": \"职位\"\n    }\n}"
+                ),
+                'analyze_match': (
+                    "请分析以下简历和JD的匹配度，返回JSON格式。\n\n"
+                    "验证后的实体信息：\n{validated_json}\n\n"
+                    "需要分析的维度：\n1. 技能匹配：计算匹配的技能数量和匹配率\n2. 教育背景匹配：判断是否满足要求\n3. 工作经验匹配：判断是否满足要求\n\n"
+                    "返回格式：\n{\n    \"skill_match\": {\n        \"matching_skills\": [\"匹配的技能1\", \"匹配的技能2\"],\n        \"jd_skills\": [\"JD技能1\", \"JD技能2\"],\n        \"resume_skills\": [\"简历技能1\", \"简历技能2\"],\n        \"match_rate\": 0.8\n    },\n    \"education_match\": {\n        \"match\": true,\n        \"reason\": \"教育背景满足要求\"\n    },\n    \"experience_match\": {\n        \"match\": true,\n        \"reason\": \"工作经验满足要求\"\n    }\n}"
+                ),
+                'generate_score': (
+                    "请根据以下匹配度分析，生成综合匹配分数，返回JSON格式。\n\n"
+                    "匹配度分析：\n{analyzed_json}\n\n"
+                    "评分标准：\n- 技能匹配率权重：50%\n- 教育背景匹配权重：25%\n- 工作经验匹配权重：25%\n\n"
+                    "返回格式：\n{\n    \"score\": 0.85,\n    \"reason\": \"技能匹配度高，教育背景和工作经验满足要求\",\n    \"details\": {\n        \"skill_weight\": 0.5,\n        \"education_weight\": 0.25,\n        \"experience_weight\": 0.25\n    }\n}"
+                ),
+                'generate_suggestions': (
+                    "请根据以下简历和JD生成优化建议，返回JSON格式。\n\n"
+                    "简历文本：{resume_text}\n\n"
+                    "JD文本：{jd_text}\n\n"
+                    "需要生成的内容包括：\n1. 优化建议列表\n2. 简历的优势\n3. 简历的劣势\n\n"
+                    "返回格式：\n{\n    \"suggestions\": [\"建议1\", \"建议2\"],\n    \"strengths\": [\"优势1\", \"优势2\"],\n    \"weaknesses\": [\"劣势1\", \"劣势2\"]\n}"
+                ),
+                'generate_interview_questions': (
+                    "请根据以下简历和JD生成面试题，返回JSON格式。\n\n"
+                    "简历文本：{resume_text}\n\n"
+                    "JD文本：{jd_text}\n\n"
+                    "需要生成5-10道面试题，涵盖技能、经验、项目等方面。\n\n"
+                    "返回格式：\n[\n    \"面试题1\",\n    \"面试题2\",\n    \"面试题3\"\n]"
+                ),
+                'evaluate_interview_answer': (
+                    "请基于以下简历与JD，对候选人的面试回答进行评分并给出改进建议，返回JSON格式。\n\n"
+                    "简历：{resume_text}\n\nJD：{jd_text}\n\n回答：{answer}\n\n"
+                    "返回格式：\n{\n  \"score\": 0.0,\n  \"strengths\": [\"...\"],\n  \"weaknesses\": [\"...\"],\n  \"suggestions\": [\"...\"]\n}"
+                ),
+                'analyze_rejection': (
+                    "请分析以下拒信文本，归纳拒绝原因并提出改进建议，返回JSON格式。\n\n"
+                    "拒信：{rejection_text}\n简历：{resume_text}\nJD：{jd_text}\n\n"
+                    "返回格式：\n{\n  \"reasons\": [\"...\"],\n  \"suggestions\": [\"...\"],\n  \"priority\": [\"...\"]\n}"
+                ),
+                'generate_learning_path': (
+                    "请根据缺失技能为候选人生成学习成长路径，返回JSON格式。\n\n"
+                    "目标岗位：{target_job}\n缺失技能：{missing_skills}\n\n"
+                    "返回格式：\n{\n  \"steps\": [\"...\"],\n  \"courses\": [\"...\"],\n  \"projects\": [\"...\"],\n  \"certifications\": [\"...\"]\n}"
+                ),
+                'jd_extract_entities': (
+                    "请从以下职位描述(JD)中提取完整的实体信息，返回JSON格式。\n\n"
+                    "JD文本：{text}\n\n"
+                    "需要提取的实体包括：{entity_list}\n\n"
+                    "返回格式：\n{\n    \"职位名称\": \"\",\n    \"公司名称\": \"\",\n    \"学历要求\": \"\",\n    \"工作年限要求\": \"\",\n    \"薪资范围\": \"\",\n    \"工作地点\": \"\",\n    \"技能要求\": \"\",\n    \"岗位职责\": \"\",\n    \"任职要求\": \"\",\n    \"行业\": \"\",\n    \"招聘人数\": \"\",\n    \"发布时间\": \"\",\n    \"截止时间\": \"\",\n    \"职位类型\": \"\",\n    \"语言要求\": \"\",\n    \"证书要求\": \"\",\n    \"福利\": \"\",\n    \"团队情况\": \"\"\n}"
+                ),
+            }
+            updated = False
+            for k, v in defaults.items():
+                if k not in prompts or not prompts.get(k):
+                    prompts[k] = v
+                    updated = True
+            if updated:
+                self.config['prompts'] = prompts
+                self._save_config()
+        except Exception:
+            pass
+
+    def get_prompt(self, name: str) -> str:
+        return (self.config.get('prompts') or {}).get(name, '')
+
+    def set_prompt(self, name: str, template: str) -> bool:
+        try:
+            if 'prompts' not in self.config:
+                self.config['prompts'] = {}
+            self.config['prompts'][name] = template
+            self._save_config()
+            return True
+        except Exception:
+            return False
 
     def _save_config(self) -> None:
         """
@@ -182,6 +286,36 @@ class LLMConfigManager:
             支持的LLM模型列表
         """
         return self.supported_models.copy()
+
+    def get_region(self) -> str:
+        return self.config.get('region', self.default_region)
+
+    def set_region(self, region: str) -> bool:
+        if region not in ['domestic', 'international']:
+            return False
+        self.config['region'] = region
+        self._save_config()
+        return True
+
+    def get_preferred_order_by_region(self, region: str = None) -> List[str]:
+        region = region or self.get_region()
+        po = self.config.get('preferred_orders', {})
+        order = po.get(region)
+        if not order:
+            order = self.default_preferred_order(region)
+        return order
+
+    def set_preferred_order(self, region: str, order: List[str]) -> bool:
+        if region not in ['domestic', 'international']:
+            return False
+        if not order or not isinstance(order, list):
+            return False
+        self.config.setdefault('preferred_orders', {})[region] = order
+        self._save_config()
+        return True
+
+    def default_preferred_order(self, region: str) -> List[str]:
+        return ['qwen', 'moonshot', 'doubao', 'deepseek', 'openrouter'] if region == 'domestic' else ['openai', 'openrouter', 'deepseek', 'moonshot', 'doubao']
 
     def get_model_config(self, model_name: str) -> Dict[str, Any]:
         """
@@ -331,8 +465,11 @@ class LLMConfigManager:
         Returns:
             是否已配置
         """
-        return model_name in self.config[
-            'models'] and 'api_key' in self.config['models'][model_name]
+        if model_name not in self.config.get('models', {}):
+            return False
+        cfg = self.config['models'][model_name]
+        key = cfg.get('api_key')
+        return bool(key)
 
     def get_config_file_path(self) -> str:
         """

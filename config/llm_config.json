@@ -1,23 +1,23 @@
 {
   "models": {
     "qwen-1.8b": {
-      "api_key": "gAAAAABpKD-CQjiABjqfIvaXGWfd8DmybDEKyJ2yYZD97UR7iYkKE1qQgEFeM4xuvgLuzRK3DpL-bYLxIbvXNTF4uExRWhwpXw==",
+      "api_key": "gAAAAABpKSZ7T7WfVvh_t9eaTiXESoxU8m1H4LKU1ZFpO-jayVlTObbhWhopDLkSPk17GJPHV0RjkSclIZ_A_2UuF1iu6ry5dQ==",
       "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
     },
     "deepseek-llm-7b-chat": {
-      "api_key": "gAAAAABpKD-Cqc1_X3OSNmWrC51p5wjkeJdiTERIt1NcxNChcMbj3P6OePpuLg0zVCjBIP-lMIOJiMknfNAg193pXvbjbFPb22kJemRFThpm_bhHHjFtIKaC3FWOVF9Pg-lzuDCJjVdU",
+      "api_key": "gAAAAABpKSZ7lIhFwT1y4Vav0cDEy-2MtJzCQOQQkDw7K7BQrpq5wtebGEeyEmi_ovX0ioUiuuQlQHOu9kb8B2hlolM4wWwSUoX6QJuKLffwzKhgGgZFH1TTj1pCdhEnuyhEadDejB6n",
       "base_url": "https://api.deepseek.com/v1"
     },
     "moonshot-v1-8k": {
-      "api_key": "gAAAAABpKD-C9Wpld4ocKm_pnf2PGeCVf_we9laxWx531tIBcVWWuca9ZFQGp5naQXJP1HSgoOoDHV3TTQcopLbJTSdfiuygljDJDgPT9h8ejM4LCp71wf6KxcpH_6fydXTCkaYNN1Hs1lK2ZB-VjhIAyWV0ZenrcA==",
+      "api_key": "gAAAAABpKSZ7sp8fBsCKwxVc1Vkk4nvDdmF7Fol1eXsXGBz5hmLof9yv0ma1KA1Fl8DypfWaIEKoHcxwFj54YGj67PrS22WjUDJ-1u8sPVpXRx1HCFNgXVDVGSdlrqj52uP57e7c6Zor1QfBW3NIoI9piJUu7hWKgg==",
       "base_url": "https://api.moonshot.cn/v1"
     },
     "gpt-3.5-turbo": {
-      "api_key": "gAAAAABpKD-CtAViEBi8iSdehulJ9q0cKIZ7piDUrrmxWqE6W_mxe2TONDZZMXjDaYga2OT0sM3_oESlF1jPi5C8PVV7W3hGWSMjoytdiV87IXY7IMo4LZUqoG_hh82Q84ecjhJApLrei0Q1kRQQ2MTAz4IK8dufufBXoaNFADDPlrBlrRs5Eo0=",
+      "api_key": "gAAAAABpKSZ7-oMAOop7YoR6DC0JMgwwb8lPibvj9_ibROKw10K75MFb01Vp-61yTvaM2Vyyv_REPGPs6UlOlVXrOZB-p1m8yAXKnuqdPHo8Ny0EsjuXFhmtVOCMvOvo8yIR6aun9evPVMwthItspa-tWFDmXqSO9bFmeWmfqZfIFIUYYXgIss8=",
       "base_url": "https://openrouter.ai/api/v1"
     },
     "gpt-4": {
-      "api_key": "gAAAAABpKD-Cgog6PlfVxrmMNA8irsBkCzzUIv4h929u6tA8QtX2fSBYV6zvBEQO1d4Em0X5v7X1GJxqSzC3zD4M2GQkNh1wlb4eTZ8nZfc1x6NpHD9qj3gHShoUTA5ltql8oM7Gnygv9pSW8BBext00t7g-Kv_oYtiFmJCkbxZKIUoUz6ZWl-0=",
+      "api_key": "gAAAAABpKSZ7mQA-dZyjN2syF5l46VUAVKL47YsDjAa5EfqWC5CTWfYVjnQAUrawtdRUQj310oCXaNQrqIO3hKS42NsFCi8Jo_S0xGxH8g6PqjdJeaeDgBdNwYtv4ABm9fXFQcaOc3FIhDOiOZDhjhjWX5uF44e3qx0hV1dlLYkRTgxkCzed0BQ=",
       "base_url": "https://openrouter.ai/api/v1"
     }
   },
@@ -27,5 +27,18 @@
       "qwen-1.8b"
     ]
   ],
-  "default_model": "qwen-1.8b"
+  "default_model": "deepseek-llm-7b-chat",
+  "region": "domestic",
+  "prompts": {
+    "extract_entities": "请从以下职位描述(JD)和简历中提取实体信息，返回JSON格式。\n\nJD文本：{jd_text}\n\n简历文本：{resume_text}\n\n需要提取的JD实体包括：技能、学历要求、工作年限要求、职位名称\n需要提取的简历实体包括：技能、教育背景、工作经验、职位\n\n返回格式：\n{\n    \"jd_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"学历要求\"],\n        \"experience\": [\"工作年限要求\"],\n        \"position\": \"职位名称\"\n    },\n    \"resume_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"教育背景\"],\n        \"experience\": [\"工作经验\"],\n        \"position\": \"职位\"\n    }\n}",
+    "validate_entities": "请验证并修正以下提取的实体信息，确保信息准确无误。\n\n提取的实体信息：\n{extracted_json}\n\n请检查：\n1. 技能是否准确\n2. 学历要求和教育背景是否合理\n3. 工作年限要求和工作经验是否匹配\n4. 职位名称是否准确\n\n返回修正后的JSON格式：\n{\n    \"jd_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"学历要求\"],\n        \"experience\": [\"工作年限要求\"],\n        \"position\": \"职位名称\"\n    },\n    \"resume_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"教育背景\"],\n        \"experience\": [\"工作经验\"],\n        \"position\": \"职位\"\n    }\n}",
+    "analyze_match": "请分析以下简历和JD的匹配度，返回JSON格式。\n\n验证后的实体信息：\n{validated_json}\n\n需要分析的维度：\n1. 技能匹配：计算匹配的技能数量和匹配率\n2. 教育背景匹配：判断是否满足要求\n3. 工作经验匹配：判断是否满足要求\n\n返回格式：\n{\n    \"skill_match\": {\n        \"matching_skills\": [\"匹配的技能1\", \"匹配的技能2\"],\n        \"jd_skills\": [\"JD技能1\", \"JD技能2\"],\n        \"resume_skills\": [\"简历技能1\", \"简历技能2\"],\n        \"match_rate\": 0.8\n    },\n    \"education_match\": {\n        \"match\": true,\n        \"reason\": \"教育背景满足要求\"\n    },\n    \"experience_match\": {\n        \"match\": true,\n        \"reason\": \"工作经验满足要求\"\n    }\n}",
+    "generate_score": "请根据以下匹配度分析，生成综合匹配分数，返回JSON格式。\n\n匹配度分析：\n{analyzed_json}\n\n评分标准：\n- 技能匹配率权重：50%\n- 教育背景匹配权重：25%\n- 工作经验匹配权重：25%\n\n返回格式：\n{\n    \"score\": 0.85,\n    \"reason\": \"技能匹配度高，教育背景和工作经验满足要求\",\n    \"details\": {\n        \"skill_weight\": 0.5,\n        \"education_weight\": 0.25,\n        \"experience_weight\": 0.25\n    }\n}",
+    "generate_suggestions": "请根据以下简历和JD生成优化建议，返回JSON格式。\n\n简历文本：{resume_text}\n\nJD文本：{jd_text}\n\n需要生成的内容包括：\n1. 优化建议列表\n2. 简历的优势\n3. 简历的劣势\n\n返回格式：\n{\n    \"suggestions\": [\"建议1\", \"建议2\"],\n    \"strengths\": [\"优势1\", \"优势2\"],\n    \"weaknesses\": [\"劣势1\", \"劣势2\"]\n}",
+    "generate_interview_questions": "请根据以下简历和JD生成面试题，返回JSON格式。\n\n简历文本：{resume_text}\n\nJD文本：{jd_text}\n\n需要生成5-10道面试题，涵盖技能、经验、项目等方面。\n\n返回格式：\n[\n    \"面试题1\",\n    \"面试题2\",\n    \"面试题3\"\n]",
+    "evaluate_interview_answer": "请基于以下简历与JD，对候选人的面试回答进行评分并给出改进建议，返回JSON格式。\n\n简历：{resume_text}\n\nJD：{jd_text}\n\n回答：{answer}\n\n返回格式：\n{\n  \"score\": 0.0,\n  \"strengths\": [\"...\"],\n  \"weaknesses\": [\"...\"],\n  \"suggestions\": [\"...\"]\n}",
+    "analyze_rejection": "请分析以下拒信文本，归纳拒绝原因并提出改进建议，返回JSON格式。\n\n拒信：{rejection_text}\n简历：{resume_text}\nJD：{jd_text}\n\n返回格式：\n{\n  \"reasons\": [\"...\"],\n  \"suggestions\": [\"...\"],\n  \"priority\": [\"...\"]\n}",
+    "generate_learning_path": "请根据缺失技能为候选人生成学习成长路径，返回JSON格式。\n\n目标岗位：{target_job}\n缺失技能：{missing_skills}\n\n返回格式：\n{\n  \"steps\": [\"...\"],\n  \"courses\": [\"...\"],\n  \"projects\": [\"...\"],\n  \"certifications\": [\"...\"]\n}",
+    "jd_extract_entities": "请从以下职位描述(JD)中提取完整的实体信息，返回JSON格式。\n\nJD文本：{text}\n\n需要提取的实体包括：{entity_list}\n\n返回格式：\n{\n    \"职位名称\": \"\",\n    \"公司名称\": \"\",\n    \"学历要求\": \"\",\n    \"工作年限要求\": \"\",\n    \"薪资范围\": \"\",\n    \"工作地点\": \"\",\n    \"技能要求\": \"\",\n    \"岗位职责\": \"\",\n    \"任职要求\": \"\",\n    \"行业\": \"\",\n    \"招聘人数\": \"\",\n    \"发布时间\": \"\",\n    \"截止时间\": \"\",\n    \"职位类型\": \"\",\n    \"语言要求\": \"\",\n    \"证书要求\": \"\",\n    \"福利\": \"\",\n    \"团队情况\": \"\"\n}"
+  }
 }

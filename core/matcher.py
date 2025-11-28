@@ -137,7 +137,8 @@ class ResumeMatcher:
             self,
             resume: Dict[str, Any],
             jd: Dict[str, Any],
-            weights: Dict[str, float] = None) -> float:
+            weights: Dict[str, float] = None,
+            segment_weights: Dict[str, float] = None) -> float:
         """
         计算简历与JD的综合匹配分数
         
@@ -159,9 +160,19 @@ class ResumeMatcher:
 
         weights = weights or default_weights
 
-        # 计算各维度的匹配分数
-        similarity_score = self.calculate_similarity_score(
-            resume['vector'], jd['vector'])
+        if resume.get('segment_vectors') and jd.get('segment_vectors'):
+            seg_w = segment_weights or {'experience': 0.5, 'skills': 0.3, 'education': 0.2}
+            sim_parts = []
+            total = 0.0
+            for k, w in seg_w.items():
+                rv = resume['segment_vectors'].get(k)
+                jv = jd['segment_vectors'].get(k)
+                if rv is not None and jv is not None:
+                    sim_parts.append(self.calculate_similarity_score(rv, jv) * w)
+                    total += w
+            similarity_score = (sum(sim_parts) / total) if total > 0 else self.calculate_similarity_score(resume['vector'], jd['vector'])
+        else:
+            similarity_score = self.calculate_similarity_score(resume['vector'], jd['vector'])
 
         skill_score = self.calculate_skill_match_score(resume['skills'],
                                                        jd['skills'])
@@ -184,7 +195,8 @@ class ResumeMatcher:
         self,
         resumes: List[Dict[str, Any]],
         jd: Dict[str, Any],
-        top_k: int = 10
+        top_k: int = 10,
+        config: Dict[str, Any] = None
     ) -> List[Tuple[Dict[str, Any], float, Dict[str, Any], Dict[str, Any]]]:
         """
         三级漏斗筛选：向量粗筛 → 规则精筛 → LLM补筛
@@ -197,11 +209,12 @@ class ResumeMatcher:
         Returns:
             匹配结果列表，每个元素是(简历, 匹配分数, 筛选详情, LLM分析结果)的元组
         """
+        cfg = config or {}
         filter_details = {
             'stage1': {
                 'total': len(resumes),
                 'passed': 0,
-                'threshold': 0.3
+                'threshold': float(cfg.get('stage1_threshold', 0.3))
             },
             'stage2': {
                 'total': 0,
@@ -210,7 +223,8 @@ class ResumeMatcher:
             },
             'stage3': {
                 'total': 0,
-                'passed': 0
+                'passed': 0,
+                'enabled': bool(cfg.get('llm_enabled', True))
             }
         }
 
@@ -249,7 +263,7 @@ class ResumeMatcher:
             },
             'experience': {
                 'operator': 'gte',
-                'value': jd.get('entities', {}).get('工作年限要求', '3'),
+                'value': jd.get('entities', {}).get('工作年限要求', str(cfg.get('required_years', 3))),
                 'field': 'experience'
             }
         }
@@ -317,11 +331,11 @@ class ResumeMatcher:
                 if required_skills:
                     matching_skills = set(resume_skills) & set(required_skills)
                     match_rate = len(matching_skills) / len(required_skills)
-                    # 要求至少匹配30%的必需技能
-                    if match_rate < 0.3:
+                    min_rate = float(cfg.get('skills_min_rate', 0.3))
+                    if match_rate < min_rate:
                         match = False
                         reasons.append(
-                            f"技能匹配率不足30%（要求：{len(required_skills)}个技能，匹配：{len(matching_skills)}个，匹配率：{match_rate:.2%}）"
+                            f"技能匹配率不足（要求：{len(required_skills)}个技能，匹配：{len(matching_skills)}个，匹配率：{match_rate:.2%}）"
                         )
 
             # 工作经验规则
@@ -339,8 +353,7 @@ class ResumeMatcher:
                 resume_years = max((extract_years(exp) for exp in resume_exp),
                                    default=0)
 
-                required_years = int(
-                    required_exp) if required_exp.isdigit() else 3
+                required_years = int(required_exp) if str(required_exp).isdigit() else int(cfg.get('required_years', 3))
 
                 if resume_years < required_years:
                     match = False
@@ -375,16 +388,22 @@ class ResumeMatcher:
         from core.llm_chain import LLMChain
         llm_chain = LLMChain()
 
+        boundary = cfg.get('llm_boundary', None)
         for resume, similarity_score in stage2_results:
-            # 调用LLM链式分析
-            llm_analysis = llm_chain.process_resume(jd['cleaned_text'],
-                                                    resume['cleaned_text'])
-
-            # 计算综合匹配分数，结合LLM分析结果
-            overall_score = (
-                self.calculate_overall_match_score(resume, jd) * 0.7 +
-                llm_analysis['final_score'] * 0.3)
-            stage3_results.append((resume, overall_score, llm_analysis))
+            use_llm = filter_details['stage3']['enabled']
+            if boundary and isinstance(boundary, (list, tuple)) and len(boundary) == 2:
+                lo, hi = float(boundary[0]), float(boundary[1])
+                use_llm = use_llm and (similarity_score >= lo and similarity_score <= hi)
+            if use_llm:
+                llm_analysis = llm_chain.process_resume(jd['cleaned_text'], resume['cleaned_text'])
+                overall_score = (
+                    self.calculate_overall_match_score(resume, jd, segment_weights=cfg.get('segment_weights')) * 0.7 +
+                    llm_analysis['final_score'] * 0.3)
+                stage3_results.append((resume, overall_score, llm_analysis))
+            else:
+                overall_score = self.calculate_overall_match_score(resume, jd, segment_weights=cfg.get('segment_weights'))
+                llm_analysis = {'final_score': overall_score}
+                stage3_results.append((resume, overall_score, llm_analysis))
 
             # 输出LLM补筛日志
             resume_id = resume.get('resume_id', '未知')
@@ -446,7 +465,8 @@ class ResumeMatcher:
         self,
         resumes: List[Dict[str, Any]],
         jd: Dict[str, Any],
-        top_k: int = 10
+        top_k: int = 10,
+        config: Dict[str, Any] = None
     ) -> List[Tuple[Dict[str, Any], float, Dict[str, Any], Dict[str, Any]]]:
         """
         将多个简历与单个JD进行匹配，返回匹配度最高的前k个简历，包含LLM分析结果
@@ -459,8 +479,7 @@ class ResumeMatcher:
         Returns:
             匹配结果列表，每个元素是(简历, 匹配分数, 筛选详情, LLM分析结果)的元组，按匹配分数降序排列
         """
-        # 使用三级漏斗筛选
-        return self.three_stage_filter(resumes, jd, top_k)
+        return self.three_stage_filter(resumes, jd, top_k, config)
 
     def match_resume_to_jds(
             self,

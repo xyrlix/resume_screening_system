@@ -33,7 +33,8 @@ class FileProcessor:
             'tif': '图片文件',
             'xls': 'Excel文件',
             'xlsx': 'Excel文件',
-            'md': 'Markdown文件'
+            'md': 'Markdown文件',
+            'txt': 'Text文件'
         }
         self._ocr_instance = None  # 缓存OCR实例
         self._file_cache = {}  # 文件内容缓存
@@ -101,6 +102,8 @@ class FileProcessor:
                 content = self._process_excel(file_path)
             elif file_type == 'Markdown文件':
                 content = self._process_markdown(file_path)
+            elif file_type == 'Text文件':
+                content = self._process_text(file_path)
             else:
                 content = ''
 
@@ -299,7 +302,14 @@ class FileProcessor:
                 content = f.read()
             return content.strip()
         except Exception as e:
-            # 处理失败，返回空字符串
+            return ''
+
+    def _process_text(self, file_path: str) -> str:
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            return content.strip()
+        except Exception as e:
             return ''
 
     def process_files(self, file_paths: List[str]) -> List[Dict[str, Any]]:

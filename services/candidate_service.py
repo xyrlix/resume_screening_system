@@ -37,13 +37,15 @@ class CandidateService:
         self.evaluator = ModelEvaluator()
 
         # 存储数据
-        self.resumes = []  # 存储简历信息
-        self.jobs = []  # 存储职位信息
-        self.matching_results = []  # 存储匹配结果
+        self.resumes = []
+        self.jobs = []
+        self.matching_results = []
+        self.applications = []
 
     def upload_resume(self,
                       resume_text: str,
-                      resume_id: str = None) -> Dict[str, Any]:
+                      resume_id: str = None,
+                      meta: Dict[str, Any] = None) -> Dict[str, Any]:
         """
         上传简历
         
@@ -66,8 +68,10 @@ class CandidateService:
             processed_resume)
 
         # 设置简历ID
-        featured_resume[
-            'resume_id'] = resume_id or f"resume_{len(self.resumes) + 1}"
+        featured_resume['resume_id'] = resume_id or f"resume_{len(self.resumes) + 1}"
+        if meta:
+            for k, v in meta.items():
+                featured_resume[k] = v
         logger.info(f"生成简历ID: {featured_resume['resume_id']}")
 
         # 添加到简历列表
@@ -76,7 +80,7 @@ class CandidateService:
 
         return featured_resume
 
-    def add_job(self, jd_text: str, job_id: str = None) -> Dict[str, Any]:
+    def add_job(self, jd_text: str, job_id: str = None, meta: Dict[str, Any] = None) -> Dict[str, Any]:
         """
         添加职位信息（用于模拟职位库）
         
@@ -100,6 +104,9 @@ class CandidateService:
 
         # 设置JD ID
         featured_jd['job_id'] = job_id or f"job_{len(self.jobs) + 1}"
+        if meta:
+            for k, v in meta.items():
+                featured_jd[k] = v
         logger.info(f"生成职位ID: {featured_jd['job_id']}")
 
         # 添加到JD列表
@@ -186,6 +193,45 @@ class CandidateService:
             'suggestions': suggestions,
             'resume_id': resume_id
         }
+
+    def submit_application(self, resume_id: str, job_id: str) -> Dict[str, Any]:
+        app = {
+            'application_id': f"app_{len(self.applications)+1}",
+            'resume_id': resume_id,
+            'job_id': job_id,
+            'status': 'submitted',
+            'history': []
+        }
+        self.applications.append(app)
+        return app
+
+    def update_application_status(self, application_id: str, status: str, rejection_text: str = None) -> Dict[str, Any]:
+        app = next((a for a in self.applications if a['application_id'] == application_id), None)
+        if not app:
+            raise ValueError(f"未找到ID为{application_id}的投递")
+        app['status'] = status
+        entry = {'status': status, 'timestamp': self._get_current_timestamp()}
+        if rejection_text:
+            resume = next((r for r in self.resumes if r['resume_id'] == app['resume_id']), None)
+            jd = next((j for j in self.jobs if j['job_id'] == app['job_id']), None)
+            analysis = self.llm_chain.analyze_rejection(rejection_text, resume['cleaned_text'] if resume else '', jd['cleaned_text'] if jd else '')
+            entry['rejection_analysis'] = analysis
+        app['history'].append(entry)
+        return app
+
+    def get_applications(self) -> List[Dict[str, Any]]:
+        return self.applications
+
+    def generate_learning_path(self, resume_id: str, jd_text: str) -> Dict[str, Any]:
+        resume = next((r for r in self.resumes if r['resume_id'] == resume_id), None)
+        if not resume:
+            raise ValueError(f"未找到ID为{resume_id}的简历")
+        analysis = self.llm_chain.process_resume(jd_text, resume['cleaned_text'])
+        sm = analysis.get('step3', {}).get('skill_match', {})
+        jd_skills = sm.get('jd_skills', [])
+        resume_skills = sm.get('resume_skills', [])
+        missing = [s for s in jd_skills if s not in resume_skills]
+        return self.llm_chain.generate_learning_path(missing, jd_text)
 
     def _generate_suggestions_from_analysis(self, analysis: dict,
                                             resume: Dict[str, Any],

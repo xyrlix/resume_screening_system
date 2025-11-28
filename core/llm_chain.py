@@ -41,8 +41,9 @@ class LLMChain:
         model_configs = llm_config_manager.get_all_model_configs()
         default_model = llm_config_manager.get_default_model()
 
-        # 优先顺序：deepseek, qwen, moonshot, doubao, openrouter
-        preferred_order = ['deepseek', 'qwen', 'moonshot', 'doubao', 'openrouter']
+        # 根据区域动态选择优先顺序
+        region = llm_config_manager.get_region()
+        preferred_order = llm_config_manager.get_preferred_order_by_region(region)
         configured = []
         for name in preferred_order:
             full = BaseLLMProvider.MODEL_NAME_MAPPING.get(name, name)
@@ -75,9 +76,15 @@ class LLMChain:
             提取的实体信息
         """
         pnames = self.active_provider_names
-        provider = self.llm_providers[pnames[0]]
-        logger.info(f"LLM调用 步骤1 provider={pnames[0]}")
-        return provider.extract_entities(jd_text, resume_text)
+        for name in pnames:
+            provider = self.llm_providers[name]
+            logger.info(f"LLM调用 步骤1 provider={name}")
+            try:
+                return provider.extract_entities(jd_text, resume_text)
+            except Exception as e:
+                logger.error(f"步骤1 provider={name} 失败: {e}")
+                continue
+        return MockLLMProvider('mock').extract_entities(jd_text, resume_text)
 
     def step2_validate(self, extracted: dict) -> dict:
         """
@@ -90,9 +97,16 @@ class LLMChain:
             验证和修正后的实体信息
         """
         pnames = self.active_provider_names
-        provider = self.llm_providers[pnames[1] if len(pnames) > 1 else pnames[0]]
-        logger.info(f"LLM调用 步骤2 provider={provider.name}")
-        return provider.validate_entities(extracted)
+        order = [pnames[1] if len(pnames) > 1 else pnames[0]] + pnames
+        for name in order:
+            provider = self.llm_providers[name]
+            logger.info(f"LLM调用 步骤2 provider={provider.name}")
+            try:
+                return provider.validate_entities(extracted)
+            except Exception as e:
+                logger.error(f"步骤2 provider={name} 失败: {e}")
+                continue
+        return extracted
 
     def step3_analyze(self, validated: dict) -> dict:
         """
@@ -105,9 +119,27 @@ class LLMChain:
             详细的匹配度分析
         """
         pnames = self.active_provider_names
-        provider = self.llm_providers[pnames[0]]
-        logger.info(f"LLM调用 步骤3 provider={provider.name}")
-        return provider.analyze_match(validated)
+        for name in pnames:
+            provider = self.llm_providers[name]
+            logger.info(f"LLM调用 步骤3 provider={provider.name}")
+            try:
+                return provider.analyze_match(validated)
+            except Exception as e:
+                logger.error(f"步骤3 provider={name} 失败: {e}")
+                continue
+        jd_skills = validated.get('jd_entities', {}).get('skills', [])
+        resume_skills = validated.get('resume_entities', {}).get('skills', [])
+        matching_skills = set(jd_skills) & set(resume_skills)
+        return {
+            "skill_match": {
+                "matching_skills": list(matching_skills),
+                "jd_skills": jd_skills,
+                "resume_skills": resume_skills,
+                "match_rate": len(matching_skills) / len(jd_skills) if jd_skills else 0
+            },
+            "education_match": {"match": True, "reason": "默认匹配"},
+            "experience_match": {"match": True, "reason": "默认匹配"}
+        }
 
     def step4_final_eval(self, analyzed: dict) -> dict:
         """
@@ -120,9 +152,20 @@ class LLMChain:
             最终的评估结果
         """
         pnames = self.active_provider_names
-        provider = self.llm_providers[pnames[1] if len(pnames) > 1 else pnames[0]]
-        logger.info(f"LLM调用 步骤4 provider={provider.name}")
-        return provider.generate_score(analyzed)
+        order = [pnames[1] if len(pnames) > 1 else pnames[0]] + pnames
+        for name in order:
+            provider = self.llm_providers[name]
+            logger.info(f"LLM调用 步骤4 provider={provider.name}")
+            try:
+                return provider.generate_score(analyzed)
+            except Exception as e:
+                logger.error(f"步骤4 provider={name} 失败: {e}")
+                continue
+        skill_match_rate = analyzed.get('skill_match', {}).get('match_rate', 0.0)
+        education_match = 1.0 if analyzed.get('education_match', {}).get('match', True) else 0.0
+        experience_match = 1.0 if analyzed.get('experience_match', {}).get('match', True) else 0.0
+        score = (skill_match_rate * 0.5) + (education_match * 0.25) + (experience_match * 0.25)
+        return {"score": score, "reason": "默认分数", "details": analyzed}
 
     def multi_llm_eval(self, analyzed: dict) -> dict:
         """
@@ -138,11 +181,16 @@ class LLMChain:
         for provider_name in self.active_provider_names:
             provider = self.llm_providers[provider_name]
             logger.info(f"LLM融合评分 provider={provider_name}")
-            score_result = provider.generate_score(analyzed)
-            llm_scores[provider_name] = {
-                'score': score_result['score'],
-                'reason': score_result['reason']
-            }
+            try:
+                score_result = provider.generate_score(analyzed)
+                llm_scores[provider_name] = {'score': score_result['score'], 'reason': score_result['reason']}
+            except Exception as e:
+                logger.error(f"融合评分 provider={provider_name} 失败: {e}")
+                sm = analyzed.get('skill_match', {}).get('match_rate', 0.0)
+                ed = 1.0 if analyzed.get('education_match', {}).get('match', True) else 0.0
+                ex = 1.0 if analyzed.get('experience_match', {}).get('match', True) else 0.0
+                fallback_score = (sm * 0.5) + (ed * 0.25) + (ex * 0.25)
+                llm_scores[provider_name] = {'score': fallback_score, 'reason': '默认分数'}
 
         # 加权平均，权重根据历史表现调整
         weights = self._load_llm_weights()
@@ -307,23 +355,8 @@ class LLMChain:
             优化建议
         """
         provider = self.llm_providers['openai']
-        prompt = f"""请根据以下简历和JD生成优化建议，返回JSON格式。
-
-简历文本：{resume_text}
-
-JD文本：{jd_text}
-
-需要生成的内容包括：
-1. 优化建议列表
-2. 简历的优势
-3. 简历的劣势
-
-返回格式：
-{
-    "suggestions": ["建议1", "建议2"],
-    "strengths": ["优势1", "优势2"],
-    "weaknesses": ["劣势1", "劣势2"]
-}"""
+        tmpl = self.llm_config_manager.get_prompt('generate_suggestions')
+        prompt = tmpl.replace('{resume_text}', resume_text).replace('{jd_text}', jd_text)
 
         response = provider._call_llm(prompt)
         try:
@@ -353,21 +386,8 @@ JD文本：{jd_text}
             面试题列表
         """
         provider = self.llm_providers['openai']
-        prompt = f"""请根据以下简历和JD生成面试题，返回JSON格式。
-
-简历文本：{resume_text}
-
-JD文本：{jd_text}
-
-需要生成5-10道面试题，涵盖技能、经验、项目等方面。
-
-返回格式：
-[
-    "面试题1",
-    "面试题2",
-    "面试题3"
-]
-"""
+        tmpl = self.llm_config_manager.get_prompt('generate_interview_questions')
+        prompt = tmpl.replace('{resume_text}', resume_text).replace('{jd_text}', jd_text)
 
         response = provider._call_llm(prompt)
         try:
@@ -379,6 +399,36 @@ JD文本：{jd_text}
                 "请详细介绍一下你最相关的项目经验", "你如何处理工作中的挑战？请举例说明", "你对我们公司和这个岗位有什么了解？",
                 "你认为自己的哪些技能最适合这个岗位？", "你未来的职业规划是什么？"
             ]
+
+    def evaluate_interview_answer(self, resume_text: str, jd_text: str, answer: str) -> dict:
+        provider = self.llm_providers.get('openai') or list(self.llm_providers.values())[0]
+        tmpl = self.llm_config_manager.get_prompt('evaluate_interview_answer')
+        prompt = tmpl.replace('{resume_text}', resume_text).replace('{jd_text}', jd_text).replace('{answer}', answer)
+        response = provider._call_llm(prompt)
+        try:
+            return json.loads(response)
+        except json.JSONDecodeError:
+            return {"score": 0.6, "strengths": ["结构完整"], "weaknesses": ["缺乏量化数据"], "suggestions": ["补充具体指标与结果"]}
+
+    def analyze_rejection(self, rejection_text: str, resume_text: str, jd_text: str) -> dict:
+        provider = self.llm_providers.get('openai') or list(self.llm_providers.values())[0]
+        tmpl = self.llm_config_manager.get_prompt('analyze_rejection')
+        prompt = tmpl.replace('{rejection_text}', rejection_text).replace('{resume_text}', resume_text).replace('{jd_text}', jd_text)
+        response = provider._call_llm(prompt)
+        try:
+            return json.loads(response)
+        except json.JSONDecodeError:
+            return {"reasons": ["技能匹配度不足"], "suggestions": ["补充相关项目与证书"], "priority": ["技能提升"]}
+
+    def generate_learning_path(self, missing_skills: list, target_job: str) -> dict:
+        provider = self.llm_providers.get('openai') or list(self.llm_providers.values())[0]
+        tmpl = self.llm_config_manager.get_prompt('generate_learning_path')
+        prompt = tmpl.replace('{target_job}', target_job).replace('{missing_skills}', ', '.join(missing_skills))
+        response = provider._call_llm(prompt)
+        try:
+            return json.loads(response)
+        except json.JSONDecodeError:
+            return {"steps": ["掌握基础概念", "完成小型项目", "参与开源"], "courses": [], "projects": [], "certifications": []}
 
 
 class BaseLLMProvider:
@@ -423,7 +473,7 @@ class BaseLLMProvider:
         """
         获取OpenAI客户端
         """
-        if not self.model_config or 'api_key' not in self.model_config:
+        if not self.model_config or not self.model_config.get('api_key'):
             raise ValueError(f"未配置{self.name}模型的API Key")
         if openai is None:
             raise ImportError("openai 未安装，无法使用真实LLM提供者")
@@ -445,20 +495,24 @@ class BaseLLMProvider:
         client = self._get_client()
         model = model or self.MODEL_NAME_MAPPING.get(self.name, "gpt-3.5-turbo")
         logger.info(f"LLM请求 provider={self.name} model={model} base_url={self.llm_config_manager.get_model_config(model).get('base_url','')} prompt_len={len(prompt)}")
-        response = client.chat.completions.create(
-            model=model,
-            messages=[{
-                "role": "system",
-                "content": "你是一个专业的简历筛选助手，擅长分析简历和职位描述的匹配度。"
-            }, {
-                "role": "user",
-                "content": prompt
-            }],
-            temperature=0.3,
-            max_tokens=1000)
-        content = response.choices[0].message.content
-        logger.info(f"LLM返回 provider={self.name} model={model} resp_len={len(content)}")
-        return content
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=[{
+                    "role": "system",
+                    "content": "你是一个专业的简历筛选助手，擅长分析简历和职位描述的匹配度。"
+                }, {
+                    "role": "user",
+                    "content": prompt
+                }],
+                temperature=0.3,
+                max_tokens=1000)
+            content = response.choices[0].message.content
+            logger.info(f"LLM返回 provider={self.name} model={model} resp_len={len(content)}")
+            return content
+        except Exception as e:
+            logger.error(f"LLM调用失败 provider={self.name} model={model}: {e}")
+            raise
 
 
 class RealLLMProvider(BaseLLMProvider):
@@ -477,30 +531,8 @@ class RealLLMProvider(BaseLLMProvider):
         Returns:
             提取的实体信息
         """
-        prompt = f"""请从以下职位描述(JD)和简历中提取实体信息，返回JSON格式。
-
-JD文本：{jd_text}
-
-简历文本：{resume_text}
-
-需要提取的JD实体包括：技能、学历要求、工作年限要求、职位名称
-需要提取的简历实体包括：技能、教育背景、工作经验、职位
-
-返回格式：
-{{
-    "jd_entities": {{
-        "skills": ["技能1", "技能2"],
-        "education": ["学历要求"],
-        "experience": ["工作年限要求"],
-        "position": "职位名称"
-    }},
-    "resume_entities": {{
-        "skills": ["技能1", "技能2"],
-        "education": ["教育背景"],
-        "experience": ["工作经验"],
-        "position": "职位"
-    }}
-}}"""
+        tmpl = self.llm_config_manager.get_prompt('extract_entities')
+        prompt = tmpl.replace('{jd_text}', jd_text).replace('{resume_text}', resume_text)
 
         response = self._call_llm(prompt)
         try:
@@ -533,32 +565,8 @@ JD文本：{jd_text}
         Returns:
             验证和修正后的实体信息
         """
-        prompt = f"""请验证并修正以下提取的实体信息，确保信息准确无误。
-
-提取的实体信息：
-{json.dumps(extracted, ensure_ascii=False, indent=2)}
-
-请检查：
-1. 技能是否准确
-2. 学历要求和教育背景是否合理
-3. 工作年限要求和工作经验是否匹配
-4. 职位名称是否准确
-
-返回修正后的JSON格式：
-{{
-    "jd_entities": {{
-        "skills": ["技能1", "技能2"],
-        "education": ["学历要求"],
-        "experience": ["工作年限要求"],
-        "position": "职位名称"
-    }},
-    "resume_entities": {{
-        "skills": ["技能1", "技能2"],
-        "education": ["教育背景"],
-        "experience": ["工作经验"],
-        "position": "职位"
-    }}
-}}"""
+        tmpl = self.llm_config_manager.get_prompt('validate_entities')
+        prompt = tmpl.replace('{extracted_json}', json.dumps(extracted, ensure_ascii=False, indent=2))
 
         response = self._call_llm(prompt)
         try:
@@ -578,33 +586,8 @@ JD文本：{jd_text}
         Returns:
             详细的匹配度分析
         """
-        prompt = f"""请分析以下简历和JD的匹配度，返回JSON格式。
-
-验证后的实体信息：
-{json.dumps(validated, ensure_ascii=False, indent=2)}
-
-需要分析的维度：
-1. 技能匹配：计算匹配的技能数量和匹配率
-2. 教育背景匹配：判断是否满足要求
-3. 工作经验匹配：判断是否满足要求
-
-返回格式：
-{{
-    "skill_match": {{
-        "matching_skills": ["匹配的技能1", "匹配的技能2"],
-        "jd_skills": ["JD技能1", "JD技能2"],
-        "resume_skills": ["简历技能1", "简历技能2"],
-        "match_rate": 0.8
-    }},
-    "education_match": {{
-        "match": true,
-        "reason": "教育背景满足要求"
-    }},
-    "experience_match": {{
-        "match": true,
-        "reason": "工作经验满足要求"
-    }}
-}}"""
+        tmpl = self.llm_config_manager.get_prompt('analyze_match')
+        prompt = tmpl.replace('{validated_json}', json.dumps(validated, ensure_ascii=False, indent=2))
 
         response = self._call_llm(prompt)
         try:
@@ -646,26 +629,8 @@ JD文本：{jd_text}
         Returns:
             生成的匹配分数
         """
-        prompt = f"""请根据以下匹配度分析，生成综合匹配分数，返回JSON格式。
-
-匹配度分析：
-{json.dumps(analyzed, ensure_ascii=False, indent=2)}
-
-评分标准：
-- 技能匹配率权重：50%
-- 教育背景匹配权重：25%
-- 工作经验匹配权重：25%
-
-返回格式：
-{{
-    "score": 0.85,
-    "reason": "技能匹配度高，教育背景和工作经验满足要求",
-    "details": {{
-        "skill_weight": 0.5,
-        "education_weight": 0.25,
-        "experience_weight": 0.25
-    }}
-}}"""
+        tmpl = self.llm_config_manager.get_prompt('generate_score')
+        prompt = tmpl.replace('{analyzed_json}', json.dumps(analyzed, ensure_ascii=False, indent=2))
 
         response = self._call_llm(prompt)
         try:

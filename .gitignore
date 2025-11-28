@@ -1,6 +1,7 @@
 # custom
 data/models/*
 logs/*
+uploads/*
 
 
 # Byte-compiled / optimized / DLL files

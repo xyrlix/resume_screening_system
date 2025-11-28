@@ -275,12 +275,18 @@ class LLMChain:
                 "final_score": final_score,
                 "llm_scores": llm_scores,
                 "weights": weights,
+                "active_providers": self.active_provider_names,
                 "suggestions": suggestions,
                 "interview_questions": interview_questions
             }
         except Exception as e:
             logger.error(f"处理简历时发生错误: {str(e)}")
-            # 返回一个默认结果，避免整个流程失败
+            default_llm_scores = {}
+            default_weights = {}
+            count = max(len(getattr(self, 'active_provider_names', [])), 1)
+            for name in getattr(self, 'active_provider_names', ['deepseek']):
+                default_llm_scores[name] = {"score": 0.5, "reason": "默认分数"}
+                default_weights[name] = 1.0 / count
             return {
                 "step1": {},
                 "step2": {},
@@ -306,35 +312,9 @@ class LLMChain:
                     "details": {}
                 },
                 "final_score": 0.5,
-                "llm_scores": {
-                    "qwen": {
-                        "score": 0.5,
-                        "reason": "默认分数"
-                    },
-                    "deepseek": {
-                        "score": 0.5,
-                        "reason": "默认分数"
-                    },
-                    "openai": {
-                        "score": 0.5,
-                        "reason": "默认分数"
-                    },
-                    "openrouter": {
-                        "score": 0.5,
-                        "reason": "默认分数"
-                    },
-                    "moonshot": {
-                        "score": 0.5,
-                        "reason": "默认分数"
-                    }
-                },
-                "weights": {
-                    "qwen": 0.2,
-                    "deepseek": 0.2,
-                    "openai": 0.2,
-                    "openrouter": 0.2,
-                    "moonshot": 0.2
-                },
+                "llm_scores": default_llm_scores,
+                "weights": default_weights,
+                "active_providers": getattr(self, 'active_provider_names', []),
                 "suggestions": {
                     "suggestions": [],
                     "strengths": [],
@@ -354,7 +334,8 @@ class LLMChain:
         Returns:
             优化建议
         """
-        provider = self.llm_providers['openai']
+        provider_name = self.active_provider_names[0] if self.active_provider_names else list(self.llm_providers.keys())[0]
+        provider = self.llm_providers[provider_name]
         tmpl = self.llm_config_manager.get_prompt('generate_suggestions')
         prompt = tmpl.replace('{resume_text}', resume_text).replace('{jd_text}', jd_text)
 
@@ -385,7 +366,8 @@ class LLMChain:
         Returns:
             面试题列表
         """
-        provider = self.llm_providers['openai']
+        provider_name = self.active_provider_names[0] if self.active_provider_names else list(self.llm_providers.keys())[0]
+        provider = self.llm_providers[provider_name]
         tmpl = self.llm_config_manager.get_prompt('generate_interview_questions')
         prompt = tmpl.replace('{resume_text}', resume_text).replace('{jd_text}', jd_text)
 
@@ -401,7 +383,7 @@ class LLMChain:
             ]
 
     def evaluate_interview_answer(self, resume_text: str, jd_text: str, answer: str) -> dict:
-        provider = self.llm_providers.get('openai') or list(self.llm_providers.values())[0]
+        provider = self.llm_providers.get(self.active_provider_names[0] if self.active_provider_names else next(iter(self.llm_providers)))
         tmpl = self.llm_config_manager.get_prompt('evaluate_interview_answer')
         prompt = tmpl.replace('{resume_text}', resume_text).replace('{jd_text}', jd_text).replace('{answer}', answer)
         response = provider._call_llm(prompt)
@@ -411,7 +393,7 @@ class LLMChain:
             return {"score": 0.6, "strengths": ["结构完整"], "weaknesses": ["缺乏量化数据"], "suggestions": ["补充具体指标与结果"]}
 
     def analyze_rejection(self, rejection_text: str, resume_text: str, jd_text: str) -> dict:
-        provider = self.llm_providers.get('openai') or list(self.llm_providers.values())[0]
+        provider = self.llm_providers.get(self.active_provider_names[0] if self.active_provider_names else next(iter(self.llm_providers)))
         tmpl = self.llm_config_manager.get_prompt('analyze_rejection')
         prompt = tmpl.replace('{rejection_text}', rejection_text).replace('{resume_text}', resume_text).replace('{jd_text}', jd_text)
         response = provider._call_llm(prompt)
@@ -421,7 +403,7 @@ class LLMChain:
             return {"reasons": ["技能匹配度不足"], "suggestions": ["补充相关项目与证书"], "priority": ["技能提升"]}
 
     def generate_learning_path(self, missing_skills: list, target_job: str) -> dict:
-        provider = self.llm_providers.get('openai') or list(self.llm_providers.values())[0]
+        provider = self.llm_providers.get(self.active_provider_names[0] if self.active_provider_names else next(iter(self.llm_providers)))
         tmpl = self.llm_config_manager.get_prompt('generate_learning_path')
         prompt = tmpl.replace('{target_job}', target_job).replace('{missing_skills}', ', '.join(missing_skills))
         response = provider._call_llm(prompt)

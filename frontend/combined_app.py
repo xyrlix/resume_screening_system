@@ -761,8 +761,15 @@ with role_tabs[0]:
                         st.write(f"- 平均匹配分数: {avg_score:.4f}")
                     else:
                         st.write("- 平均匹配分数: 0.0")
-                    st.write(f"- 模型准确率: 0.85")
-                    st.write(f"- 模型召回率: 0.90")
+                    try:
+                        from core.evaluator import ModelEvaluator
+                        evalr = ModelEvaluator()
+                        metrics = evalr.compute_ner_metrics_from_annotations(os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'data', 'processed', 'ner_annotations.json')))
+                        st.write(f"- 模型准确率: {metrics['accuracy']:.4f}")
+                        st.write(f"- 模型召回率: {metrics['recall']:.4f}")
+                    except Exception:
+                        st.write(f"- 模型准确率: --")
+                        st.write(f"- 模型召回率: --")
 
                     # 显示雷达图
                     st.subheader("匹配结果雷达图")
@@ -939,7 +946,7 @@ with role_tabs[0]:
                         st.metric("🏆 最终匹配分数", f"{result['final_score']:.4f}")
                     with col2:
                         st.metric("🤖 参与LLM模型数量",
-                                  len(result.get('llm_scores', {})))
+                                  len(result.get('active_providers', [])))
                     with col3:
                         st.metric("📊 分析维度", 3)  # 技能、教育、经验
 
@@ -948,7 +955,8 @@ with role_tabs[0]:
 
                     # 步骤1: 实体提取
                     with st.expander("🔍 步骤1: 实体提取", expanded=False):
-                        st.write("**使用模型**: Qwen")
+                        provs = result.get('active_providers', [])
+                        st.write(f"**使用模型**: {provs[0] if provs else 'N/A'}")
                         st.write("**任务**: 从JD和简历中提取关键实体信息，为后续匹配奠定基础")
                         if result.get('step1'):
                             col1, col2 = st.columns(2)
@@ -964,14 +972,16 @@ with role_tabs[0]:
 
                     # 步骤2: 实体验证
                     with st.expander("✅ 步骤2: 实体验证", expanded=False):
-                        st.write("**使用模型**: DeepSeek")
+                        provs = result.get('active_providers', [])
+                        st.write(f"**使用模型**: {provs[1] if len(provs) > 1 else (provs[0] if provs else 'N/A')} ")
                         st.write("**任务**: 验证和修正提取的实体信息，确保数据准确性")
                         if result.get('step2'):
                             st.json(result['step2'], expanded=False)
 
                     # 步骤3: 匹配度分析
                     with st.expander("📊 步骤3: 匹配度分析", expanded=False):
-                        st.write("**使用模型**: OpenAI")
+                        provs = result.get('active_providers', [])
+                        st.write(f"**使用模型**: {provs[0] if provs else 'N/A'}")
                         st.write("**任务**: 基于提取的实体信息，详细分析简历和JD的匹配度")
                         if result.get('step3'):
                             # 技能匹配

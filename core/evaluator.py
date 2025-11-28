@@ -6,8 +6,11 @@
 负责评估模型的性能，包括MSE、MAPE等指标的计算
 """
 
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 import numpy as np
+import json
+import os
+from core.ner_model import get_ner
 
 
 class ModelEvaluator:
@@ -220,6 +223,74 @@ class ModelEvaluator:
 
         # 计算评估指标
         return self.evaluate_model(actual_scores, predicted_scores)
+
+    def _load_ner_dataset(self, path: str) -> Tuple[List[str], List[List[Dict[str, str]]]]:
+        if not os.path.isfile(path):
+            raise FileNotFoundError(path)
+        with open(path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        texts = data.get('texts', [])
+        annotations = data.get('annotations', [])
+        return texts, annotations
+
+    def compute_ner_metrics_from_annotations(self, annotations_path: str) -> Dict[str, float]:
+        texts, annotations = self._load_ner_dataset(annotations_path)
+        ner = get_ner()
+
+        tp = 0
+        fp = 0
+        fn = 0
+
+        def norm(s: str) -> str:
+            return (s or '').strip()
+
+        for i, text in enumerate(texts):
+            gold = annotations[i] if i < len(annotations) else []
+            gold_pairs = {(norm(item.get('label')), norm(item.get('value')))
+                          for item in gold if item.get('label') and item.get('value')}
+
+            pred_pairs = set()
+            if ner:
+                spans = ner.predict(text)
+                for sp in spans:
+                    lab = norm(sp.get('label'))
+                    val = norm(sp.get('text'))
+                    if lab and val:
+                        pred_pairs.add((lab, val))
+            else:
+                pred_pairs = set()
+
+            matched_gold = set()
+            matched_pred = set()
+
+            for plab, pval in pred_pairs:
+                candidates = [(glab, gval) for (glab, gval) in gold_pairs if glab == plab]
+                hit = False
+                for glab, gval in candidates:
+                    if pval and gval and (pval in gval or gval in pval):
+                        tp += 1
+                        matched_gold.add((glab, gval))
+                        matched_pred.add((plab, pval))
+                        hit = True
+                        break
+                if not hit:
+                    fp += 1
+
+            for g in gold_pairs:
+                if g not in matched_gold:
+                    fn += 1
+
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+        recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+        f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
+        accuracy = precision
+
+        return {
+            'accuracy': accuracy,
+            'precision': precision,
+            'recall': recall,
+            'f1_score': f1,
+        }
 
     def generate_evaluation_report(
             self, evaluation_results: Dict[str, float]) -> str:

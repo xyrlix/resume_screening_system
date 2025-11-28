@@ -42,8 +42,8 @@ class LLMConfigManager:
 
         # 支持的LLM模型列表
         self.supported_models = [
-            "gpt-3.5-turbo", "gpt-4", "qwen-1.8b", "deepseek-llm-7b-chat",
-            "moonshot-v1-8k"
+            "gpt-3.5-turbo", "gpt-4", "qwen-1.8b", "Qwen3-Max",
+            "deepseek-llm-7b-chat", "moonshot-v1-8k", "Doubao-Seed-1.6"
         ]
 
         # 初始化加密器

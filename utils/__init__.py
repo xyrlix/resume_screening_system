@@ -12,9 +12,7 @@ __version__ = "1.0.0"
 # 导出工具模块
 from utils.clean_tools import clean_text, remove_special_chars, normalize_whitespace
 from utils.lang_tools import translate_text, detect_language, tokenize_text
-from utils.layout_parse import parse_document_layout, extract_layout_elements
 from utils.logger import get_logger
-from utils.parse_tools import parse_resume
 
 # 导出模块列表
 __all__ = [
@@ -26,13 +24,8 @@ __all__ = [
     'translate_text',
     'detect_language',
     'tokenize_text',
-    # 布局解析工具
-    'parse_document_layout',
-    'extract_layout_elements',
     # 日志工具
-    'get_logger',
-    # 解析工具
-    'parse_resume'
+    'get_logger'
 ]
 
 

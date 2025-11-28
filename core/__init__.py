@@ -44,5 +44,4 @@ def get_version():
     return __version__
 
 
-# 打印初始化信息
-print(f"正在加载智能简历筛选系统核心模块 v{__version__}")
+# 初始化信息输出已移除以避免控制台编码问题

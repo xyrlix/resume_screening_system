@@ -9,7 +9,7 @@
 - **可编辑 PDF/Word**：使用 PyPDF2、python-docx 提取文本
 - **扫描件/图片简历**：使用 PaddleOCR 提取文本，添加图像增强
 - **Excel 表格简历**：使用 camelot-py 提取表格数据
-- **Markdown 文档**：支持直接读取和处理 Markdown 格式的简历和职位描述
+- **TXT/Markdown 文档**：支持直接读取和处理 TXT/Markdown 格式的简历和职位描述
 
 ### 2. 行业和岗位支持
 

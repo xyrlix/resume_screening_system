@@ -154,9 +154,8 @@ JD文本：{text}
 请确保提取所有可能的实体，不要遗漏任何信息。如果某个实体不存在，请留空字符串。"""
 
                 # 使用LLM提取实体
-                provider = llm_chain.llm_providers.get(
-                    'openai',
-                    llm_chain.llm_providers.values()[0])
+                provider = llm_chain.llm_providers.get('openai') or next(
+                    iter(llm_chain.llm_providers.values()))
                 response = provider._call_llm(prompt)
 
                 # 解析LLM响应

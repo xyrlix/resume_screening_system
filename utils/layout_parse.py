@@ -1,7 +1,12 @@
-import pdfplumber
+try:
+    import pdfplumber
+except ImportError:
+    pdfplumber = None
 from typing import List, Dict, Any
 
 def layout_aware_parse(pdf_path: str):
+    if pdfplumber is None:
+        raise ImportError("pdfplumber is not installed")
     text_blocks = []
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:

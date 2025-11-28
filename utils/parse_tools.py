@@ -2,7 +2,10 @@ import os
 from typing import List, Dict, Any
 import PyPDF2
 import docx
-import pdfplumber
+try:
+    import pdfplumber
+except ImportError:
+    pdfplumber = None
 from PIL import Image
 import pytesseract
 import camelot
@@ -26,6 +29,9 @@ def parse_scanned_pdf(file_path: str) -> str:
     """解析扫描版PDF文件"""
     text = ""
     try:
+        if pdfplumber is None:
+            print("解析扫描版PDF时注意: pdfplumber未安装")
+            return ""
         with pdfplumber.open(file_path) as pdf:
             for page in pdf.pages:
                 text += page.extract_text() + "\n"

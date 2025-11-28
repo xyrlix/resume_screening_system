@@ -8,7 +8,10 @@ LLM链式分析模块
 
 from typing import List, Dict, Any
 import json
-import openai
+try:
+    import openai
+except ImportError:
+    openai = None
 from core.llm_config_manager import LLMConfigManager
 from utils.logger import get_logger
 
@@ -38,27 +41,27 @@ class LLMChain:
         model_configs = llm_config_manager.get_all_model_configs()
         default_model = llm_config_manager.get_default_model()
 
-        # 如果没有配置模型，使用模拟实现
-        if not model_configs:
-            logger.info("未配置LLM模型，使用模拟实现")
-            self.llm_providers = {
-                'qwen': MockLLMProvider('qwen'),
-                'deepseek': MockLLMProvider('deepseek'),
-                'openai': MockLLMProvider('openai'),
-                'openrouter': MockLLMProvider('openrouter'),
-                'moonshot': MockLLMProvider('moonshot')
-            }
+        # 优先顺序：deepseek, qwen, moonshot, doubao, openrouter
+        preferred_order = ['deepseek', 'qwen', 'moonshot', 'doubao', 'openrouter']
+        configured = []
+        for name in preferred_order:
+            full = BaseLLMProvider.MODEL_NAME_MAPPING.get(name, name)
+            if llm_config_manager.is_model_configured(full):
+                configured.append(name)
+
+        selected = configured[:2]
+
+        if not selected:
+            logger.info("未配置优先LLM模型，使用模拟实现")
+            # 选择前两个模拟提供者
+            selected = preferred_order[:2]
+            self.llm_providers = {n: MockLLMProvider(n) for n in selected}
         else:
-            # 使用真实的LLM提供者
             logger.info(
-                f"已配置 {len(model_configs)} 个LLM模型，默认模型: {default_model}")
-            self.llm_providers = {
-                'qwen': RealLLMProvider('qwen'),
-                'deepseek': RealLLMProvider('deepseek'),
-                'openai': RealLLMProvider('openai'),
-                'openrouter': RealLLMProvider('openrouter'),
-                'moonshot': RealLLMProvider('moonshot')
-            }
+                f"已选择 {len(selected)} 个LLM模型用于链式分析: {', '.join(selected)}")
+            self.llm_providers = {n: RealLLMProvider(n) for n in selected}
+
+        self.active_provider_names = selected
 
     def step1_extract(self, jd_text: str, resume_text: str) -> dict:
         """
@@ -71,7 +74,9 @@ class LLMChain:
         Returns:
             提取的实体信息
         """
-        provider = self.llm_providers['qwen']
+        pnames = self.active_provider_names
+        provider = self.llm_providers[pnames[0]]
+        logger.info(f"LLM调用 步骤1 provider={pnames[0]}")
         return provider.extract_entities(jd_text, resume_text)
 
     def step2_validate(self, extracted: dict) -> dict:
@@ -84,7 +89,9 @@ class LLMChain:
         Returns:
             验证和修正后的实体信息
         """
-        provider = self.llm_providers['deepseek']
+        pnames = self.active_provider_names
+        provider = self.llm_providers[pnames[1] if len(pnames) > 1 else pnames[0]]
+        logger.info(f"LLM调用 步骤2 provider={provider.name}")
         return provider.validate_entities(extracted)
 
     def step3_analyze(self, validated: dict) -> dict:
@@ -97,7 +104,9 @@ class LLMChain:
         Returns:
             详细的匹配度分析
         """
-        provider = self.llm_providers['openai']
+        pnames = self.active_provider_names
+        provider = self.llm_providers[pnames[0]]
+        logger.info(f"LLM调用 步骤3 provider={provider.name}")
         return provider.analyze_match(validated)
 
     def step4_final_eval(self, analyzed: dict) -> dict:
@@ -110,7 +119,9 @@ class LLMChain:
         Returns:
             最终的评估结果
         """
-        provider = self.llm_providers['openrouter']
+        pnames = self.active_provider_names
+        provider = self.llm_providers[pnames[1] if len(pnames) > 1 else pnames[0]]
+        logger.info(f"LLM调用 步骤4 provider={provider.name}")
         return provider.generate_score(analyzed)
 
     def multi_llm_eval(self, analyzed: dict) -> dict:
@@ -124,7 +135,9 @@ class LLMChain:
             融合后的匹配分数和每个LLM的评分
         """
         llm_scores = {}
-        for provider_name, provider in self.llm_providers.items():
+        for provider_name in self.active_provider_names:
+            provider = self.llm_providers[provider_name]
+            logger.info(f"LLM融合评分 provider={provider_name}")
             score_result = provider.generate_score(analyzed)
             llm_scores[provider_name] = {
                 'score': score_result['score'],
@@ -133,9 +146,8 @@ class LLMChain:
 
         # 加权平均，权重根据历史表现调整
         weights = self._load_llm_weights()
-        weighted_sum = sum(llm_scores[provider_name]['score'] *
-                           weights[provider_name]
-                           for provider_name in self.llm_providers.keys())
+        weighted_sum = sum(llm_scores[p]['score'] * weights[p]
+                           for p in self.active_provider_names)
         final_score = weighted_sum / sum(weights.values())
 
         return {
@@ -152,13 +164,12 @@ class LLMChain:
             LLM模型权重字典
         """
         # 这里使用默认权重，实际项目中应该根据历史表现动态调整
-        return {
-            'qwen': 0.2,
-            'deepseek': 0.2,
-            'openai': 0.2,
-            'openrouter': 0.2,
-            'moonshot': 0.2
-        }
+        # 仅对当前激活的提供者设置权重，平均分配
+        weights = {}
+        count = max(len(getattr(self, 'active_provider_names', [])), 1)
+        for name in getattr(self, 'active_provider_names', ['deepseek']):
+            weights[name] = 1.0 / count
+        return weights
 
     def process_resume(self, jd_text: str, resume_text: str) -> dict:
         """
@@ -378,10 +389,11 @@ class BaseLLMProvider:
     # 模型名称映射：简短名称 -> 完整名称
     MODEL_NAME_MAPPING = {
         'qwen': 'qwen-1.8b',
-        'deepseek': 'deepseek-llm-7b-chat',
+        'deepseek': 'deepseek-chat',
         'openai': 'gpt-3.5-turbo',
         'openrouter': 'gpt-3.5-turbo',
-        'moonshot': 'moonshot-v1-8k'
+        'moonshot': 'moonshot-v1-8k',
+        'doubao': 'Doubao-Seed-1.6'
     }
 
     def __init__(self, name: str):
@@ -413,12 +425,13 @@ class BaseLLMProvider:
         """
         if not self.model_config or 'api_key' not in self.model_config:
             raise ValueError(f"未配置{self.name}模型的API Key")
-
+        if openai is None:
+            raise ImportError("openai 未安装，无法使用真实LLM提供者")
         client = openai.OpenAI(api_key=self.model_config['api_key'],
                                base_url=self.model_config.get('base_url'))
         return client
 
-    def _call_llm(self, prompt: str, model: str = "gpt-3.5-turbo") -> str:
+    def _call_llm(self, prompt: str, model: str = None) -> str:
         """
         调用LLM模型
         
@@ -430,6 +443,8 @@ class BaseLLMProvider:
             LLM响应
         """
         client = self._get_client()
+        model = model or self.MODEL_NAME_MAPPING.get(self.name, "gpt-3.5-turbo")
+        logger.info(f"LLM请求 provider={self.name} model={model} base_url={self.llm_config_manager.get_model_config(model).get('base_url','')} prompt_len={len(prompt)}")
         response = client.chat.completions.create(
             model=model,
             messages=[{
@@ -441,7 +456,9 @@ class BaseLLMProvider:
             }],
             temperature=0.3,
             max_tokens=1000)
-        return response.choices[0].message.content
+        content = response.choices[0].message.content
+        logger.info(f"LLM返回 provider={self.name} model={model} resp_len={len(content)}")
+        return content
 
 
 class RealLLMProvider(BaseLLMProvider):
@@ -687,6 +704,7 @@ class MockLLMProvider(BaseLLMProvider):
         Returns:
             提取的实体信息
         """
+        logger.info(f"MockLLM 提取实体 provider={self.name}")
         return {
             "jd_entities": {
                 "skills": ["Python", "Java", "SQL"],
@@ -713,6 +731,7 @@ class MockLLMProvider(BaseLLMProvider):
             验证和修正后的实体信息
         """
         # 简单验证，实际项目中应该使用LLM进行验证
+        logger.info(f"MockLLM 验证实体 provider={self.name}")
         return extracted
 
     def analyze_match(self, validated: dict) -> dict:
@@ -729,6 +748,7 @@ class MockLLMProvider(BaseLLMProvider):
         resume_skills = validated['resume_entities']['skills']
         matching_skills = set(jd_skills) & set(resume_skills)
 
+        logger.info(f"MockLLM 匹配分析 provider={self.name}")
         return {
             "skill_match": {
                 "matching_skills":
@@ -774,6 +794,7 @@ class MockLLMProvider(BaseLLMProvider):
         random_factor = random.uniform(0.95, 1.05)
         score = min(max(score * random_factor, 0.0), 1.0)
 
+        logger.info(f"MockLLM 生成分数 provider={self.name}")
         return {
             "score": score,
             "reason":

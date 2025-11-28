@@ -1,0 +1,31 @@
+{
+  "models": {
+    "qwen-1.8b": {
+      "api_key": "gAAAAABpKD-CQjiABjqfIvaXGWfd8DmybDEKyJ2yYZD97UR7iYkKE1qQgEFeM4xuvgLuzRK3DpL-bYLxIbvXNTF4uExRWhwpXw==",
+      "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    },
+    "deepseek-llm-7b-chat": {
+      "api_key": "gAAAAABpKD-Cqc1_X3OSNmWrC51p5wjkeJdiTERIt1NcxNChcMbj3P6OePpuLg0zVCjBIP-lMIOJiMknfNAg193pXvbjbFPb22kJemRFThpm_bhHHjFtIKaC3FWOVF9Pg-lzuDCJjVdU",
+      "base_url": "https://api.deepseek.com/v1"
+    },
+    "moonshot-v1-8k": {
+      "api_key": "gAAAAABpKD-C9Wpld4ocKm_pnf2PGeCVf_we9laxWx531tIBcVWWuca9ZFQGp5naQXJP1HSgoOoDHV3TTQcopLbJTSdfiuygljDJDgPT9h8ejM4LCp71wf6KxcpH_6fydXTCkaYNN1Hs1lK2ZB-VjhIAyWV0ZenrcA==",
+      "base_url": "https://api.moonshot.cn/v1"
+    },
+    "gpt-3.5-turbo": {
+      "api_key": "gAAAAABpKD-CtAViEBi8iSdehulJ9q0cKIZ7piDUrrmxWqE6W_mxe2TONDZZMXjDaYga2OT0sM3_oESlF1jPi5C8PVV7W3hGWSMjoytdiV87IXY7IMo4LZUqoG_hh82Q84ecjhJApLrei0Q1kRQQ2MTAz4IK8dufufBXoaNFADDPlrBlrRs5Eo0=",
+      "base_url": "https://openrouter.ai/api/v1"
+    },
+    "gpt-4": {
+      "api_key": "gAAAAABpKD-Cgog6PlfVxrmMNA8irsBkCzzUIv4h929u6tA8QtX2fSBYV6zvBEQO1d4Em0X5v7X1GJxqSzC3zD4M2GQkNh1wlb4eTZ8nZfc1x6NpHD9qj3gHShoUTA5ltql8oM7Gnygv9pSW8BBext00t7g-Kv_oYtiFmJCkbxZKIUoUz6ZWl-0=",
+      "base_url": "https://openrouter.ai/api/v1"
+    }
+  },
+  "chains": [
+    [
+      "deepseek-llm-7b-chat",
+      "qwen-1.8b"
+    ]
+  ],
+  "default_model": "qwen-1.8b"
+}

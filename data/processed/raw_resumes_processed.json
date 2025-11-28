@@ -1,0 +1,2602 @@
+[
+    {
+        "text": "个人简历\n姓名：陈三0\n求职意向：前端工程师\n学历：博士\n专业：统计学\n工作年限：4年\n技能：Linux, PyTorch, Scala, RAG\n项目经验：在阿里巴巴参与前端工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：复旦大学\n薪资期望：28K48K\n证书：CKA\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三0\n求职意向：前端工程师\n学历：博士\n专业：统计学\n工作年限：4年\n技能：Linux, PyTorch, Scala, RAG\n项目经验：在阿里巴巴参与前端工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：28K48K\n证书：CKA\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_0.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：郑一1\n求职意向：架构师\n学历：博士\n专业：数学\n工作年限：3年\n技能：Linux, TypeScript, GCP, PostgreSQL, Python, XGBoost\n项目经验：在京东参与架构师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：上海交通大学\n薪资期望：23K55K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：郑一1\n求职意向：架构师\n学历：博士\n专业：数学\n工作年限：3年\n技能：Linux, TypeScript, GCP, PostgreSQL, Python, XGBoost\n项目经验：在京东参与架构师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：23K55K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_1.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十10\n求职意向：后端工程师\n学历：博士\n专业：人工智能\n工作年限：12年\n技能：Git, C, Azure, Rust, Faiss\n项目经验：在阿里巴巴参与后端工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：32K54K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十10\n求职意向：后端工程师\n学历：博士\n专业：人工智能\n工作年限：12年\n技能：Git, C, Azure, Rust, Faiss\n项目经验：在阿里巴巴参与后端工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：32K54K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_10.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：钱七100\n求职意向：计算机视觉工程师\n学历：硕士\n专业：人工智能\n工作年限：10年\n技能：Node.js, Redis, Airflow, Milvus, LangChain, React\n项目经验：在腾讯参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：南京大学\n薪资期望：21K54K\n证书：AWS SAA\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：钱七100\n求职意向：计算机视觉工程师\n学历：硕士\n专业：人工智能\n工作年限：10年\n技能：Node.js, Redis, Airflow, Milvus, LangChain, React\n项目经验：在腾讯参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：南京大学\n薪资期望：21K54K\n证书：AWS SAA\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_100.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八101\n求职意向：DevOps工程师\n学历：博士\n专业：统计学\n工作年限：8年\n技能：Redis, Rust, XGBoost\n项目经验：在美团参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：浙江大学\n薪资期望：43K78K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八101\n求职意向：DevOps工程师\n学历：博士\n专业：统计学\n工作年限：8年\n技能：Redis, Rust, XGBoost\n项目经验：在美团参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：43K78K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_101.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：李四102\n求职意向：数据工程师\n学历：大专\n专业：人工智能\n工作年限：0年\n技能：C, Vue, Milvus, Kafka, Git, Airflow\n项目经验：在阿里巴巴参与数据工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：上海交通大学\n薪资期望：22K47K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：李四102\n求职意向：数据工程师\n学历：大专\n专业：人工智能\n工作年限：0年\n技能：C, Vue, Milvus, Kafka, Git, Airflow\n项目经验：在阿里巴巴参与数据工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：22K47K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_102.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四103\n求职意向：机器学习工程师\n学历：硕士\n专业：软件工程\n工作年限：0年\n技能：Elasticsearch, PyTorch, TypeScript, Jenkins, Python\n项目经验：在阿里巴巴参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：清华大学\n薪资期望：23K59K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四103\n求职意向：机器学习工程师\n学历：硕士\n专业：软件工程\n工作年限：0年\n技能：Elasticsearch, PyTorch, TypeScript, Jenkins, Python\n项目经验：在阿里巴巴参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：23K59K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_103.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四104\n求职意向：架构师\n学历：大专\n专业：计算机科学\n工作年限：12年\n技能：Git, MongoDB, TensorFlow, C, React\n项目经验：在小米参与架构师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：清华大学\n薪资期望：18K77K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四104\n求职意向：架构师\n学历：大专\n专业：计算机科学\n工作年限：12年\n技能：Git, MongoDB, TensorFlow, C, React\n项目经验：在小米参与架构师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：18K77K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_104.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三105\n求职意向：DevOps工程师\n学历：硕士\n专业：统计学\n工作年限：2年\n技能：Angular, Python, Jenkins, Flink, Git\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：北京大学\n薪资期望：36K51K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三105\n求职意向：DevOps工程师\n学历：硕士\n专业：统计学\n工作年限：2年\n技能：Angular, Python, Jenkins, Flink, Git\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：36K51K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_105.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：李四106\n求职意向：DevOps工程师\n学历：博士\n专业：信息工程\n工作年限：7年\n技能：Airflow, Kafka, MySQL\n项目经验：在字节跳动参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：上海交通大学\n薪资期望：40K50K\n证书：PMP\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：李四106\n求职意向：DevOps工程师\n学历：博士\n专业：信息工程\n工作年限：7年\n技能：Airflow, Kafka, MySQL\n项目经验：在字节跳动参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：本科院校\n薪资期望：40K50K\n证书：PMP\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_106.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：卫五107\n求职意向：架构师\n学历：本科\n专业：软件工程\n工作年限：0年\n技能：RAG, Spark, LightGBM, Node.js, Elasticsearch\n项目经验：在腾讯参与架构师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：南京大学\n薪资期望：19K50K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：卫五107\n求职意向：架构师\n学历：本科\n专业：软件工程\n工作年限：0年\n技能：RAG, Spark, LightGBM, Node.js, Elasticsearch\n项目经验：在腾讯参与架构师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：南京大学\n薪资期望：19K50K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_107.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十108\n求职意向：后端工程师\n学历：本科\n专业：软件工程\n工作年限：0年\n技能：Go, Hadoop, MongoDB, Milvus\n项目经验：在京东参与后端工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：南京大学\n薪资期望：32K76K\n证书：CKA\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十108\n求职意向：后端工程师\n学历：本科\n专业：软件工程\n工作年限：0年\n技能：Go, Hadoop, MongoDB, Milvus\n项目经验：在京东参与后端工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：南京大学\n薪资期望：32K76K\n证书：CKA\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_108.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：钱七109\n求职意向：机器学习工程师\n学历：博士\n专业：电子工程\n工作年限：10年\n技能：PostgreSQL, TensorFlow, Kafka, Angular, Vue\n项目经验：在小米参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：浙江大学\n薪资期望：25K57K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：钱七109\n求职意向：机器学习工程师\n学历：博士\n专业：电子工程\n工作年限：10年\n技能：PostgreSQL, TensorFlow, Kafka, Angular, Vue\n项目经验：在小米参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：25K57K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_109.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：郑一11\n求职意向：算法工程师\n学历：本科\n专业：数学\n工作年限：9年\n技能：Kubernetes, RAG, Docker, MongoDB, Vue, Kafka\n项目经验：在小米参与算法工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：复旦大学\n薪资期望：29K53K\n证书：CKAD\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：郑一11\n求职意向：算法工程师\n学历：本科\n专业：数学\n工作年限：9年\n技能：Kubernetes, RAG, Docker, MongoDB, Vue, Kafka\n项目经验：在小米参与算法工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：29K53K\n证书：CKAD\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_11.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八110\n求职意向：DevOps工程师\n学历：本科\n专业：电子工程\n工作年限：1年\n技能：Rust, Angular, LightGBM, RAG, Redis, Hadoop\n项目经验：在阿里巴巴参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：清华大学\n薪资期望：25K64K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八110\n求职意向：DevOps工程师\n学历：本科\n专业：电子工程\n工作年限：1年\n技能：Rust, Angular, LightGBM, RAG, Redis, Hadoop\n项目经验：在阿里巴巴参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：25K64K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_110.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四111\n求职意向：NLP工程师\n学历：硕士\n专业：统计学\n工作年限：7年\n技能：TypeScript, Go, Flink, Jenkins, Angular\n项目经验：在美团参与NLP工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：中国科学技术大学\n薪资期望：40K49K\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四111\n求职意向：NLP工程师\n学历：硕士\n专业：统计学\n工作年限：7年\n技能：TypeScript, Go, Flink, Jenkins, Angular\n项目经验：在美团参与NLP工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：中国科学技术大学\n薪资期望：40K49K\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_111.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：周九112\n求职意向：机器学习工程师\n学历：硕士\n专业：计算机科学\n工作年限：2年\n技能：Go, PyTorch, C, Git, Kafka, AWS\n项目经验：在京东参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：复旦大学\n薪资期望：16K55K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：周九112\n求职意向：机器学习工程师\n学历：硕士\n专业：计算机科学\n工作年限：2年\n技能：Go, PyTorch, C, Git, Kafka, AWS\n项目经验：在京东参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：16K55K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_112.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八113\n求职意向：机器学习工程师\n学历：大专\n专业：电子工程\n工作年限：1年\n技能：LangChain, Kafka, Vue, Hadoop\n项目经验：在美团参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：北京大学\n薪资期望：45K53K\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八113\n求职意向：机器学习工程师\n学历：大专\n专业：电子工程\n工作年限：1年\n技能：LangChain, Kafka, Vue, Hadoop\n项目经验：在美团参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：45K53K\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_113.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十114\n求职意向：DevOps工程师\n学历：大专\n专业：数学\n工作年限：1年\n技能：MySQL, TypeScript, Kubernetes, Jenkins, Redis\n项目经验：在小米参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：北京大学\n薪资期望：18K54K\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十114\n求职意向：DevOps工程师\n学历：大专\n专业：数学\n工作年限：1年\n技能：MySQL, TypeScript, Kubernetes, Jenkins, Redis\n项目经验：在小米参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：18K54K\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_114.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四115\n求职意向：计算机视觉工程师\n学历：博士\n专业：电子工程\n工作年限：10年\n技能：Flink, C, AWS, RAG, Redis\n项目经验：在美团参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：南京大学\n薪资期望：20K57K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四115\n求职意向：计算机视觉工程师\n学历：博士\n专业：电子工程\n工作年限：10年\n技能：Flink, C, AWS, RAG, Redis\n项目经验：在美团参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：南京大学\n薪资期望：20K57K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_115.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：李四116\n求职意向：数据工程师\n学历：硕士\n专业：软件工程\n工作年限：12年\n技能：Java, Kafka, AWS, Azure, Terraform, Node.js\n项目经验：在腾讯参与数据工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：复旦大学\n薪资期望：43K51K\n证书：AWS SAA\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：李四116\n求职意向：数据工程师\n学历：硕士\n专业：软件工程\n工作年限：12年\n技能：Java, Kafka, AWS, Azure, Terraform, Node.js\n项目经验：在腾讯参与数据工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：43K51K\n证书：AWS SAA\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_116.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：郑一117\n求职意向：NLP工程师\n学历：大专\n专业：电子工程\n工作年限：9年\n技能：PyTorch, Hadoop, C\n项目经验：在小米参与NLP工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：浙江大学\n薪资期望：36K79K\n证书：RHCE\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：郑一117\n求职意向：NLP工程师\n学历：大专\n专业：电子工程\n工作年限：9年\n技能：PyTorch, Hadoop, C\n项目经验：在小米参与NLP工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：36K79K\n证书：RHCE\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_117.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三118\n求职意向：架构师\n学历：硕士\n专业：电子工程\n工作年限：2年\n技能：Milvus, C, TensorFlow, LangChain, scikitlearn, MongoDB\n项目经验：在腾讯参与架构师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：北京大学\n薪资期望：25K60K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三118\n求职意向：架构师\n学历：硕士\n专业：电子工程\n工作年限：2年\n技能：Milvus, C, TensorFlow, LangChain, scikitlearn, MongoDB\n项目经验：在腾讯参与架构师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：25K60K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_118.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：郑一119\n求职意向：数据科学家\n学历：博士\n专业：人工智能\n工作年限：3年\n技能：PyTorch, MongoDB, Jenkins, RAG, Rust\n项目经验：在腾讯参与数据科学家相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：复旦大学\n薪资期望：45K55K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：郑一119\n求职意向：数据科学家\n学历：博士\n专业：人工智能\n工作年限：3年\n技能：PyTorch, MongoDB, Jenkins, RAG, Rust\n项目经验：在腾讯参与数据科学家相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：45K55K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_119.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：张三12\n求职意向：架构师\n学历：硕士\n专业：数学\n工作年限：3年\n技能：C, C, Linux\n项目经验：在阿里巴巴参与架构师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：清华大学\n薪资期望：42K67K\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：张三12\n求职意向：架构师\n学历：硕士\n专业：数学\n工作年限：3年\n技能：C, C, Linux\n项目经验：在阿里巴巴参与架构师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：42K67K\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_12.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四120\n求职意向：架构师\n学历：本科\n专业：电子工程\n工作年限：9年\n技能：Java, Rust, Go\n项目经验：在美团参与架构师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：中国科学技术大学\n薪资期望：21K72K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四120\n求职意向：架构师\n学历：本科\n专业：电子工程\n工作年限：9年\n技能：Java, Rust, Go\n项目经验：在美团参与架构师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：中国科学技术大学\n薪资期望：21K72K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_120.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十121\n求职意向：DevOps工程师\n学历：本科\n专业：统计学\n工作年限：4年\n技能：Git, Vue, MongoDB, Node.js, C, C\n项目经验：在腾讯参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：浙江大学\n薪资期望：28K76K\n证书：RHCE\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十121\n求职意向：DevOps工程师\n学历：本科\n专业：统计学\n工作年限：4年\n技能：Git, Vue, MongoDB, Node.js, C, C\n项目经验：在腾讯参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：28K76K\n证书：RHCE\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_121.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五122\n求职意向：机器学习工程师\n学历：本科\n专业：统计学\n工作年限：5年\n技能：PyTorch, Kafka, Milvus, AWS, Scala, Hadoop\n项目经验：在华为参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：浙江大学\n薪资期望：18K63K\n证书：PMP\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五122\n求职意向：机器学习工程师\n学历：本科\n专业：统计学\n工作年限：5年\n技能：PyTorch, Kafka, Milvus, AWS, Scala, Hadoop\n项目经验：在华为参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：18K63K\n证书：PMP\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_122.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：张三123\n求职意向：数据科学家\n学历：大专\n专业：电子工程\n工作年限：9年\n技能：Git, XGBoost, Hadoop, Azure, GCP, Docker\n项目经验：在腾讯参与数据科学家相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：浙江大学\n薪资期望：31K75K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：张三123\n求职意向：数据科学家\n学历：大专\n专业：电子工程\n工作年限：9年\n技能：Git, XGBoost, Hadoop, Azure, GCP, Docker\n项目经验：在腾讯参与数据科学家相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：31K75K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_123.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十124\n求职意向：后端工程师\n学历：博士\n专业：信息工程\n工作年限：8年\n技能：Git, Kubernetes, GCP, Flink, C, AWS\n项目经验：在美团参与后端工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：浙江大学\n薪资期望：34K76K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十124\n求职意向：后端工程师\n学历：博士\n专业：信息工程\n工作年限：8年\n技能：Git, Kubernetes, GCP, Flink, C, AWS\n项目经验：在美团参与后端工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：34K76K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_124.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：李四125\n求职意向：NLP工程师\n学历：硕士\n专业：人工智能\n工作年限：11年\n技能：Vue, Kafka, Go, C, Azure\n项目经验：在华为参与NLP工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：上海交通大学\n薪资期望：32K64K\n证书：AWS SAA\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：李四125\n求职意向：NLP工程师\n学历：硕士\n专业：人工智能\n工作年限：11年\n技能：Vue, Kafka, Go, C, Azure\n项目经验：在华为参与NLP工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：32K64K\n证书：AWS SAA\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_125.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：卫五126\n求职意向：DevOps工程师\n学历：本科\n专业：电子工程\n工作年限：9年\n技能：PyTorch, Scala, Vue\n项目经验：在百度参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：南京大学\n薪资期望：25K69K\n证书：RHCE\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：卫五126\n求职意向：DevOps工程师\n学历：本科\n专业：电子工程\n工作年限：9年\n技能：PyTorch, Scala, Vue\n项目经验：在百度参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：南京大学\n薪资期望：25K69K\n证书：RHCE\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_126.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：周九127\n求职意向：DevOps工程师\n学历：博士\n专业：计算机科学\n工作年限：0年\n技能：Spark, Elasticsearch, LangChain, Node.js\n项目经验：在腾讯参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：复旦大学\n薪资期望：43K78K\n证书：RHCE\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：周九127\n求职意向：DevOps工程师\n学历：博士\n专业：计算机科学\n工作年限：0年\n技能：Spark, Elasticsearch, LangChain, Node.js\n项目经验：在腾讯参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：43K78K\n证书：RHCE\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_127.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八128\n求职意向：算法工程师\n学历：大专\n专业：数学\n工作年限：11年\n技能：GCP, Spark, Milvus, RAG, Faiss\n项目经验：在美团参与算法工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：浙江大学\n薪资期望：41K47K\n证书：PMP\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八128\n求职意向：算法工程师\n学历：大专\n专业：数学\n工作年限：11年\n技能：GCP, Spark, Milvus, RAG, Faiss\n项目经验：在美团参与算法工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：41K47K\n证书：PMP\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_128.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：周九129\n求职意向：架构师\n学历：本科\n专业：电子工程\n工作年限：11年\n技能：Terraform, Elasticsearch, MySQL\n项目经验：在华为参与架构师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：中国科学技术大学\n薪资期望：16K76K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：周九129\n求职意向：架构师\n学历：本科\n专业：电子工程\n工作年限：11年\n技能：Terraform, Elasticsearch, MySQL\n项目经验：在华为参与架构师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：中国科学技术大学\n薪资期望：16K76K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_129.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：钱七13\n求职意向：计算机视觉工程师\n学历：硕士\n专业：数学\n工作年限：2年\n技能：Git, Elasticsearch, React, Docker, Scala, AWS\n项目经验：在京东参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：上海交通大学\n薪资期望：28K72K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：钱七13\n求职意向：计算机视觉工程师\n学历：硕士\n专业：数学\n工作年限：2年\n技能：Git, Elasticsearch, React, Docker, Scala, AWS\n项目经验：在京东参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：28K72K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_13.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四130\n求职意向：架构师\n学历：大专\n专业：软件工程\n工作年限：10年\n技能：Go, Azure, TensorFlow, Docker\n项目经验：在字节跳动参与架构师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：浙江大学\n薪资期望：25K72K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四130\n求职意向：架构师\n学历：大专\n专业：软件工程\n工作年限：10年\n技能：Go, Azure, TensorFlow, Docker\n项目经验：在字节跳动参与架构师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：本科院校\n薪资期望：25K72K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_130.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六131\n求职意向：NLP工程师\n学历：大专\n专业：电子工程\n工作年限：11年\n技能：PyTorch, LangChain, Kubernetes\n项目经验：在百度参与NLP工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：中国科学技术大学\n薪资期望：30K79K\n证书：CKA\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六131\n求职意向：NLP工程师\n学历：大专\n专业：电子工程\n工作年限：11年\n技能：PyTorch, LangChain, Kubernetes\n项目经验：在百度参与NLP工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：中国科学技术大学\n薪资期望：30K79K\n证书：CKA\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_131.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十132\n求职意向：DevOps工程师\n学历：本科\n专业：数学\n工作年限：5年\n技能：Jenkins, Elasticsearch, Docker, Git, PostgreSQL\n项目经验：在美团参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：北京大学\n薪资期望：45K65K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十132\n求职意向：DevOps工程师\n学历：本科\n专业：数学\n工作年限：5年\n技能：Jenkins, Elasticsearch, Docker, Git, PostgreSQL\n项目经验：在美团参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：45K65K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_132.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四133\n求职意向：计算机视觉工程师\n学历：本科\n专业：信息工程\n工作年限：5年\n技能：Redis, TensorFlow, Azure, RAG, Airflow\n项目经验：在京东参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：南京大学\n薪资期望：26K55K\n证书：PMP\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四133\n求职意向：计算机视觉工程师\n学历：本科\n专业：信息工程\n工作年限：5年\n技能：Redis, TensorFlow, Azure, RAG, Airflow\n项目经验：在京东参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：南京大学\n薪资期望：26K55K\n证书：PMP\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_133.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八134\n求职意向：计算机视觉工程师\n学历：本科\n专业：统计学\n工作年限：7年\n技能：Docker, RAG, PostgreSQL, AWS\n项目经验：在美团参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：北京大学\n薪资期望：18K61K\n证书：RHCE\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八134\n求职意向：计算机视觉工程师\n学历：本科\n专业：统计学\n工作年限：7年\n技能：Docker, RAG, PostgreSQL, AWS\n项目经验：在美团参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：18K61K\n证书：RHCE\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_134.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六135\n求职意向：数据工程师\n学历：博士\n专业：计算机科学\n工作年限：6年\n技能：Elasticsearch, Scala, PyTorch, Python, AWS\n项目经验：在腾讯参与数据工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：浙江大学\n薪资期望：35K76K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六135\n求职意向：数据工程师\n学历：博士\n专业：计算机科学\n工作年限：6年\n技能：Elasticsearch, Scala, PyTorch, Python, AWS\n项目经验：在腾讯参与数据工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：35K76K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_135.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：卫五136\n求职意向：数据科学家\n学历：本科\n专业：人工智能\n工作年限：10年\n技能：Rust, Azure, Linux\n项目经验：在字节跳动参与数据科学家相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：北京大学\n薪资期望：28K57K\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：卫五136\n求职意向：数据科学家\n学历：本科\n专业：人工智能\n工作年限：10年\n技能：Rust, Azure, Linux\n项目经验：在字节跳动参与数据科学家相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：本科院校\n薪资期望：28K57K\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_136.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：周九137\n求职意向：计算机视觉工程师\n学历：硕士\n专业：统计学\n工作年限：4年\n技能：Python, MongoDB, Azure\n项目经验：在阿里巴巴参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：上海交通大学\n薪资期望：24K75K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：周九137\n求职意向：计算机视觉工程师\n学历：硕士\n专业：统计学\n工作年限：4年\n技能：Python, MongoDB, Azure\n项目经验：在阿里巴巴参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：24K75K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_137.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十138\n求职意向：算法工程师\n学历：大专\n专业：人工智能\n工作年限：3年\n技能：Spark, XGBoost, Node.js\n项目经验：在美团参与算法工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：中国科学技术大学\n薪资期望：20K46K\n证书：CKAD\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十138\n求职意向：算法工程师\n学历：大专\n专业：人工智能\n工作年限：3年\n技能：Spark, XGBoost, Node.js\n项目经验：在美团参与算法工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：中国科学技术大学\n薪资期望：20K46K\n证书：CKAD\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_138.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：冯二139\n求职意向：数据工程师\n学历：硕士\n专业：数学\n工作年限：10年\n技能：Angular, Milvus, Hadoop, Rust, Vue, Scala\n项目经验：在腾讯参与数据工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：北京大学\n薪资期望：30K66K\n证书：AWS SAA\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：冯二139\n求职意向：数据工程师\n学历：硕士\n专业：数学\n工作年限：10年\n技能：Angular, Milvus, Hadoop, Rust, Vue, Scala\n项目经验：在腾讯参与数据工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：30K66K\n证书：AWS SAA\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_139.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：张三14\n求职意向：前端工程师\n学历：博士\n专业：信息工程\n工作年限：11年\n技能：Scala, Git, Docker, RAG, TypeScript\n项目经验：在腾讯参与前端工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：浙江大学\n薪资期望：20K63K\n证书：PMP\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：张三14\n求职意向：前端工程师\n学历：博士\n专业：信息工程\n工作年限：11年\n技能：Scala, Git, Docker, RAG, TypeScript\n项目经验：在腾讯参与前端工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：20K63K\n证书：PMP\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_14.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六140\n求职意向：计算机视觉工程师\n学历：本科\n专业：人工智能\n工作年限：4年\n技能：MySQL, Kafka, Git\n项目经验：在字节跳动参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：中国科学技术大学\n薪资期望：18K75K\n证书：RHCE\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六140\n求职意向：计算机视觉工程师\n学历：本科\n专业：人工智能\n工作年限：4年\n技能：MySQL, Kafka, Git\n项目经验：在字节跳动参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：中国科学技术大学\n薪资期望：18K75K\n证书：RHCE\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_140.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四141\n求职意向：数据科学家\n学历：博士\n专业：统计学\n工作年限：4年\n技能：Jenkins, Linux, PyTorch, Elasticsearch, scikitlearn\n项目经验：在小米参与数据科学家相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：中国科学技术大学\n薪资期望：34K69K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四141\n求职意向：数据科学家\n学历：博士\n专业：统计学\n工作年限：4年\n技能：Jenkins, Linux, PyTorch, Elasticsearch, scikitlearn\n项目经验：在小米参与数据科学家相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：中国科学技术大学\n薪资期望：34K69K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_141.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十142\n求职意向：DevOps工程师\n学历：硕士\n专业：电子工程\n工作年限：3年\n技能：LangChain, TypeScript, Kafka\n项目经验：在阿里巴巴参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：复旦大学\n薪资期望：18K49K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十142\n求职意向：DevOps工程师\n学历：硕士\n专业：电子工程\n工作年限：3年\n技能：LangChain, TypeScript, Kafka\n项目经验：在阿里巴巴参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：18K49K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_142.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六143\n求职意向：架构师\n学历：硕士\n专业：软件工程\n工作年限：5年\n技能：TensorFlow, Kubernetes, GCP, Faiss, Rust, Milvus\n项目经验：在小米参与架构师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：南京大学\n薪资期望：16K75K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六143\n求职意向：架构师\n学历：硕士\n专业：软件工程\n工作年限：5年\n技能：TensorFlow, Kubernetes, GCP, Faiss, Rust, Milvus\n项目经验：在小米参与架构师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：南京大学\n薪资期望：16K75K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_143.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十144\n求职意向：架构师\n学历：博士\n专业：数学\n工作年限：7年\n技能：Java, Vue, MySQL, Python, Kubernetes\n项目经验：在阿里巴巴参与架构师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：清华大学\n薪资期望：28K68K\n证书：PMP\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十144\n求职意向：架构师\n学历：博士\n专业：数学\n工作年限：7年\n技能：Java, Vue, MySQL, Python, Kubernetes\n项目经验：在阿里巴巴参与架构师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：28K68K\n证书：PMP\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_144.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：李四145\n求职意向：计算机视觉工程师\n学历：博士\n专业：人工智能\n工作年限：6年\n技能：PyTorch, React, Kafka, Airflow\n项目经验：在小米参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：南京大学\n薪资期望：44K70K\n证书：RHCE\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：李四145\n求职意向：计算机视觉工程师\n学历：博士\n专业：人工智能\n工作年限：6年\n技能：PyTorch, React, Kafka, Airflow\n项目经验：在小米参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：南京大学\n薪资期望：44K70K\n证书：RHCE\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_145.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五146\n求职意向：机器学习工程师\n学历：博士\n专业：软件工程\n工作年限：8年\n技能：LangChain, PyTorch, Linux, Python, Java, MongoDB\n项目经验：在小米参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：中国科学技术大学\n薪资期望：38K80K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五146\n求职意向：机器学习工程师\n学历：博士\n专业：软件工程\n工作年限：8年\n技能：LangChain, PyTorch, Linux, Python, Java, MongoDB\n项目经验：在小米参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：中国科学技术大学\n薪资期望：38K80K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_146.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六147\n求职意向：数据工程师\n学历：大专\n专业：人工智能\n工作年限：2年\n技能：Docker, TensorFlow, Go, React, Jenkins\n项目经验：在字节跳动参与数据工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：北京大学\n薪资期望：21K50K\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六147\n求职意向：数据工程师\n学历：大专\n专业：人工智能\n工作年限：2年\n技能：Docker, TensorFlow, Go, React, Jenkins\n项目经验：在字节跳动参与数据工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：本科院校\n薪资期望：21K50K\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_147.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十148\n求职意向：架构师\n学历：博士\n专业：软件工程\n工作年限：11年\n技能：Vue, TypeScript, Linux\n项目经验：在华为参与架构师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：42K49K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十148\n求职意向：架构师\n学历：博士\n专业：软件工程\n工作年限：11年\n技能：Vue, TypeScript, Linux\n项目经验：在华为参与架构师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：42K49K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_148.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：钱七149\n求职意向：数据工程师\n学历：本科\n专业：数学\n工作年限：9年\n技能：Git, MongoDB, scikitlearn, LangChain, Linux\n项目经验：在京东参与数据工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：上海交通大学\n薪资期望：23K49K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：钱七149\n求职意向：数据工程师\n学历：本科\n专业：数学\n工作年限：9年\n技能：Git, MongoDB, scikitlearn, LangChain, Linux\n项目经验：在京东参与数据工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：23K49K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_149.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十15\n求职意向：DevOps工程师\n学历：博士\n专业：计算机科学\n工作年限：10年\n技能：Rust, Git, XGBoost\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：浙江大学\n薪资期望：30K59K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十15\n求职意向：DevOps工程师\n学历：博士\n专业：计算机科学\n工作年限：10年\n技能：Rust, Git, XGBoost\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：30K59K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_15.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四150\n求职意向：算法工程师\n学历：大专\n专业：数学\n工作年限：7年\n技能：Flink, Airflow, LangChain\n项目经验：在百度参与算法工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：中国科学技术大学\n薪资期望：28K72K\n证书：CKA\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四150\n求职意向：算法工程师\n学历：大专\n专业：数学\n工作年限：7年\n技能：Flink, Airflow, LangChain\n项目经验：在百度参与算法工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：中国科学技术大学\n薪资期望：28K72K\n证书：CKA\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_150.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：卫五151\n求职意向：DevOps工程师\n学历：大专\n专业：软件工程\n工作年限：3年\n技能：scikitlearn, Node.js, C, AWS, React\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：复旦大学\n薪资期望：31K54K\n证书：CKA\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：卫五151\n求职意向：DevOps工程师\n学历：大专\n专业：软件工程\n工作年限：3年\n技能：scikitlearn, Node.js, C, AWS, React\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：31K54K\n证书：CKA\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_151.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八152\n求职意向：前端工程师\n学历：大专\n专业：电子工程\n工作年限：5年\n技能：RAG, Docker, C\n项目经验：在美团参与前端工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：浙江大学\n薪资期望：36K48K\n证书：RHCE\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八152\n求职意向：前端工程师\n学历：大专\n专业：电子工程\n工作年限：5年\n技能：RAG, Docker, C\n项目经验：在美团参与前端工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：36K48K\n证书：RHCE\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_152.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四153\n求职意向：DevOps工程师\n学历：硕士\n专业：信息工程\n工作年限：3年\n技能：MongoDB, Python, Kubernetes, Docker, TensorFlow\n项目经验：在小米参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：北京大学\n薪资期望：37K59K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四153\n求职意向：DevOps工程师\n学历：硕士\n专业：信息工程\n工作年限：3年\n技能：MongoDB, Python, Kubernetes, Docker, TensorFlow\n项目经验：在小米参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：37K59K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_153.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：郑一154\n求职意向：机器学习工程师\n学历：本科\n专业：信息工程\n工作年限：7年\n技能：MongoDB, MySQL, Kafka, Milvus, Faiss\n项目经验：在小米参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：清华大学\n薪资期望：40K76K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：郑一154\n求职意向：机器学习工程师\n学历：本科\n专业：信息工程\n工作年限：7年\n技能：MongoDB, MySQL, Kafka, Milvus, Faiss\n项目经验：在小米参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：40K76K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_154.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八155\n求职意向：机器学习工程师\n学历：大专\n专业：计算机科学\n工作年限：9年\n技能：scikitlearn, Java, MySQL, AWS\n项目经验：在京东参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：上海交通大学\n薪资期望：19K58K\n证书：RHCE\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八155\n求职意向：机器学习工程师\n学历：大专\n专业：计算机科学\n工作年限：9年\n技能：scikitlearn, Java, MySQL, AWS\n项目经验：在京东参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：19K58K\n证书：RHCE\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_155.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六156\n求职意向：计算机视觉工程师\n学历：本科\n专业：人工智能\n工作年限：12年\n技能：Faiss, Node.js, XGBoost, Flink, GCP, PyTorch\n项目经验：在小米参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：北京大学\n薪资期望：44K80K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六156\n求职意向：计算机视觉工程师\n学历：本科\n专业：人工智能\n工作年限：12年\n技能：Faiss, Node.js, XGBoost, Flink, GCP, PyTorch\n项目经验：在小米参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：44K80K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_156.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：郑一157\n求职意向：后端工程师\n学历：博士\n专业：电子工程\n工作年限：10年\n技能：Python, React, PyTorch\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：清华大学\n薪资期望：37K55K\n证书：AWS SAA\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：郑一157\n求职意向：后端工程师\n学历：博士\n专业：电子工程\n工作年限：10年\n技能：Python, React, PyTorch\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：37K55K\n证书：AWS SAA\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_157.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八158\n求职意向：后端工程师\n学历：大专\n专业：统计学\n工作年限：7年\n技能：Python, RAG, AWS\n项目经验：在京东参与后端工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：清华大学\n薪资期望：15K79K\n证书：CKAD\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八158\n求职意向：后端工程师\n学历：大专\n专业：统计学\n工作年限：7年\n技能：Python, RAG, AWS\n项目经验：在京东参与后端工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：15K79K\n证书：CKAD\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_158.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：张三159\n求职意向：DevOps工程师\n学历：大专\n专业：电子工程\n工作年限：2年\n技能：Scala, LangChain, scikitlearn\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：北京大学\n薪资期望：34K79K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：张三159\n求职意向：DevOps工程师\n学历：大专\n专业：电子工程\n工作年限：2年\n技能：Scala, LangChain, scikitlearn\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：34K79K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_159.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五16\n求职意向：NLP工程师\n学历：博士\n专业：信息工程\n工作年限：4年\n技能：Redis, Angular, AWS, Faiss, scikitlearn, Docker\n项目经验：在美团参与NLP工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：北京大学\n薪资期望：45K49K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五16\n求职意向：NLP工程师\n学历：博士\n专业：信息工程\n工作年限：4年\n技能：Redis, Angular, AWS, Faiss, scikitlearn, Docker\n项目经验：在美团参与NLP工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：45K49K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_16.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：钱七160\n求职意向：NLP工程师\n学历：博士\n专业：人工智能\n工作年限：6年\n技能：Azure, Git, Linux, MongoDB, Rust, Go\n项目经验：在阿里巴巴参与NLP工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：浙江大学\n薪资期望：27K70K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：钱七160\n求职意向：NLP工程师\n学历：博士\n专业：人工智能\n工作年限：6年\n技能：Azure, Git, Linux, MongoDB, Rust, Go\n项目经验：在阿里巴巴参与NLP工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：27K70K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_160.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三161\n求职意向：后端工程师\n学历：硕士\n专业：计算机科学\n工作年限：7年\n技能：Spark, Azure, Scala, LangChain, Go, Linux\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：37K76K\n证书：PMP\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三161\n求职意向：后端工程师\n学历：硕士\n专业：计算机科学\n工作年限：7年\n技能：Spark, Azure, Scala, LangChain, Go, Linux\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：37K76K\n证书：PMP\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_161.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三162\n求职意向：数据科学家\n学历：博士\n专业：软件工程\n工作年限：5年\n技能：Kubernetes, GCP, scikitlearn\n项目经验：在京东参与数据科学家相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：清华大学\n薪资期望：24K56K\n证书：AWS SAA\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三162\n求职意向：数据科学家\n学历：博士\n专业：软件工程\n工作年限：5年\n技能：Kubernetes, GCP, scikitlearn\n项目经验：在京东参与数据科学家相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：24K56K\n证书：AWS SAA\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_162.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三163\n求职意向：DevOps工程师\n学历：本科\n专业：信息工程\n工作年限：12年\n技能：Rust, Milvus, Flink, C\n项目经验：在阿里巴巴参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：浙江大学\n薪资期望：22K50K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三163\n求职意向：DevOps工程师\n学历：本科\n专业：信息工程\n工作年限：12年\n技能：Rust, Milvus, Flink, C\n项目经验：在阿里巴巴参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：22K50K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_163.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：冯二164\n求职意向：架构师\n学历：大专\n专业：电子工程\n工作年限：5年\n技能：PostgreSQL, TypeScript, Faiss\n项目经验：在华为参与架构师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：上海交通大学\n薪资期望：32K70K\n证书：RHCE\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：冯二164\n求职意向：架构师\n学历：大专\n专业：电子工程\n工作年限：5年\n技能：PostgreSQL, TypeScript, Faiss\n项目经验：在华为参与架构师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：32K70K\n证书：RHCE\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_164.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三165\n求职意向：NLP工程师\n学历：博士\n专业：电子工程\n工作年限：9年\n技能：Git, C, Rust, PostgreSQL, scikitlearn\n项目经验：在京东参与NLP工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：中国科学技术大学\n薪资期望：40K55K\n证书：CKAD\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三165\n求职意向：NLP工程师\n学历：博士\n专业：电子工程\n工作年限：9年\n技能：Git, C, Rust, PostgreSQL, scikitlearn\n项目经验：在京东参与NLP工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：中国科学技术大学\n薪资期望：40K55K\n证书：CKAD\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_165.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：李四166\n求职意向：前端工程师\n学历：博士\n专业：人工智能\n工作年限：7年\n技能：PostgreSQL, Scala, PyTorch, Rust, LightGBM\n项目经验：在京东参与前端工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：浙江大学\n薪资期望：32K78K\n证书：PMP\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：李四166\n求职意向：前端工程师\n学历：博士\n专业：人工智能\n工作年限：7年\n技能：PostgreSQL, Scala, PyTorch, Rust, LightGBM\n项目经验：在京东参与前端工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：32K78K\n证书：PMP\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_166.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八167\n求职意向：DevOps工程师\n学历：博士\n专业：数学\n工作年限：9年\n技能：Airflow, Python, Redis, React, Rust\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：复旦大学\n薪资期望：31K56K\n证书：CKA\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八167\n求职意向：DevOps工程师\n学历：博士\n专业：数学\n工作年限：9年\n技能：Airflow, Python, Redis, React, Rust\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：31K56K\n证书：CKA\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_167.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：钱七168\n求职意向：数据科学家\n学历：本科\n专业：信息工程\n工作年限：2年\n技能：XGBoost, Angular, PostgreSQL\n项目经验：在京东参与数据科学家相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：上海交通大学\n薪资期望：30K50K\n证书：CKA\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：钱七168\n求职意向：数据科学家\n学历：本科\n专业：信息工程\n工作年限：2年\n技能：XGBoost, Angular, PostgreSQL\n项目经验：在京东参与数据科学家相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：30K50K\n证书：CKA\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_168.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四169\n求职意向：计算机视觉工程师\n学历：硕士\n专业：信息工程\n工作年限：1年\n技能：MongoDB, Python, Vue, Spark\n项目经验：在京东参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：南京大学\n薪资期望：42K67K\n证书：RHCE\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四169\n求职意向：计算机视觉工程师\n学历：硕士\n专业：信息工程\n工作年限：1年\n技能：MongoDB, Python, Vue, Spark\n项目经验：在京东参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：南京大学\n薪资期望：42K67K\n证书：RHCE\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_169.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：张三17\n求职意向：机器学习工程师\n学历：博士\n专业：计算机科学\n工作年限：9年\n技能：Milvus, LangChain, XGBoost, C, Jenkins, Rust\n项目经验：在腾讯参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：清华大学\n薪资期望：34K50K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：张三17\n求职意向：机器学习工程师\n学历：博士\n专业：计算机科学\n工作年限：9年\n技能：Milvus, LangChain, XGBoost, C, Jenkins, Rust\n项目经验：在腾讯参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：34K50K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_17.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五170\n求职意向：数据科学家\n学历：本科\n专业：数学\n工作年限：11年\n技能：Elasticsearch, Hadoop, LightGBM, Vue\n项目经验：在百度参与数据科学家相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：上海交通大学\n薪资期望：38K77K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五170\n求职意向：数据科学家\n学历：本科\n专业：数学\n工作年限：11年\n技能：Elasticsearch, Hadoop, LightGBM, Vue\n项目经验：在百度参与数据科学家相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：38K77K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_170.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八171\n求职意向：NLP工程师\n学历：本科\n专业：电子工程\n工作年限：12年\n技能：Kafka, TensorFlow, Azure, Docker, RAG, LightGBM\n项目经验：在字节跳动参与NLP工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：中国科学技术大学\n薪资期望：29K59K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八171\n求职意向：NLP工程师\n学历：本科\n专业：电子工程\n工作年限：12年\n技能：Kafka, TensorFlow, Azure, Docker, RAG, LightGBM\n项目经验：在字节跳动参与NLP工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：中国科学技术大学\n薪资期望：29K59K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_171.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四172\n求职意向：前端工程师\n学历：大专\n专业：统计学\n工作年限：7年\n技能：MongoDB, Git, MySQL, scikitlearn\n项目经验：在京东参与前端工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：南京大学\n薪资期望：27K50K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四172\n求职意向：前端工程师\n学历：大专\n专业：统计学\n工作年限：7年\n技能：MongoDB, Git, MySQL, scikitlearn\n项目经验：在京东参与前端工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：南京大学\n薪资期望：27K50K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_172.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十173\n求职意向：架构师\n学历：大专\n专业：数学\n工作年限：8年\n技能：RAG, Go, Kafka, Jenkins, Rust, Scala\n项目经验：在华为参与架构师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：中国科学技术大学\n薪资期望：36K68K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十173\n求职意向：架构师\n学历：大专\n专业：数学\n工作年限：8年\n技能：RAG, Go, Kafka, Jenkins, Rust, Scala\n项目经验：在华为参与架构师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：中国科学技术大学\n薪资期望：36K68K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_173.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：张三174\n求职意向：架构师\n学历：大专\n专业：电子工程\n工作年限：5年\n技能：Scala, Python, Jenkins, MySQL, Linux, Milvus\n项目经验：在华为参与架构师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：浙江大学\n薪资期望：26K71K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：张三174\n求职意向：架构师\n学历：大专\n专业：电子工程\n工作年限：5年\n技能：Scala, Python, Jenkins, MySQL, Linux, Milvus\n项目经验：在华为参与架构师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：26K71K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_174.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：冯二175\n求职意向：DevOps工程师\n学历：硕士\n专业：人工智能\n工作年限：0年\n技能：Scala, Redis, React, Rust, TensorFlow, scikitlearn\n项目经验：在百度参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：上海交通大学\n薪资期望：25K75K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：冯二175\n求职意向：DevOps工程师\n学历：硕士\n专业：人工智能\n工作年限：0年\n技能：Scala, Redis, React, Rust, TensorFlow, scikitlearn\n项目经验：在百度参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：25K75K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_175.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八176\n求职意向：计算机视觉工程师\n学历：博士\n专业：信息工程\n工作年限：11年\n技能：Hadoop, C, MongoDB, Go, TensorFlow, Java\n项目经验：在百度参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：中国科学技术大学\n薪资期望：18K56K\n证书：CKA\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八176\n求职意向：计算机视觉工程师\n学历：博士\n专业：信息工程\n工作年限：11年\n技能：Hadoop, C, MongoDB, Go, TensorFlow, Java\n项目经验：在百度参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：中国科学技术大学\n薪资期望：18K56K\n证书：CKA\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_176.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：郑一177\n求职意向：算法工程师\n学历：本科\n专业：数学\n工作年限：6年\n技能：Linux, Vue, LightGBM, GCP, Angular, Terraform\n项目经验：在字节跳动参与算法工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：中国科学技术大学\n薪资期望：34K58K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：郑一177\n求职意向：算法工程师\n学历：本科\n专业：数学\n工作年限：6年\n技能：Linux, Vue, LightGBM, GCP, Angular, Terraform\n项目经验：在字节跳动参与算法工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：中国科学技术大学\n薪资期望：34K58K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_177.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：周九178\n求职意向：后端工程师\n学历：硕士\n专业：软件工程\n工作年限：4年\n技能：Azure, Scala, RAG\n项目经验：在腾讯参与后端工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：上海交通大学\n薪资期望：25K58K\n证书：AWS SAA\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：周九178\n求职意向：后端工程师\n学历：硕士\n专业：软件工程\n工作年限：4年\n技能：Azure, Scala, RAG\n项目经验：在腾讯参与后端工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：25K58K\n证书：AWS SAA\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_178.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：郑一179\n求职意向：机器学习工程师\n学历：大专\n专业：数学\n工作年限：6年\n技能：Flink, Node.js, Jenkins\n项目经验：在腾讯参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：南京大学\n薪资期望：36K65K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：郑一179\n求职意向：机器学习工程师\n学历：大专\n专业：数学\n工作年限：6年\n技能：Flink, Node.js, Jenkins\n项目经验：在腾讯参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：南京大学\n薪资期望：36K65K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_179.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：周九18\n求职意向：前端工程师\n学历：硕士\n专业：数学\n工作年限：9年\n技能：Jenkins, Rust, React\n项目经验：在百度参与前端工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：上海交通大学\n薪资期望：21K66K\n证书：CKA\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：周九18\n求职意向：前端工程师\n学历：硕士\n专业：数学\n工作年限：9年\n技能：Jenkins, Rust, React\n项目经验：在百度参与前端工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：21K66K\n证书：CKA\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_18.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三180\n求职意向：算法工程师\n学历：本科\n专业：计算机科学\n工作年限：3年\n技能：TensorFlow, LightGBM, Kafka, scikitlearn, Milvus\n项目经验：在京东参与算法工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：浙江大学\n薪资期望：34K54K\n证书：CKA\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三180\n求职意向：算法工程师\n学历：本科\n专业：计算机科学\n工作年限：3年\n技能：TensorFlow, LightGBM, Kafka, scikitlearn, Milvus\n项目经验：在京东参与算法工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：34K54K\n证书：CKA\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_180.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十181\n求职意向：DevOps工程师\n学历：硕士\n专业：数学\n工作年限：2年\n技能：Redis, PyTorch, LightGBM, Hadoop, TypeScript, C\n项目经验：在百度参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：清华大学\n薪资期望：30K54K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十181\n求职意向：DevOps工程师\n学历：硕士\n专业：数学\n工作年限：2年\n技能：Redis, PyTorch, LightGBM, Hadoop, TypeScript, C\n项目经验：在百度参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：30K54K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_181.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：郑一182\n求职意向：DevOps工程师\n学历：大专\n专业：信息工程\n工作年限：10年\n技能：React, TypeScript, Faiss, XGBoost, Rust, Java\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：上海交通大学\n薪资期望：16K63K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：郑一182\n求职意向：DevOps工程师\n学历：大专\n专业：信息工程\n工作年限：10年\n技能：React, TypeScript, Faiss, XGBoost, Rust, Java\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：16K63K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_182.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五183\n求职意向：计算机视觉工程师\n学历：大专\n专业：数学\n工作年限：8年\n技能：Azure, TensorFlow, PostgreSQL\n项目经验：在百度参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：复旦大学\n薪资期望：41K48K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五183\n求职意向：计算机视觉工程师\n学历：大专\n专业：数学\n工作年限：8年\n技能：Azure, TensorFlow, PostgreSQL\n项目经验：在百度参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：41K48K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_183.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六184\n求职意向：NLP工程师\n学历：博士\n专业：统计学\n工作年限：10年\n技能：MongoDB, Go, TypeScript, MySQL\n项目经验：在百度参与NLP工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：南京大学\n薪资期望：41K51K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六184\n求职意向：NLP工程师\n学历：博士\n专业：统计学\n工作年限：10年\n技能：MongoDB, Go, TypeScript, MySQL\n项目经验：在百度参与NLP工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：南京大学\n薪资期望：41K51K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_184.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：李四185\n求职意向：数据工程师\n学历：硕士\n专业：电子工程\n工作年限：11年\n技能：Jenkins, Angular, XGBoost, PyTorch, Kubernetes\n项目经验：在华为参与数据工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：16K68K\n证书：RHCE\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：李四185\n求职意向：数据工程师\n学历：硕士\n专业：电子工程\n工作年限：11年\n技能：Jenkins, Angular, XGBoost, PyTorch, Kubernetes\n项目经验：在华为参与数据工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：16K68K\n证书：RHCE\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_185.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五186\n求职意向：机器学习工程师\n学历：本科\n专业：人工智能\n工作年限：9年\n技能：Milvus, Scala, PyTorch, React, C\n项目经验：在美团参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：南京大学\n薪资期望：35K54K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五186\n求职意向：机器学习工程师\n学历：本科\n专业：人工智能\n工作年限：9年\n技能：Milvus, Scala, PyTorch, React, C\n项目经验：在美团参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：南京大学\n薪资期望：35K54K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_186.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六187\n求职意向：算法工程师\n学历：本科\n专业：电子工程\n工作年限：3年\n技能：Faiss, scikitlearn, Azure, PostgreSQL, React, Airflow\n项目经验：在小米参与算法工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：清华大学\n薪资期望：35K51K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六187\n求职意向：算法工程师\n学历：本科\n专业：电子工程\n工作年限：3年\n技能：Faiss, scikitlearn, Azure, PostgreSQL, React, Airflow\n项目经验：在小米参与算法工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：35K51K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_187.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：钱七188\n求职意向：机器学习工程师\n学历：大专\n专业：信息工程\n工作年限：5年\n技能：Rust, Node.js, Flink\n项目经验：在阿里巴巴参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：32K71K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：钱七188\n求职意向：机器学习工程师\n学历：大专\n专业：信息工程\n工作年限：5年\n技能：Rust, Node.js, Flink\n项目经验：在阿里巴巴参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：32K71K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_188.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六189\n求职意向：计算机视觉工程师\n学历：本科\n专业：人工智能\n工作年限：4年\n技能：AWS, Azure, PyTorch, Faiss, Spark\n项目经验：在字节跳动参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：清华大学\n薪资期望：18K75K\n证书：CKA\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六189\n求职意向：计算机视觉工程师\n学历：本科\n专业：人工智能\n工作年限：4年\n技能：AWS, Azure, PyTorch, Faiss, Spark\n项目经验：在字节跳动参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：本科院校\n薪资期望：18K75K\n证书：CKA\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_189.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三19\n求职意向：数据科学家\n学历：大专\n专业：人工智能\n工作年限：12年\n技能：Python, Node.js, Jenkins\n项目经验：在阿里巴巴参与数据科学家相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：清华大学\n薪资期望：32K59K\n证书：CKAD\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三19\n求职意向：数据科学家\n学历：大专\n专业：人工智能\n工作年限：12年\n技能：Python, Node.js, Jenkins\n项目经验：在阿里巴巴参与数据科学家相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：32K59K\n证书：CKAD\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_19.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十190\n求职意向：计算机视觉工程师\n学历：博士\n专业：信息工程\n工作年限：3年\n技能：MongoDB, XGBoost, PostgreSQL, Rust\n项目经验：在百度参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：上海交通大学\n薪资期望：17K69K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十190\n求职意向：计算机视觉工程师\n学历：博士\n专业：信息工程\n工作年限：3年\n技能：MongoDB, XGBoost, PostgreSQL, Rust\n项目经验：在百度参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：17K69K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_190.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五191\n求职意向：后端工程师\n学历：大专\n专业：统计学\n工作年限：4年\n技能：Angular, Rust, Scala, Python\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：浙江大学\n薪资期望：17K54K\n证书：AWS SAA\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五191\n求职意向：后端工程师\n学历：大专\n专业：统计学\n工作年限：4年\n技能：Angular, Rust, Scala, Python\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：17K54K\n证书：AWS SAA\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_191.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：张三192\n求职意向：后端工程师\n学历：本科\n专业：电子工程\n工作年限：1年\n技能：PyTorch, Elasticsearch, C, Linux, Airflow, Rust\n项目经验：在阿里巴巴参与后端工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：清华大学\n薪资期望：25K69K\n证书：CKA\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：张三192\n求职意向：后端工程师\n学历：本科\n专业：电子工程\n工作年限：1年\n技能：PyTorch, Elasticsearch, C, Linux, Airflow, Rust\n项目经验：在阿里巴巴参与后端工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：25K69K\n证书：CKA\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_192.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三193\n求职意向：算法工程师\n学历：博士\n专业：数学\n工作年限：9年\n技能：Jenkins, XGBoost, TypeScript\n项目经验：在百度参与算法工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：中国科学技术大学\n薪资期望：21K55K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三193\n求职意向：算法工程师\n学历：博士\n专业：数学\n工作年限：9年\n技能：Jenkins, XGBoost, TypeScript\n项目经验：在百度参与算法工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：中国科学技术大学\n薪资期望：21K55K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_193.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十194\n求职意向：数据工程师\n学历：博士\n专业：计算机科学\n工作年限：2年\n技能：GCP, Airflow, Flink\n项目经验：在京东参与数据工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：上海交通大学\n薪资期望：40K54K\n证书：PMP\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十194\n求职意向：数据工程师\n学历：博士\n专业：计算机科学\n工作年限：2年\n技能：GCP, Airflow, Flink\n项目经验：在京东参与数据工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：40K54K\n证书：PMP\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_194.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六195\n求职意向：DevOps工程师\n学历：本科\n专业：电子工程\n工作年限：11年\n技能：MongoDB, Kubernetes, LangChain\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：中国科学技术大学\n薪资期望：27K64K\n证书：CKA\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六195\n求职意向：DevOps工程师\n学历：本科\n专业：电子工程\n工作年限：11年\n技能：MongoDB, Kubernetes, LangChain\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：中国科学技术大学\n薪资期望：27K64K\n证书：CKA\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_195.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十196\n求职意向：NLP工程师\n学历：博士\n专业：软件工程\n工作年限：7年\n技能：LangChain, Python, Kafka\n项目经验：在百度参与NLP工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：北京大学\n薪资期望：27K72K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十196\n求职意向：NLP工程师\n学历：博士\n专业：软件工程\n工作年限：7年\n技能：LangChain, Python, Kafka\n项目经验：在百度参与NLP工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：27K72K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_196.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五197\n求职意向：计算机视觉工程师\n学历：博士\n专业：计算机科学\n工作年限：9年\n技能：Python, MySQL, Kubernetes\n项目经验：在字节跳动参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：清华大学\n薪资期望：45K71K\n证书：RHCE\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五197\n求职意向：计算机视觉工程师\n学历：博士\n专业：计算机科学\n工作年限：9年\n技能：Python, MySQL, Kubernetes\n项目经验：在字节跳动参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：本科院校\n薪资期望：45K71K\n证书：RHCE\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_197.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：卫五198\n求职意向：NLP工程师\n学历：大专\n专业：统计学\n工作年限：6年\n技能：RAG, Jenkins, scikitlearn\n项目经验：在美团参与NLP工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：清华大学\n薪资期望：24K51K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：卫五198\n求职意向：NLP工程师\n学历：大专\n专业：统计学\n工作年限：6年\n技能：RAG, Jenkins, scikitlearn\n项目经验：在美团参与NLP工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：24K51K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_198.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：卫五199\n求职意向：算法工程师\n学历：本科\n专业：信息工程\n工作年限：9年\n技能：MongoDB, Angular, Git\n项目经验：在字节跳动参与算法工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：北京大学\n薪资期望：17K73K\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：卫五199\n求职意向：算法工程师\n学历：本科\n专业：信息工程\n工作年限：9年\n技能：MongoDB, Angular, Git\n项目经验：在字节跳动参与算法工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：本科院校\n薪资期望：17K73K\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_199.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八2\n求职意向：前端工程师\n学历：博士\n专业：信息工程\n工作年限：1年\n技能：Flink, Terraform, MySQL, Go, Node.js\n项目经验：在阿里巴巴参与前端工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：浙江大学\n薪资期望：17K64K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八2\n求职意向：前端工程师\n学历：博士\n专业：信息工程\n工作年限：1年\n技能：Flink, Terraform, MySQL, Go, Node.js\n项目经验：在阿里巴巴参与前端工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：17K64K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_2.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：李四20\n求职意向：数据工程师\n学历：本科\n专业：人工智能\n工作年限：2年\n技能：RAG, MongoDB, LangChain, Python, AWS, Terraform\n项目经验：在阿里巴巴参与数据工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：北京大学\n薪资期望：23K53K\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：李四20\n求职意向：数据工程师\n学历：本科\n专业：人工智能\n工作年限：2年\n技能：RAG, MongoDB, LangChain, Python, AWS, Terraform\n项目经验：在阿里巴巴参与数据工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：23K53K\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_20.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五21\n求职意向：数据科学家\n学历：本科\n专业：数学\n工作年限：3年\n技能：Kubernetes, MySQL, Milvus, Faiss, C\n项目经验：在阿里巴巴参与数据科学家相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：中国科学技术大学\n薪资期望：28K63K\n证书：CKA\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五21\n求职意向：数据科学家\n学历：本科\n专业：数学\n工作年限：3年\n技能：Kubernetes, MySQL, Milvus, Faiss, C\n项目经验：在阿里巴巴参与数据科学家相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：中国科学技术大学\n薪资期望：28K63K\n证书：CKA\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_21.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三22\n求职意向：数据科学家\n学历：硕士\n专业：统计学\n工作年限：7年\n技能：AWS, Python, TensorFlow, C, scikitlearn, RAG\n项目经验：在字节跳动参与数据科学家相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：南京大学\n薪资期望：26K55K\n证书：CKAD\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三22\n求职意向：数据科学家\n学历：硕士\n专业：统计学\n工作年限：7年\n技能：AWS, Python, TensorFlow, C, scikitlearn, RAG\n项目经验：在字节跳动参与数据科学家相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：南京大学\n薪资期望：26K55K\n证书：CKAD\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_22.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八23\n求职意向：后端工程师\n学历：本科\n专业：软件工程\n工作年限：10年\n技能：Scala, Flink, AWS, React\n项目经验：在腾讯参与后端工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：北京大学\n薪资期望：42K56K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八23\n求职意向：后端工程师\n学历：本科\n专业：软件工程\n工作年限：10年\n技能：Scala, Flink, AWS, React\n项目经验：在腾讯参与后端工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：42K56K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_23.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：张三24\n求职意向：算法工程师\n学历：本科\n专业：电子工程\n工作年限：6年\n技能：PostgreSQL, XGBoost, Scala, Airflow\n项目经验：在字节跳动参与算法工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：南京大学\n薪资期望：30K60K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：张三24\n求职意向：算法工程师\n学历：本科\n专业：电子工程\n工作年限：6年\n技能：PostgreSQL, XGBoost, Scala, Airflow\n项目经验：在字节跳动参与算法工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：南京大学\n薪资期望：30K60K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_24.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十25\n求职意向：机器学习工程师\n学历：本科\n专业：电子工程\n工作年限：12年\n技能：Linux, Java, Docker, Vue\n项目经验：在百度参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：上海交通大学\n薪资期望：42K50K\n证书：RHCE\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十25\n求职意向：机器学习工程师\n学历：本科\n专业：电子工程\n工作年限：12年\n技能：Linux, Java, Docker, Vue\n项目经验：在百度参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：42K50K\n证书：RHCE\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_25.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：周九26\n求职意向：DevOps工程师\n学历：本科\n专业：计算机科学\n工作年限：1年\n技能：LightGBM, GCP, MySQL, Go, Scala\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：上海交通大学\n薪资期望：38K66K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：周九26\n求职意向：DevOps工程师\n学历：本科\n专业：计算机科学\n工作年限：1年\n技能：LightGBM, GCP, MySQL, Go, Scala\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：38K66K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_26.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：郑一27\n求职意向：前端工程师\n学历：大专\n专业：数学\n工作年限：3年\n技能：Go, Angular, Python, LangChain, RAG\n项目经验：在华为参与前端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：上海交通大学\n薪资期望：28K50K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：郑一27\n求职意向：前端工程师\n学历：大专\n专业：数学\n工作年限：3年\n技能：Go, Angular, Python, LangChain, RAG\n项目经验：在华为参与前端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：28K50K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_27.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：冯二28\n求职意向：机器学习工程师\n学历：博士\n专业：统计学\n工作年限：4年\n技能：React, Hadoop, Vue, Redis, AWS\n项目经验：在腾讯参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：北京大学\n薪资期望：28K70K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：冯二28\n求职意向：机器学习工程师\n学历：博士\n专业：统计学\n工作年限：4年\n技能：React, Hadoop, Vue, Redis, AWS\n项目经验：在腾讯参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：28K70K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_28.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五29\n求职意向：架构师\n学历：本科\n专业：信息工程\n工作年限：8年\n技能：MongoDB, Redis, Kubernetes\n项目经验：在京东参与架构师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：南京大学\n薪资期望：33K66K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五29\n求职意向：架构师\n学历：本科\n专业：信息工程\n工作年限：8年\n技能：MongoDB, Redis, Kubernetes\n项目经验：在京东参与架构师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：南京大学\n薪资期望：33K66K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_29.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八3\n求职意向：架构师\n学历：硕士\n专业：统计学\n工作年限：1年\n技能：Linux, Redis, Rust\n项目经验：在华为参与架构师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：18K70K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八3\n求职意向：架构师\n学历：硕士\n专业：统计学\n工作年限：1年\n技能：Linux, Redis, Rust\n项目经验：在华为参与架构师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：18K70K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_3.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三30\n求职意向：数据工程师\n学历：大专\n专业：电子工程\n工作年限：12年\n技能：Rust, Redis, Milvus, Jenkins\n项目经验：在百度参与数据工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：清华大学\n薪资期望：41K61K\n证书：CKA\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三30\n求职意向：数据工程师\n学历：大专\n专业：电子工程\n工作年限：12年\n技能：Rust, Redis, Milvus, Jenkins\n项目经验：在百度参与数据工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：41K61K\n证书：CKA\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_30.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五31\n求职意向：后端工程师\n学历：博士\n专业：软件工程\n工作年限：7年\n技能：Node.js, React, Azure\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：中国科学技术大学\n薪资期望：37K70K\n证书：CKA\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五31\n求职意向：后端工程师\n学历：博士\n专业：软件工程\n工作年限：7年\n技能：Node.js, React, Azure\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：中国科学技术大学\n薪资期望：37K70K\n证书：CKA\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_31.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三32\n求职意向：后端工程师\n学历：博士\n专业：电子工程\n工作年限：6年\n技能：LightGBM, LangChain, Node.js, C\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：18K75K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三32\n求职意向：后端工程师\n学历：博士\n专业：电子工程\n工作年限：6年\n技能：LightGBM, LangChain, Node.js, C\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：18K75K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_32.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三33\n求职意向：DevOps工程师\n学历：本科\n专业：电子工程\n工作年限：7年\n技能：AWS, TypeScript, XGBoost, Elasticsearch, Terraform, MySQL\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：35K63K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三33\n求职意向：DevOps工程师\n学历：本科\n专业：电子工程\n工作年限：7年\n技能：AWS, TypeScript, XGBoost, Elasticsearch, Terraform, MySQL\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：35K63K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_33.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六34\n求职意向：数据科学家\n学历：大专\n专业：计算机科学\n工作年限：11年\n技能：Git, PostgreSQL, Spark, Hadoop, RAG\n项目经验：在阿里巴巴参与数据科学家相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：北京大学\n薪资期望：19K60K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六34\n求职意向：数据科学家\n学历：大专\n专业：计算机科学\n工作年限：11年\n技能：Git, PostgreSQL, Spark, Hadoop, RAG\n项目经验：在阿里巴巴参与数据科学家相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：19K60K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_34.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四35\n求职意向：数据工程师\n学历：博士\n专业：信息工程\n工作年限：6年\n技能：RAG, Node.js, React, C, Kubernetes\n项目经验：在京东参与数据工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：浙江大学\n薪资期望：43K47K\n证书：PMP\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四35\n求职意向：数据工程师\n学历：博士\n专业：信息工程\n工作年限：6年\n技能：RAG, Node.js, React, C, Kubernetes\n项目经验：在京东参与数据工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：43K47K\n证书：PMP\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_35.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八36\n求职意向：数据科学家\n学历：大专\n专业：电子工程\n工作年限：6年\n技能：Faiss, Linux, PostgreSQL, Angular\n项目经验：在小米参与数据科学家相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：清华大学\n薪资期望：27K67K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八36\n求职意向：数据科学家\n学历：大专\n专业：电子工程\n工作年限：6年\n技能：Faiss, Linux, PostgreSQL, Angular\n项目经验：在小米参与数据科学家相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：27K67K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_36.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：周九37\n求职意向：算法工程师\n学历：大专\n专业：软件工程\n工作年限：9年\n技能：Vue, GCP, Azure\n项目经验：在字节跳动参与算法工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：清华大学\n薪资期望：35K73K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：周九37\n求职意向：算法工程师\n学历：大专\n专业：软件工程\n工作年限：9年\n技能：Vue, GCP, Azure\n项目经验：在字节跳动参与算法工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：本科院校\n薪资期望：35K73K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_37.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五38\n求职意向：后端工程师\n学历：本科\n专业：信息工程\n工作年限：5年\n技能：Node.js, Hadoop, Spark, Airflow\n项目经验：在美团参与后端工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：南京大学\n薪资期望：45K72K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五38\n求职意向：后端工程师\n学历：本科\n专业：信息工程\n工作年限：5年\n技能：Node.js, Hadoop, Spark, Airflow\n项目经验：在美团参与后端工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：南京大学\n薪资期望：45K72K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_38.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十39\n求职意向：后端工程师\n学历：博士\n专业：人工智能\n工作年限：3年\n技能：Go, Java, Git\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：15K55K\n证书：PMP\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十39\n求职意向：后端工程师\n学历：博士\n专业：人工智能\n工作年限：3年\n技能：Go, Java, Git\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：15K55K\n证书：PMP\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_39.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八4\n求职意向：算法工程师\n学历：本科\n专业：人工智能\n工作年限：3年\n技能：C, Terraform, XGBoost, RAG, Git\n项目经验：在腾讯参与算法工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：浙江大学\n薪资期望：27K63K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八4\n求职意向：算法工程师\n学历：本科\n专业：人工智能\n工作年限：3年\n技能：C, Terraform, XGBoost, RAG, Git\n项目经验：在腾讯参与算法工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：27K63K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_4.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：冯二40\n求职意向：数据工程师\n学历：大专\n专业：统计学\n工作年限：4年\n技能：XGBoost, Terraform, TensorFlow, MongoDB, Scala\n项目经验：在字节跳动参与数据工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：上海交通大学\n薪资期望：33K70K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：冯二40\n求职意向：数据工程师\n学历：大专\n专业：统计学\n工作年限：4年\n技能：XGBoost, Terraform, TensorFlow, MongoDB, Scala\n项目经验：在字节跳动参与数据工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：本科院校\n薪资期望：33K70K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_40.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六41\n求职意向：前端工程师\n学历：硕士\n专业：计算机科学\n工作年限：11年\n技能：Terraform, TensorFlow, Azure, Go, Flink\n项目经验：在京东参与前端工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：中国科学技术大学\n薪资期望：26K50K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六41\n求职意向：前端工程师\n学历：硕士\n专业：计算机科学\n工作年限：11年\n技能：Terraform, TensorFlow, Azure, Go, Flink\n项目经验：在京东参与前端工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：中国科学技术大学\n薪资期望：26K50K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_41.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：张三42\n求职意向：NLP工程师\n学历：大专\n专业：计算机科学\n工作年限：6年\n技能：Node.js, scikitlearn, Angular, LightGBM, LangChain\n项目经验：在美团参与NLP工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：复旦大学\n薪资期望：40K80K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：张三42\n求职意向：NLP工程师\n学历：大专\n专业：计算机科学\n工作年限：6年\n技能：Node.js, scikitlearn, Angular, LightGBM, LangChain\n项目经验：在美团参与NLP工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：40K80K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_42.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四43\n求职意向：架构师\n学历：本科\n专业：人工智能\n工作年限：3年\n技能：PostgreSQL, TypeScript, Git\n项目经验：在小米参与架构师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：复旦大学\n薪资期望：34K70K\n证书：CKAD\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四43\n求职意向：架构师\n学历：本科\n专业：人工智能\n工作年限：3年\n技能：PostgreSQL, TypeScript, Git\n项目经验：在小米参与架构师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：34K70K\n证书：CKAD\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_43.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五44\n求职意向：计算机视觉工程师\n学历：硕士\n专业：人工智能\n工作年限：12年\n技能：Spark, PostgreSQL, Terraform, AWS, Python\n项目经验：在华为参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：清华大学\n薪资期望：22K72K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五44\n求职意向：计算机视觉工程师\n学历：硕士\n专业：人工智能\n工作年限：12年\n技能：Spark, PostgreSQL, Terraform, AWS, Python\n项目经验：在华为参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：22K72K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_44.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六45\n求职意向：计算机视觉工程师\n学历：大专\n专业：信息工程\n工作年限：12年\n技能：Rust, Redis, Linux\n项目经验：在京东参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：中国科学技术大学\n薪资期望：22K65K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六45\n求职意向：计算机视觉工程师\n学历：大专\n专业：信息工程\n工作年限：12年\n技能：Rust, Redis, Linux\n项目经验：在京东参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：中国科学技术大学\n薪资期望：22K65K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_45.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十46\n求职意向：DevOps工程师\n学历：本科\n专业：信息工程\n工作年限：11年\n技能：Flink, Node.js, PostgreSQL, MongoDB, MySQL\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：清华大学\n薪资期望：38K58K\n证书：RHCE\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十46\n求职意向：DevOps工程师\n学历：本科\n专业：信息工程\n工作年限：11年\n技能：Flink, Node.js, PostgreSQL, MongoDB, MySQL\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：38K58K\n证书：RHCE\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_46.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：卫五47\n求职意向：算法工程师\n学历：硕士\n专业：软件工程\n工作年限：11年\n技能：PostgreSQL, GCP, LangChain, Redis, Scala, Docker\n项目经验：在美团参与算法工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：北京大学\n薪资期望：26K57K\n证书：RHCE\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：卫五47\n求职意向：算法工程师\n学历：硕士\n专业：软件工程\n工作年限：11年\n技能：PostgreSQL, GCP, LangChain, Redis, Scala, Docker\n项目经验：在美团参与算法工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：26K57K\n证书：RHCE\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_47.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五48\n求职意向：数据科学家\n学历：博士\n专业：计算机科学\n工作年限：8年\n技能：PyTorch, Faiss, Scala, Python, Azure\n项目经验：在美团参与数据科学家相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：浙江大学\n薪资期望：30K74K\n证书：PMP\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五48\n求职意向：数据科学家\n学历：博士\n专业：计算机科学\n工作年限：8年\n技能：PyTorch, Faiss, Scala, Python, Azure\n项目经验：在美团参与数据科学家相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：30K74K\n证书：PMP\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_48.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：钱七49\n求职意向：计算机视觉工程师\n学历：博士\n专业：电子工程\n工作年限：1年\n技能：Faiss, C, Azure, C, scikitlearn, AWS\n项目经验：在美团参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：清华大学\n薪资期望：22K53K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：钱七49\n求职意向：计算机视觉工程师\n学历：博士\n专业：电子工程\n工作年限：1年\n技能：Faiss, C, Azure, C, scikitlearn, AWS\n项目经验：在美团参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：22K53K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_49.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六5\n求职意向：机器学习工程师\n学历：博士\n专业：软件工程\n工作年限：0年\n技能：Vue, PostgreSQL, C, Kubernetes, Azure\n项目经验：在百度参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：北京大学\n薪资期望：35K77K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六5\n求职意向：机器学习工程师\n学历：博士\n专业：软件工程\n工作年限：0年\n技能：Vue, PostgreSQL, C, Kubernetes, Azure\n项目经验：在百度参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：35K77K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_5.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：冯二50\n求职意向：架构师\n学历：硕士\n专业：电子工程\n工作年限：8年\n技能：TypeScript, Jenkins, MongoDB, Angular, GCP, C\n项目经验：在阿里巴巴参与架构师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：21K59K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：冯二50\n求职意向：架构师\n学历：硕士\n专业：电子工程\n工作年限：8年\n技能：TypeScript, Jenkins, MongoDB, Angular, GCP, C\n项目经验：在阿里巴巴参与架构师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：21K59K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_50.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五51\n求职意向：数据工程师\n学历：硕士\n专业：数学\n工作年限：1年\n技能：Python, React, TypeScript, Terraform\n项目经验：在小米参与数据工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：上海交通大学\n薪资期望：16K60K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五51\n求职意向：数据工程师\n学历：硕士\n专业：数学\n工作年限：1年\n技能：Python, React, TypeScript, Terraform\n项目经验：在小米参与数据工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：16K60K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_51.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四52\n求职意向：计算机视觉工程师\n学历：博士\n专业：统计学\n工作年限：3年\n技能：GCP, Docker, Angular, TensorFlow, RAG\n项目经验：在华为参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：中国科学技术大学\n薪资期望：19K63K\n证书：CKA\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四52\n求职意向：计算机视觉工程师\n学历：博士\n专业：统计学\n工作年限：3年\n技能：GCP, Docker, Angular, TensorFlow, RAG\n项目经验：在华为参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：中国科学技术大学\n薪资期望：19K63K\n证书：CKA\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_52.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：卫五53\n求职意向：数据科学家\n学历：本科\n专业：信息工程\n工作年限：1年\n技能：MongoDB, Vue, PostgreSQL, Milvus, RAG, Faiss\n项目经验：在小米参与数据科学家相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：清华大学\n薪资期望：34K48K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：卫五53\n求职意向：数据科学家\n学历：本科\n专业：信息工程\n工作年限：1年\n技能：MongoDB, Vue, PostgreSQL, Milvus, RAG, Faiss\n项目经验：在小米参与数据科学家相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：34K48K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_53.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：冯二54\n求职意向：数据科学家\n学历：博士\n专业：计算机科学\n工作年限：3年\n技能：PostgreSQL, Azure, Go\n项目经验：在腾讯参与数据科学家相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：浙江大学\n薪资期望：31K74K\n证书：RHCE\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：冯二54\n求职意向：数据科学家\n学历：博士\n专业：计算机科学\n工作年限：3年\n技能：PostgreSQL, Azure, Go\n项目经验：在腾讯参与数据科学家相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：31K74K\n证书：RHCE\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_54.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：周九55\n求职意向：计算机视觉工程师\n学历：博士\n专业：信息工程\n工作年限：5年\n技能：Spark, Hadoop, Scala, XGBoost, Jenkins, React\n项目经验：在小米参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：上海交通大学\n薪资期望：36K71K\n证书：PMP\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：周九55\n求职意向：计算机视觉工程师\n学历：博士\n专业：信息工程\n工作年限：5年\n技能：Spark, Hadoop, Scala, XGBoost, Jenkins, React\n项目经验：在小米参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：36K71K\n证书：PMP\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_55.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八56\n求职意向：数据科学家\n学历：本科\n专业：计算机科学\n工作年限：12年\n技能：Milvus, Python, RAG, Node.js, React, C\n项目经验：在华为参与数据科学家相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：复旦大学\n薪资期望：26K77K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八56\n求职意向：数据科学家\n学历：本科\n专业：计算机科学\n工作年限：12年\n技能：Milvus, Python, RAG, Node.js, React, C\n项目经验：在华为参与数据科学家相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：26K77K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_56.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：张三57\n求职意向：数据工程师\n学历：本科\n专业：数学\n工作年限：2年\n技能：TypeScript, Faiss, TensorFlow, Java, Terraform\n项目经验：在华为参与数据工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：中国科学技术大学\n薪资期望：20K65K\n证书：AWS SAA\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：张三57\n求职意向：数据工程师\n学历：本科\n专业：数学\n工作年限：2年\n技能：TypeScript, Faiss, TensorFlow, Java, Terraform\n项目经验：在华为参与数据工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：中国科学技术大学\n薪资期望：20K65K\n证书：AWS SAA\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_57.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：李四58\n求职意向：数据工程师\n学历：博士\n专业：信息工程\n工作年限：1年\n技能：Faiss, Redis, Milvus, PostgreSQL\n项目经验：在京东参与数据工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：南京大学\n薪资期望：30K76K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：李四58\n求职意向：数据工程师\n学历：博士\n专业：信息工程\n工作年限：1年\n技能：Faiss, Redis, Milvus, PostgreSQL\n项目经验：在京东参与数据工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：南京大学\n薪资期望：30K76K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_58.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五59\n求职意向：NLP工程师\n学历：硕士\n专业：数学\n工作年限：8年\n技能：C, PostgreSQL, React, Spark\n项目经验：在美团参与NLP工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：南京大学\n薪资期望：15K64K\n证书：RHCE\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五59\n求职意向：NLP工程师\n学历：硕士\n专业：数学\n工作年限：8年\n技能：C, PostgreSQL, React, Spark\n项目经验：在美团参与NLP工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：南京大学\n薪资期望：15K64K\n证书：RHCE\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_59.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三6\n求职意向：计算机视觉工程师\n学历：硕士\n专业：人工智能\n工作年限：2年\n技能：AWS, RAG, MySQL, GCP\n项目经验：在京东参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：复旦大学\n薪资期望：27K69K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三6\n求职意向：计算机视觉工程师\n学历：硕士\n专业：人工智能\n工作年限：2年\n技能：AWS, RAG, MySQL, GCP\n项目经验：在京东参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：27K69K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_6.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：冯二60\n求职意向：计算机视觉工程师\n学历：硕士\n专业：信息工程\n工作年限：8年\n技能：Flink, Spark, AWS, RAG, Airflow, Node.js\n项目经验：在百度参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：南京大学\n薪资期望：21K61K\n证书：AWS SAA\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：冯二60\n求职意向：计算机视觉工程师\n学历：硕士\n专业：信息工程\n工作年限：8年\n技能：Flink, Spark, AWS, RAG, Airflow, Node.js\n项目经验：在百度参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：南京大学\n薪资期望：21K61K\n证书：AWS SAA\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_60.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：张三61\n求职意向：机器学习工程师\n学历：大专\n专业：统计学\n工作年限：12年\n技能：Airflow, scikitlearn, Faiss, Go, PyTorch, Milvus\n项目经验：在百度参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：南京大学\n薪资期望：18K74K\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：张三61\n求职意向：机器学习工程师\n学历：大专\n专业：统计学\n工作年限：12年\n技能：Airflow, scikitlearn, Faiss, Go, PyTorch, Milvus\n项目经验：在百度参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：南京大学\n薪资期望：18K74K\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_61.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十62\n求职意向：后端工程师\n学历：硕士\n专业：信息工程\n工作年限：10年\n技能：C, Elasticsearch, MySQL, Spark\n项目经验：在京东参与后端工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：中国科学技术大学\n薪资期望：17K67K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十62\n求职意向：后端工程师\n学历：硕士\n专业：信息工程\n工作年限：10年\n技能：C, Elasticsearch, MySQL, Spark\n项目经验：在京东参与后端工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：中国科学技术大学\n薪资期望：17K67K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_62.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：周九63\n求职意向：机器学习工程师\n学历：大专\n专业：电子工程\n工作年限：8年\n技能：Jenkins, C, Git\n项目经验：在美团参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：北京大学\n薪资期望：38K51K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：周九63\n求职意向：机器学习工程师\n学历：大专\n专业：电子工程\n工作年限：8年\n技能：Jenkins, C, Git\n项目经验：在美团参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：38K51K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_63.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：卫五64\n求职意向：前端工程师\n学历：大专\n专业：软件工程\n工作年限：11年\n技能：Java, Go, Hadoop, C, Redis\n项目经验：在百度参与前端工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：上海交通大学\n薪资期望：28K55K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：卫五64\n求职意向：前端工程师\n学历：大专\n专业：软件工程\n工作年限：11年\n技能：Java, Go, Hadoop, C, Redis\n项目经验：在百度参与前端工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：28K55K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_64.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：冯二65\n求职意向：算法工程师\n学历：硕士\n专业：软件工程\n工作年限：1年\n技能：Jenkins, Git, Faiss, scikitlearn, Linux, Node.js\n项目经验：在美团参与算法工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：浙江大学\n薪资期望：23K46K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：冯二65\n求职意向：算法工程师\n学历：硕士\n专业：软件工程\n工作年限：1年\n技能：Jenkins, Git, Faiss, scikitlearn, Linux, Node.js\n项目经验：在美团参与算法工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：23K46K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_65.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三66\n求职意向：DevOps工程师\n学历：硕士\n专业：计算机科学\n工作年限：7年\n技能：GCP, MongoDB, Angular, MySQL, Node.js\n项目经验：在美团参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：北京大学\n薪资期望：27K76K\n证书：RHCE\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三66\n求职意向：DevOps工程师\n学历：硕士\n专业：计算机科学\n工作年限：7年\n技能：GCP, MongoDB, Angular, MySQL, Node.js\n项目经验：在美团参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：27K76K\n证书：RHCE\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_66.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八67\n求职意向：架构师\n学历：本科\n专业：统计学\n工作年限：4年\n技能：Vue, PostgreSQL, Python\n项目经验：在字节跳动参与架构师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：复旦大学\n薪资期望：38K77K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八67\n求职意向：架构师\n学历：本科\n专业：统计学\n工作年限：4年\n技能：Vue, PostgreSQL, Python\n项目经验：在字节跳动参与架构师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：本科院校\n薪资期望：38K77K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_67.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六68\n求职意向：架构师\n学历：本科\n专业：软件工程\n工作年限：10年\n技能：Jenkins, MySQL, PyTorch, Scala\n项目经验：在字节跳动参与架构师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：上海交通大学\n薪资期望：40K74K\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六68\n求职意向：架构师\n学历：本科\n专业：软件工程\n工作年限：10年\n技能：Jenkins, MySQL, PyTorch, Scala\n项目经验：在字节跳动参与架构师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：本科院校\n薪资期望：40K74K\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_68.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四69\n求职意向：算法工程师\n学历：博士\n专业：人工智能\n工作年限：5年\n技能：LightGBM, Docker, PyTorch, RAG, Kafka, LangChain\n项目经验：在美团参与算法工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：南京大学\n薪资期望：20K62K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四69\n求职意向：算法工程师\n学历：博士\n专业：人工智能\n工作年限：5年\n技能：LightGBM, Docker, PyTorch, RAG, Kafka, LangChain\n项目经验：在美团参与算法工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：南京大学\n薪资期望：20K62K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_69.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五7\n求职意向：DevOps工程师\n学历：大专\n专业：计算机科学\n工作年限：12年\n技能：TensorFlow, scikitlearn, XGBoost\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：复旦大学\n薪资期望：17K70K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五7\n求职意向：DevOps工程师\n学历：大专\n专业：计算机科学\n工作年限：12年\n技能：TensorFlow, scikitlearn, XGBoost\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：17K70K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_7.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：钱七70\n求职意向：机器学习工程师\n学历：博士\n专业：信息工程\n工作年限：1年\n技能：Linux, Vue, AWS, Kafka\n项目经验：在阿里巴巴参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：27K46K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：钱七70\n求职意向：机器学习工程师\n学历：博士\n专业：信息工程\n工作年限：1年\n技能：Linux, Vue, AWS, Kafka\n项目经验：在阿里巴巴参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：27K46K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_70.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十71\n求职意向：机器学习工程师\n学历：本科\n专业：数学\n工作年限：6年\n技能：Scala, Linux, Elasticsearch, Java, Jenkins\n项目经验：在百度参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：复旦大学\n薪资期望：22K50K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十71\n求职意向：机器学习工程师\n学历：本科\n专业：数学\n工作年限：6年\n技能：Scala, Linux, Elasticsearch, Java, Jenkins\n项目经验：在百度参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：22K50K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_71.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：楮四72\n求职意向：数据科学家\n学历：大专\n专业：计算机科学\n工作年限：2年\n技能：Go, MongoDB, Faiss\n项目经验：在阿里巴巴参与数据科学家相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：清华大学\n薪资期望：22K80K\n证书：CKAD\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：楮四72\n求职意向：数据科学家\n学历：大专\n专业：计算机科学\n工作年限：2年\n技能：Go, MongoDB, Faiss\n项目经验：在阿里巴巴参与数据科学家相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：22K80K\n证书：CKAD\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_72.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三73\n求职意向：DevOps工程师\n学历：大专\n专业：数学\n工作年限：11年\n技能：React, Scala, Faiss, Jenkins\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：上海交通大学\n薪资期望：16K69K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三73\n求职意向：DevOps工程师\n学历：大专\n专业：数学\n工作年限：11年\n技能：React, Scala, Faiss, Jenkins\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：16K69K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_73.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六74\n求职意向：机器学习工程师\n学历：博士\n专业：统计学\n工作年限：5年\n技能：C, Vue, PostgreSQL, Docker, TensorFlow\n项目经验：在小米参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：清华大学\n薪资期望：36K59K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六74\n求职意向：机器学习工程师\n学历：博士\n专业：统计学\n工作年限：5年\n技能：C, Vue, PostgreSQL, Docker, TensorFlow\n项目经验：在小米参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：36K59K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_74.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：张三75\n求职意向：后端工程师\n学历：本科\n专业：软件工程\n工作年限：2年\n技能：C, AWS, Kubernetes, GCP\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：42K60K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：张三75\n求职意向：后端工程师\n学历：本科\n专业：软件工程\n工作年限：2年\n技能：C, AWS, Kubernetes, GCP\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：42K60K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_75.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：卫五76\n求职意向：架构师\n学历：博士\n专业：人工智能\n工作年限：2年\n技能：RAG, MySQL, LightGBM, TensorFlow\n项目经验：在字节跳动参与架构师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：北京大学\n薪资期望：15K68K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：卫五76\n求职意向：架构师\n学历：博士\n专业：人工智能\n工作年限：2年\n技能：RAG, MySQL, LightGBM, TensorFlow\n项目经验：在字节跳动参与架构师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：本科院校\n薪资期望：15K68K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_76.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：张三77\n求职意向：算法工程师\n学历：本科\n专业：计算机科学\n工作年限：2年\n技能：LangChain, TensorFlow, C, Elasticsearch, TypeScript, Kafka\n项目经验：在阿里巴巴参与算法工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：浙江大学\n薪资期望：31K60K\n证书：RHCE\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：张三77\n求职意向：算法工程师\n学历：本科\n专业：计算机科学\n工作年限：2年\n技能：LangChain, TensorFlow, C, Elasticsearch, TypeScript, Kafka\n项目经验：在阿里巴巴参与算法工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：31K60K\n证书：RHCE\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_77.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：钱七78\n求职意向：计算机视觉工程师\n学历：博士\n专业：计算机科学\n工作年限：7年\n技能：Angular, Scala, Faiss, TypeScript, C, Rust\n项目经验：在百度参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：复旦大学\n薪资期望：19K50K\n证书：RHCE\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：钱七78\n求职意向：计算机视觉工程师\n学历：博士\n专业：计算机科学\n工作年限：7年\n技能：Angular, Scala, Faiss, TypeScript, C, Rust\n项目经验：在百度参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：19K50K\n证书：RHCE\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_78.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：郑一79\n求职意向：机器学习工程师\n学历：大专\n专业：数学\n工作年限：8年\n技能：Node.js, Milvus, Terraform, Angular, Scala\n项目经验：在阿里巴巴参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：35K59K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：郑一79\n求职意向：机器学习工程师\n学历：大专\n专业：数学\n工作年限：8年\n技能：Node.js, Milvus, Terraform, Angular, Scala\n项目经验：在阿里巴巴参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：35K59K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_79.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十8\n求职意向：DevOps工程师\n学历：本科\n专业：数学\n工作年限：0年\n技能：RAG, PostgreSQL, Spark\n项目经验：在阿里巴巴参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：上海交通大学\n薪资期望：28K56K\n证书：CKAD\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十8\n求职意向：DevOps工程师\n学历：本科\n专业：数学\n工作年限：0年\n技能：RAG, PostgreSQL, Spark\n项目经验：在阿里巴巴参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：28K56K\n证书：CKAD\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_8.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：赵六80\n求职意向：NLP工程师\n学历：本科\n专业：电子工程\n工作年限：7年\n技能：React, Scala, Hadoop, Angular, GCP, MySQL\n项目经验：在百度参与NLP工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：北京大学\n薪资期望：36K76K\n证书：PMP\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：赵六80\n求职意向：NLP工程师\n学历：本科\n专业：电子工程\n工作年限：7年\n技能：React, Scala, Hadoop, Angular, GCP, MySQL\n项目经验：在百度参与NLP工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：36K76K\n证书：PMP\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_80.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：李四81\n求职意向：NLP工程师\n学历：博士\n专业：统计学\n工作年限：11年\n技能：PyTorch, AWS, C, GCP, Spark\n项目经验：在阿里巴巴参与NLP工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：浙江大学\n薪资期望：26K73K\n证书：CKAD\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：李四81\n求职意向：NLP工程师\n学历：博士\n专业：统计学\n工作年限：11年\n技能：PyTorch, AWS, C, GCP, Spark\n项目经验：在阿里巴巴参与NLP工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：26K73K\n证书：CKAD\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_81.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：冯二82\n求职意向：数据科学家\n学历：本科\n专业：计算机科学\n工作年限：9年\n技能：scikitlearn, Elasticsearch, Linux, Scala\n项目经验：在百度参与数据科学家相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：南京大学\n薪资期望：32K69K\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：冯二82\n求职意向：数据科学家\n学历：本科\n专业：计算机科学\n工作年限：9年\n技能：scikitlearn, Elasticsearch, Linux, Scala\n项目经验：在百度参与数据科学家相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：南京大学\n薪资期望：32K69K\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_82.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：冯二83\n求职意向：数据工程师\n学历：大专\n专业：电子工程\n工作年限：8年\n技能：Terraform, PostgreSQL, Java\n项目经验：在腾讯参与数据工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：上海交通大学\n薪资期望：37K65K\n证书：CKA\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：冯二83\n求职意向：数据工程师\n学历：大专\n专业：电子工程\n工作年限：8年\n技能：Terraform, PostgreSQL, Java\n项目经验：在腾讯参与数据工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：37K65K\n证书：CKA\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_83.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五84\n求职意向：架构师\n学历：大专\n专业：计算机科学\n工作年限：2年\n技能：Rust, LangChain, Kubernetes\n项目经验：在京东参与架构师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：浙江大学\n薪资期望：29K67K\n证书：CKAD\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五84\n求职意向：架构师\n学历：大专\n专业：计算机科学\n工作年限：2年\n技能：Rust, LangChain, Kubernetes\n项目经验：在京东参与架构师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：29K67K\n证书：CKAD\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_84.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：卫五85\n求职意向：架构师\n学历：博士\n专业：计算机科学\n工作年限：2年\n技能：Jenkins, C, Rust, PostgreSQL\n项目经验：在小米参与架构师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：中国科学技术大学\n薪资期望：28K77K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：卫五85\n求职意向：架构师\n学历：博士\n专业：计算机科学\n工作年限：2年\n技能：Jenkins, C, Rust, PostgreSQL\n项目经验：在小米参与架构师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：中国科学技术大学\n薪资期望：28K77K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_85.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：钱七86\n求职意向：数据工程师\n学历：博士\n专业：人工智能\n工作年限：6年\n技能：Redis, GCP, Faiss\n项目经验：在美团参与数据工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：清华大学\n薪资期望：22K71K\n证书：CKA\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：钱七86\n求职意向：数据工程师\n学历：博士\n专业：人工智能\n工作年限：6年\n技能：Redis, GCP, Faiss\n项目经验：在美团参与数据工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：本科院校\n薪资期望：22K71K\n证书：CKA\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_86.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：钱七87\n求职意向：数据工程师\n学历：硕士\n专业：电子工程\n工作年限：4年\n技能：Hadoop, TensorFlow, Python, Faiss, Angular\n项目经验：在腾讯参与数据工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：北京大学\n薪资期望：27K80K\n证书：RHCE\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：钱七87\n求职意向：数据工程师\n学历：硕士\n专业：电子工程\n工作年限：4年\n技能：Hadoop, TensorFlow, Python, Faiss, Angular\n项目经验：在腾讯参与数据工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：27K80K\n证书：RHCE\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_87.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三88\n求职意向：机器学习工程师\n学历：博士\n专业：信息工程\n工作年限：11年\n技能：Angular, Java, Node.js\n项目经验：在阿里巴巴参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：25K73K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三88\n求职意向：机器学习工程师\n学历：博士\n专业：信息工程\n工作年限：11年\n技能：Angular, Java, Node.js\n项目经验：在阿里巴巴参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：25K73K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_88.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三89\n求职意向：NLP工程师\n学历：本科\n专业：计算机科学\n工作年限：6年\n技能：Hadoop, XGBoost, Jenkins\n项目经验：在小米参与NLP工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：南京大学\n薪资期望：37K69K\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三89\n求职意向：NLP工程师\n学历：本科\n专业：计算机科学\n工作年限：6年\n技能：Hadoop, XGBoost, Jenkins\n项目经验：在小米参与NLP工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：南京大学\n薪资期望：37K69K\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_89.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：郑一9\n求职意向：算法工程师\n学历：博士\n专业：电子工程\n工作年限：10年\n技能：Milvus, Terraform, Docker, scikitlearn, Kafka\n项目经验：在腾讯参与算法工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：复旦大学\n薪资期望：45K79K\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：郑一9\n求职意向：算法工程师\n学历：博士\n专业：电子工程\n工作年限：10年\n技能：Milvus, Terraform, Docker, scikitlearn, Kafka\n项目经验：在腾讯参与算法工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：45K79K\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_9.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：李四90\n求职意向：数据工程师\n学历：大专\n专业：数学\n工作年限：6年\n技能：Vue, MongoDB, Spark\n项目经验：在华为参与数据工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：上海交通大学\n薪资期望：39K56K\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：李四90\n求职意向：数据工程师\n学历：大专\n专业：数学\n工作年限：6年\n技能：Vue, MongoDB, Spark\n项目经验：在华为参与数据工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：39K56K\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_90.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：李四91\n求职意向：DevOps工程师\n学历：硕士\n专业：电子工程\n工作年限：5年\n技能：scikitlearn, Git, Scala, MySQL, Docker\n项目经验：在腾讯参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：复旦大学\n薪资期望：19K50K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：李四91\n求职意向：DevOps工程师\n学历：硕士\n专业：电子工程\n工作年限：5年\n技能：scikitlearn, Git, Scala, MySQL, Docker\n项目经验：在腾讯参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：本科院校\n薪资期望：19K50K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_91.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：陈三92\n求职意向：计算机视觉工程师\n学历：大专\n专业：电子工程\n工作年限：9年\n技能：Azure, Hadoop, Terraform, scikitlearn, TypeScript, C\n项目经验：在小米参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：浙江大学\n薪资期望：35K65K\n语言能力：CET6",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：陈三92\n求职意向：计算机视觉工程师\n学历：大专\n专业：电子工程\n工作年限：9年\n技能：Azure, Hadoop, Terraform, scikitlearn, TypeScript, C\n项目经验：在小米参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：35K65K\n语言能力：CET6",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_92.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：孙八93\n求职意向：DevOps工程师\n学历：博士\n专业：人工智能\n工作年限：7年\n技能：Go, C, Kafka, Redis, C, Rust\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：浙江大学\n薪资期望：33K48K\n语言能力：雅思",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：孙八93\n求职意向：DevOps工程师\n学历：博士\n专业：人工智能\n工作年限：7年\n技能：Go, C, Kafka, Redis, C, Rust\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：本科院校\n薪资期望：33K48K\n语言能力：雅思",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_93.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：冯二94\n求职意向：数据工程师\n学历：本科\n专业：数学\n工作年限：7年\n技能：C, TypeScript, Scala, Spark\n项目经验：在阿里巴巴参与数据工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：复旦大学\n薪资期望：35K57K\n证书：AWS SAA\n语言能力：英语四级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：冯二94\n求职意向：数据工程师\n学历：本科\n专业：数学\n工作年限：7年\n技能：C, TypeScript, Scala, Spark\n项目经验：在阿里巴巴参与数据工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：35K57K\n证书：AWS SAA\n语言能力：英语四级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_94.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：吴十95\n求职意向：DevOps工程师\n学历：硕士\n专业：人工智能\n工作年限：5年\n技能：Airflow, React, Spark, Terraform, C\n项目经验：在百度参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：清华大学\n薪资期望：25K52K\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：吴十95\n求职意向：DevOps工程师\n学历：硕士\n专业：人工智能\n工作年限：5年\n技能：Airflow, React, Spark, Terraform, C\n项目经验：在百度参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：本科院校\n薪资期望：25K52K\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_95.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：钱七96\n求职意向：数据科学家\n学历：硕士\n专业：人工智能\n工作年限：1年\n技能：Flink, MongoDB, Vue, PyTorch\n项目经验：在阿里巴巴参与数据科学家相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：上海交通大学\n薪资期望：32K70K\n语言能力：日语N1",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：钱七96\n求职意向：数据科学家\n学历：硕士\n专业：人工智能\n工作年限：1年\n技能：Flink, MongoDB, Vue, PyTorch\n项目经验：在阿里巴巴参与数据科学家相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：本科院校\n薪资期望：32K70K\n语言能力：日语N1",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_96.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五97\n求职意向：DevOps工程师\n学历：博士\n专业：统计学\n工作年限：10年\n技能：Milvus, Kafka, Java, Terraform, MongoDB, LightGBM\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：上海交通大学\n薪资期望：45K77K\n证书：CKA\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五97\n求职意向：DevOps工程师\n学历：博士\n专业：统计学\n工作年限：10年\n技能：Milvus, Kafka, Java, Terraform, MongoDB, LightGBM\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：本科院校\n薪资期望：45K77K\n证书：CKA\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_97.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五98\n求职意向：前端工程师\n学历：本科\n专业：电子工程\n工作年限：12年\n技能：Milvus, RAG, LangChain\n项目经验：在字节跳动参与前端工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：中国科学技术大学\n薪资期望：25K54K\n证书：CKA\n语言能力：托福",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五98\n求职意向：前端工程师\n学历：本科\n专业：电子工程\n工作年限：12年\n技能：Milvus, RAG, LangChain\n项目经验：在字节跳动参与前端工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：中国科学技术大学\n薪资期望：25K54K\n证书：CKA\n语言能力：托福",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "普本/专科",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_98.docx",
+        "file_extension": ".docx"
+    },
+    {
+        "text": "个人简历\n姓名：王五99\n求职意向：架构师\n学历：硕士\n专业：统计学\n工作年限：7年\n技能：React, Kafka, Git\n项目经验：在小米参与架构师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：复旦大学\n薪资期望：24K74K\n语言能力：英语六级",
+        "language": "zh",
+        "masked_text": "个人简历\n姓名：王五99\n求职意向：架构师\n学历：硕士\n专业：统计学\n工作年限：7年\n技能：React, Kafka, Git\n项目经验：在小米参与架构师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：本科院校\n薪资期望：24K74K\n语言能力：英语六级",
+        "fairness_tags": {
+            "gender": "未知",
+            "school_tier": "未知",
+            "gap_type": "未知"
+        },
+        "entities": [],
+        "file_path": "data/raw_resumes\\mock_resume_99.docx",
+        "file_extension": ".docx"
+    }
+]

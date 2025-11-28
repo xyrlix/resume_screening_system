@@ -1,4 +1,5 @@
 import pdfplumber
+from typing import List, Dict, Any
 
 def layout_aware_parse(pdf_path: str):
     text_blocks = []
@@ -27,3 +28,32 @@ def index_backfill(sorted_text: str, text_blocks, llm_response: dict):
         except Exception:
             result[key] = ""
     return result
+
+def parse_document_layout(document_path: str) -> Dict[str, Any]:
+    """解析文档布局的简单实现"""
+    # 使用现有的layout_aware_parse函数作为基础实现
+    try:
+        if document_path.lower().endswith('.pdf'):
+            text, elements = layout_aware_parse(document_path)
+            return {
+                "success": True,
+                "text": text,
+                "elements": elements,
+                "page_count": 1  # layout_aware_parse没有返回页数，这里简化处理
+            }
+        else:
+            return {
+                "success": False,
+                "error": "Unsupported document type"
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+def extract_layout_elements(layout_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """从布局数据中提取布局元素"""
+    if layout_data.get("success"):
+        return layout_data.get("elements", [])
+    return []

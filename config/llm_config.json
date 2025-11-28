@@ -1,23 +1,23 @@
 {
   "models": {
     "qwen-1.8b": {
-      "api_key": "gAAAAABpKSZ7T7WfVvh_t9eaTiXESoxU8m1H4LKU1ZFpO-jayVlTObbhWhopDLkSPk17GJPHV0RjkSclIZ_A_2UuF1iu6ry5dQ==",
+      "api_key": "gAAAAABpKUY0AT1Krm5aMp4BmbQQPDlrGhei-4I2TV05PUT8K1OdQJ_Sphu5uP5_d44X0ViVRehUGHqAG37rTdmkivvqhUAUig==",
       "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
     },
     "deepseek-llm-7b-chat": {
-      "api_key": "gAAAAABpKSZ7lIhFwT1y4Vav0cDEy-2MtJzCQOQQkDw7K7BQrpq5wtebGEeyEmi_ovX0ioUiuuQlQHOu9kb8B2hlolM4wWwSUoX6QJuKLffwzKhgGgZFH1TTj1pCdhEnuyhEadDejB6n",
+      "api_key": "gAAAAABpKUY08RSk--YeOxrOKRSYFBPdXwfwwgG_5gsh-93ZcfPYpjtoIbKgiAYYSds9IZrcr2IhXvjHWtQEVRw_OohoiT6PI1YUV2QDBlynOPyUVZxwToLlSIpRD2VVbKv9gmvpth6C",
       "base_url": "https://api.deepseek.com/v1"
     },
     "moonshot-v1-8k": {
-      "api_key": "gAAAAABpKSZ7sp8fBsCKwxVc1Vkk4nvDdmF7Fol1eXsXGBz5hmLof9yv0ma1KA1Fl8DypfWaIEKoHcxwFj54YGj67PrS22WjUDJ-1u8sPVpXRx1HCFNgXVDVGSdlrqj52uP57e7c6Zor1QfBW3NIoI9piJUu7hWKgg==",
+      "api_key": "gAAAAABpKUY0Ft4U9tNfEXZr40kokNO4TdkNh_rXEK4lPYx3SFiEO7_9-r_e28qSBU9OY7J6T3VIzwfrSsHiAPTiWTkPwvaYLeIrPOAuqRxqMwEkr8K6bAoHIVaykHNGUUnousiC3bVbIx8wFU0Zkcy4HA-hxNUOfg==",
       "base_url": "https://api.moonshot.cn/v1"
     },
     "gpt-3.5-turbo": {
-      "api_key": "gAAAAABpKSZ7-oMAOop7YoR6DC0JMgwwb8lPibvj9_ibROKw10K75MFb01Vp-61yTvaM2Vyyv_REPGPs6UlOlVXrOZB-p1m8yAXKnuqdPHo8Ny0EsjuXFhmtVOCMvOvo8yIR6aun9evPVMwthItspa-tWFDmXqSO9bFmeWmfqZfIFIUYYXgIss8=",
+      "api_key": "gAAAAABpKUY0H2NIugArL1eGQth880eqHwdY95BqgIEYRDQpaS1dMvDS_RDUveK2wiLekqQiJBYr_W-ndVmGIMpRo5LnymVXT1Z5LGeZ7o1ZvqsiXuA7Cv2bNlSBK1DgKjDjzNIqLofbknC_M6pXWkCWC_GCVhaeNSiCrcZ_VHxfz5euw7zPaWU=",
       "base_url": "https://openrouter.ai/api/v1"
     },
     "gpt-4": {
-      "api_key": "gAAAAABpKSZ7mQA-dZyjN2syF5l46VUAVKL47YsDjAa5EfqWC5CTWfYVjnQAUrawtdRUQj310oCXaNQrqIO3hKS42NsFCi8Jo_S0xGxH8g6PqjdJeaeDgBdNwYtv4ABm9fXFQcaOc3FIhDOiOZDhjhjWX5uF44e3qx0hV1dlLYkRTgxkCzed0BQ=",
+      "api_key": "gAAAAABpKUY0wejk4ytg4V7aahTHoGuUykL-w5jnHqqkXkZQJngeuV520GqiKPf6HPIR8EyzIXVP4dB3dycbhXOTndNPcSsGSoolMEVIc8lgeNi80EyrF_ENFBg7G7W8OvUMarBz4uF1VH2eG-mqttOez8lUWh4u_3lU9n2LVyalk0Sdr6NBYq4=",
       "base_url": "https://openrouter.ai/api/v1"
     }
   },
@@ -28,7 +28,7 @@
     ]
   ],
   "default_model": "deepseek-llm-7b-chat",
-  "region": "domestic",
+  "region": "international",
   "prompts": {
     "extract_entities": "请从以下职位描述(JD)和简历中提取实体信息，返回JSON格式。\n\nJD文本：{jd_text}\n\n简历文本：{resume_text}\n\n需要提取的JD实体包括：技能、学历要求、工作年限要求、职位名称\n需要提取的简历实体包括：技能、教育背景、工作经验、职位\n\n返回格式：\n{\n    \"jd_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"学历要求\"],\n        \"experience\": [\"工作年限要求\"],\n        \"position\": \"职位名称\"\n    },\n    \"resume_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"教育背景\"],\n        \"experience\": [\"工作经验\"],\n        \"position\": \"职位\"\n    }\n}",
     "validate_entities": "请验证并修正以下提取的实体信息，确保信息准确无误。\n\n提取的实体信息：\n{extracted_json}\n\n请检查：\n1. 技能是否准确\n2. 学历要求和教育背景是否合理\n3. 工作年限要求和工作经验是否匹配\n4. 职位名称是否准确\n\n返回修正后的JSON格式：\n{\n    \"jd_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"学历要求\"],\n        \"experience\": [\"工作年限要求\"],\n        \"position\": \"职位名称\"\n    },\n    \"resume_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"教育背景\"],\n        \"experience\": [\"工作经验\"],\n        \"position\": \"职位\"\n    }\n}",
@@ -40,5 +40,14 @@
     "analyze_rejection": "请分析以下拒信文本，归纳拒绝原因并提出改进建议，返回JSON格式。\n\n拒信：{rejection_text}\n简历：{resume_text}\nJD：{jd_text}\n\n返回格式：\n{\n  \"reasons\": [\"...\"],\n  \"suggestions\": [\"...\"],\n  \"priority\": [\"...\"]\n}",
     "generate_learning_path": "请根据缺失技能为候选人生成学习成长路径，返回JSON格式。\n\n目标岗位：{target_job}\n缺失技能：{missing_skills}\n\n返回格式：\n{\n  \"steps\": [\"...\"],\n  \"courses\": [\"...\"],\n  \"projects\": [\"...\"],\n  \"certifications\": [\"...\"]\n}",
     "jd_extract_entities": "请从以下职位描述(JD)中提取完整的实体信息，返回JSON格式。\n\nJD文本：{text}\n\n需要提取的实体包括：{entity_list}\n\n返回格式：\n{\n    \"职位名称\": \"\",\n    \"公司名称\": \"\",\n    \"学历要求\": \"\",\n    \"工作年限要求\": \"\",\n    \"薪资范围\": \"\",\n    \"工作地点\": \"\",\n    \"技能要求\": \"\",\n    \"岗位职责\": \"\",\n    \"任职要求\": \"\",\n    \"行业\": \"\",\n    \"招聘人数\": \"\",\n    \"发布时间\": \"\",\n    \"截止时间\": \"\",\n    \"职位类型\": \"\",\n    \"语言要求\": \"\",\n    \"证书要求\": \"\",\n    \"福利\": \"\",\n    \"团队情况\": \"\"\n}"
+  },
+  "preferred_orders": {
+    "international": [
+      "moonshot",
+      "openrouter",
+      "deepseek",
+      "doubao",
+      "qwen"
+    ]
   }
 }

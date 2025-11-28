@@ -1,0 +1,5034 @@
+{
+  "texts": [
+    "岗位名称：产品经理\n所属行业：互联网\n学历要求：本科及以上\n工作年限：1-3年\n技能要求：数据分析, 需求分析, 用户研究, 敏捷开发, 产品设计, 项目管理\n岗位职责：\n- 负责产品的全生命周期管理，包括需求分析、产品设计和项目协调\n- 通过用户研究和数据分析，不断优化产品功能和用户体验\n- 与研发、设计、市场等团队紧密合作，推动产品落地",
+    "个人简历\n姓名：李四106\n求职意向：DevOps工程师\n学历：博士\n专业：信息工程\n工作年限：7年\n技能：Airflow, Kafka, MySQL\n项目经验：在字节跳动参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：上海交通大学\n薪资期望：40K50K\n证书：PMP\n语言能力：CET6",
+    "个人简历\n姓名：孙八4\n求职意向：算法工程师\n学历：本科\n专业：人工智能\n工作年限：3年\n技能：C, Terraform, XGBoost, RAG, Git\n项目经验：在腾讯参与算法工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：浙江大学\n薪资期望：27K63K\n语言能力：日语N1",
+    "个人简历\n姓名：李四91\n求职意向：DevOps工程师\n学历：硕士\n专业：电子工程\n工作年限：5年\n技能：scikitlearn, Git, Scala, MySQL, Docker\n项目经验：在腾讯参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：复旦大学\n薪资期望：19K50K\n语言能力：英语六级",
+    "个人简历\n姓名：李四102\n求职意向：数据工程师\n学历：大专\n专业：人工智能\n工作年限：0年\n技能：C, Vue, Milvus, Kafka, Git, Airflow\n项目经验：在阿里巴巴参与数据工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：上海交通大学\n薪资期望：22K47K\n语言能力：CET6",
+    "个人简历\n姓名：楮四153\n求职意向：DevOps工程师\n学历：硕士\n专业：信息工程\n工作年限：3年\n技能：MongoDB, Python, Kubernetes, Docker, TensorFlow\n项目经验：在小米参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：北京大学\n薪资期望：37K59K\n语言能力：雅思",
+    "岗位名称：算法工程师\n所属行业：人工智能\n学历要求：本科及以上\n工作年限：5-10年\n技能要求：深度学习, TensorFlow, Python, 计算机视觉, NLP\n岗位职责：\n- 负责人工智能领域的算法研发工作，包括模型设计、训练与优化\n- 解决实际业务中的算法问题，提升产品性能和用户体验\n- 跟踪和研究前沿算法技术，推动技术创新和应用",
+    "岗位名称：电池研发工程师\n所属行业：新能源\n学历要求：本科及以上\n工作年限：1-3年\n技能要求：电池管理系统, 循环寿命测试, 电池设计, 电化学, 锂电池, 材料科学\n岗位职责：\n- 负责新能源电池的研发工作，参与电池材料选型和性能测试\n- 优化电池制造工艺，提升电池能量密度和循环寿命\n- 解决电池研发和生产中的技术难题",
+    "个人简历\n姓名：冯二139\n求职意向：数据工程师\n学历：硕士\n专业：数学\n工作年限：10年\n技能：Angular, Milvus, Hadoop, Rust, Vue, Scala\n项目经验：在腾讯参与数据工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：北京大学\n薪资期望：30K66K\n证书：AWS SAA\n语言能力：英语六级",
+    "岗位名称：电池研发工程师\n所属行业：新能源\n学历要求：本科及以上\n工作年限：3-5年\n技能要求：电化学, 电池管理系统, 锂电池, 循环寿命测试\n岗位职责：\n- 负责新能源电池的研发工作，参与电池材料选型和性能测试\n- 优化电池制造工艺，提升电池能量密度和循环寿命\n- 解决电池研发和生产中的技术难题",
+    "岗位名称：跨境电商\n所属行业：电子商务\n学历要求：大专及以上\n工作年限：1-3年\n技能要求：多语言沟通, 跨境物流, 平台运营, 供应链管理, 海外市场, 国际贸易\n岗位职责：\n- 负责跨境电商平台运营，包括产品选品、定价和市场推广\n- 管理海外仓储物流，优化供应链和配送流程\n- 分析市场数据，制定销售策略，提升店铺业绩",
+    "个人简历\n姓名：钱七100\n求职意向：计算机视觉工程师\n学历：硕士\n专业：人工智能\n工作年限：10年\n技能：Node.js, Redis, Airflow, Milvus, LangChain, React\n项目经验：在腾讯参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：南京大学\n薪资期望：21K54K\n证书：AWS SAA\n语言能力：CET6",
+    "个人简历\n姓名：王五29\n求职意向：架构师\n学历：本科\n专业：信息工程\n工作年限：8年\n技能：MongoDB, Redis, Kubernetes\n项目经验：在京东参与架构师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：南京大学\n薪资期望：33K66K\n语言能力：雅思",
+    "个人简历\n姓名：吴十124\n求职意向：后端工程师\n学历：博士\n专业：信息工程\n工作年限：8年\n技能：Git, Kubernetes, GCP, Flink, C, AWS\n项目经验：在美团参与后端工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：浙江大学\n薪资期望：34K76K\n语言能力：CET6",
+    "岗位名称：算法工程师\n所属行业：人工智能\n学历要求：本科及以上\n工作年限：5-10年\n技能要求：深度学习, TensorFlow, 计算机视觉, NLP, Python, PyTorch\n岗位职责：\n- 负责人工智能领域的算法研发工作，包括模型设计、训练与优化\n- 解决实际业务中的算法问题，提升产品性能和用户体验\n- 跟踪和研究前沿算法技术，推动技术创新和应用",
+    "岗位：前端工程师\n学历要求：本科\n工作年限：1年\n技能要求：TypeScript, React, Webpack, Node.js\n方向关键词：组件化, 性能优化\n有跨端或SSR经验者优先。",
+    "个人简历\n姓名：陈三30\n求职意向：数据工程师\n学历：大专\n专业：电子工程\n工作年限：12年\n技能：Rust, Redis, Milvus, Jenkins\n项目经验：在百度参与数据工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：清华大学\n薪资期望：41K61K\n证书：CKA\n语言能力：日语N1",
+    "个人简历\n姓名：卫五76\n求职意向：架构师\n学历：博士\n专业：人工智能\n工作年限：2年\n技能：RAG, MySQL, LightGBM, TensorFlow\n项目经验：在字节跳动参与架构师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：北京大学\n薪资期望：15K68K\n语言能力：英语六级",
+    "招聘高级软件工程师\n\n岗位职责：\n- 参与后端服务的架构设计与开发，编写高质量代码。\n- 优化系统性能，保障服务稳定与安全。\n\n任职要求：\n- 学历本科及以上，计算机相关专业优先。\n- 5年以上后端开发经验，熟悉 Python/Java。\n- 熟悉 Linux、Git，具备良好工程实践。\n\n加分项：\n- 了解 Docker/Kubernetes，具备云原生经验。",
+    "岗位：数据工程师\n学历要求：本科\n工作年限：5年\n技能要求：Spark, Hadoop, Kafka, Airflow\n方向关键词：数据仓库, ETL\n熟悉Linux环境与脚本，掌握SQL优化。",
+    "岗位：DevOps工程师\n学历要求：本科\n工作年限：3年\n技能要求：Docker, Kubernetes, Jenkins, Terraform\n方向关键词：CI/CD, 云原生\n具备云平台经验（AWS/Azure/GCP）。",
+    "岗位：后端工程师\n学历要求：本科\n工作年限：3年\n技能要求：Java, Go, MySQL, Redis, Kafka\n方向关键词：微服务, REST, 高并发\n了解 Docker/Kubernetes，具备云原生经验。",
+    "个人简历\n姓名：张三17\n求职意向：机器学习工程师\n学历：博士\n专业：计算机科学\n工作年限：9年\n技能：Milvus, LangChain, XGBoost, C, Jenkins, Rust\n项目经验：在腾讯参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：清华大学\n薪资期望：34K50K\n语言能力：日语N1",
+    "个人简历\n姓名：张三77\n求职意向：算法工程师\n学历：本科\n专业：计算机科学\n工作年限：2年\n技能：LangChain, TensorFlow, C, Elasticsearch, TypeScript, Kafka\n项目经验：在阿里巴巴参与算法工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：浙江大学\n薪资期望：31K60K\n证书：RHCE\n语言能力：托福",
+    "个人简历\n姓名：冯二164\n求职意向：架构师\n学历：大专\n专业：电子工程\n工作年限：5年\n技能：PostgreSQL, TypeScript, Faiss\n项目经验：在华为参与架构师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：上海交通大学\n薪资期望：32K70K\n证书：RHCE\n语言能力：雅思",
+    "个人简历\n姓名：钱七49\n求职意向：计算机视觉工程师\n学历：博士\n专业：电子工程\n工作年限：1年\n技能：Faiss, C, Azure, C, scikitlearn, AWS\n项目经验：在美团参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：清华大学\n薪资期望：22K53K\n语言能力：托福",
+    "个人简历\n姓名：钱七188\n求职意向：机器学习工程师\n学历：大专\n专业：信息工程\n工作年限：5年\n技能：Rust, Node.js, Flink\n项目经验：在阿里巴巴参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：32K71K\n语言能力：英语六级",
+    "个人简历\n姓名：王五191\n求职意向：后端工程师\n学历：大专\n专业：统计学\n工作年限：4年\n技能：Angular, Rust, Scala, Python\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：浙江大学\n薪资期望：17K54K\n证书：AWS SAA\n语言能力：托福",
+    "岗位名称：算法工程师\n所属行业：人工智能\n学历要求：硕士及以上\n工作年限：1-3年\n技能要求：深度学习, 计算机视觉, NLP, PyTorch, Python, TensorFlow\n岗位职责：\n- 负责人工智能领域的算法研发工作，包括模型设计、训练与优化\n- 解决实际业务中的算法问题，提升产品性能和用户体验\n- 跟踪和研究前沿算法技术，推动技术创新和应用",
+    "个人简历\n姓名：李四90\n求职意向：数据工程师\n学历：大专\n专业：数学\n工作年限：6年\n技能：Vue, MongoDB, Spark\n项目经验：在华为参与数据工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：上海交通大学\n薪资期望：39K56K\n语言能力：英语四级",
+    "个人简历\n姓名：楮四72\n求职意向：数据科学家\n学历：大专\n专业：计算机科学\n工作年限：2年\n技能：Go, MongoDB, Faiss\n项目经验：在阿里巴巴参与数据科学家相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：清华大学\n薪资期望：22K80K\n证书：CKAD\n语言能力：英语六级",
+    "个人简历\n姓名：卫五199\n求职意向：算法工程师\n学历：本科\n专业：信息工程\n工作年限：9年\n技能：MongoDB, Angular, Git\n项目经验：在字节跳动参与算法工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：北京大学\n薪资期望：17K73K\n语言能力：英语四级",
+    "个人简历\n姓名：郑一117\n求职意向：NLP工程师\n学历：大专\n专业：电子工程\n工作年限：9年\n技能：PyTorch, Hadoop, C\n项目经验：在小米参与NLP工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：浙江大学\n薪资期望：36K79K\n证书：RHCE\n语言能力：CET6",
+    "个人简历\n姓名：孙八101\n求职意向：DevOps工程师\n学历：博士\n专业：统计学\n工作年限：8年\n技能：Redis, Rust, XGBoost\n项目经验：在美团参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：浙江大学\n薪资期望：43K78K\n语言能力：英语六级",
+    "个人简历\n姓名：陈三163\n求职意向：DevOps工程师\n学历：本科\n专业：信息工程\n工作年限：12年\n技能：Rust, Milvus, Flink, C\n项目经验：在阿里巴巴参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：浙江大学\n薪资期望：22K50K\n语言能力：CET6",
+    "个人简历\n姓名：楮四111\n求职意向：NLP工程师\n学历：硕士\n专业：统计学\n工作年限：7年\n技能：TypeScript, Go, Flink, Jenkins, Angular\n项目经验：在美团参与NLP工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：中国科学技术大学\n薪资期望：40K49K\n语言能力：英语四级",
+    "个人简历\n姓名：吴十194\n求职意向：数据工程师\n学历：博士\n专业：计算机科学\n工作年限：2年\n技能：GCP, Airflow, Flink\n项目经验：在京东参与数据工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：上海交通大学\n薪资期望：40K54K\n证书：PMP\n语言能力：英语六级",
+    "个人简历\n姓名：李四20\n求职意向：数据工程师\n学历：本科\n专业：人工智能\n工作年限：2年\n技能：RAG, MongoDB, LangChain, Python, AWS, Terraform\n项目经验：在阿里巴巴参与数据工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：北京大学\n薪资期望：23K53K\n语言能力：英语四级",
+    "个人简历\n姓名：吴十144\n求职意向：架构师\n学历：博士\n专业：数学\n工作年限：7年\n技能：Java, Vue, MySQL, Python, Kubernetes\n项目经验：在阿里巴巴参与架构师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：清华大学\n薪资期望：28K68K\n证书：PMP\n语言能力：日语N1",
+    "个人简历\n姓名：赵六34\n求职意向：数据科学家\n学历：大专\n专业：计算机科学\n工作年限：11年\n技能：Git, PostgreSQL, Spark, Hadoop, RAG\n项目经验：在阿里巴巴参与数据科学家相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：北京大学\n薪资期望：19K60K\n语言能力：雅思",
+    "个人简历\n姓名：王五38\n求职意向：后端工程师\n学历：本科\n专业：信息工程\n工作年限：5年\n技能：Node.js, Hadoop, Spark, Airflow\n项目经验：在美团参与后端工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：南京大学\n薪资期望：45K72K\n语言能力：CET6",
+    "个人简历\n姓名：王五97\n求职意向：DevOps工程师\n学历：博士\n专业：统计学\n工作年限：10年\n技能：Milvus, Kafka, Java, Terraform, MongoDB, LightGBM\n项目经验：在华为参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：上海交通大学\n薪资期望：45K77K\n证书：CKA\n语言能力：英语六级",
+    "岗位名称：产品经理\n所属行业：互联网\n学历要求：本科及以上\n工作年限：1-3年\n技能要求：数据分析, 敏捷开发, 产品设计, 项目管理\n岗位职责：\n- 负责产品的全生命周期管理，包括需求分析、产品设计和项目协调\n- 通过用户研究和数据分析，不断优化产品功能和用户体验\n- 与研发、设计、市场等团队紧密合作，推动产品落地",
+    "个人简历\n姓名：冯二175\n求职意向：DevOps工程师\n学历：硕士\n专业：人工智能\n工作年限：0年\n技能：Scala, Redis, React, Rust, TensorFlow, scikitlearn\n项目经验：在百度参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：上海交通大学\n薪资期望：25K75K\n语言能力：英语六级",
+    "岗位名称：算法工程师\n所属行业：人工智能\n学历要求：本科及以上\n工作年限：1-3年\n技能要求：计算机视觉, NLP, PyTorch, Python\n岗位职责：\n- 负责人工智能领域的算法研发工作，包括模型设计、训练与优化\n- 解决实际业务中的算法问题，提升产品性能和用户体验\n- 跟踪和研究前沿算法技术，推动技术创新和应用",
+    "个人简历\n姓名：吴十138\n求职意向：算法工程师\n学历：大专\n专业：人工智能\n工作年限：3年\n技能：Spark, XGBoost, Node.js\n项目经验：在美团参与算法工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：中国科学技术大学\n薪资期望：20K46K\n证书：CKAD\n语言能力：日语N1",
+    "个人简历\n姓名：冯二82\n求职意向：数据科学家\n学历：本科\n专业：计算机科学\n工作年限：9年\n技能：scikitlearn, Elasticsearch, Linux, Scala\n项目经验：在百度参与数据科学家相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：南京大学\n薪资期望：32K69K\n语言能力：英语四级",
+    "个人简历\n姓名：孙八152\n求职意向：前端工程师\n学历：大专\n专业：电子工程\n工作年限：5年\n技能：RAG, Docker, C\n项目经验：在美团参与前端工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：浙江大学\n薪资期望：36K48K\n证书：RHCE\n语言能力：英语四级",
+    "岗位：数据工程师\n学历要求：本科\n工作年限：3年\n技能要求：Spark, Hadoop, Kafka, Airflow\n方向关键词：数据仓库, ETL\n熟悉Linux环境与脚本，掌握SQL优化。",
+    "个人简历\n姓名：王五122\n求职意向：机器学习工程师\n学历：本科\n专业：统计学\n工作年限：5年\n技能：PyTorch, Kafka, Milvus, AWS, Scala, Hadoop\n项目经验：在华为参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：浙江大学\n薪资期望：18K63K\n证书：PMP\n语言能力：雅思",
+    "岗位：DevOps工程师\n学历要求：本科\n工作年限：4年\n技能要求：Docker, Kubernetes, Jenkins, Terraform\n方向关键词：CI/CD, 云原生\n具备云平台经验（AWS/Azure/GCP）。",
+    "岗位：机器学习工程师\n学历要求：硕士\n工作年限：2年\n技能要求：Python, PyTorch, TensorFlow, scikit-learn\n方向关键词：推荐系统, NLP, LLM\n掌握RAG/向量检索，熟悉LangChain优先。",
+    "岗位名称：芯片设计工程师\n所属行业：半导体/芯片\n学历要求：本科及以上\n工作年限：5-10年\n技能要求：EDA工具, 数字电路设计, Verilog, FPGA开发\n岗位职责：\n- 从事芯片设计工作，负责数字/模拟电路的RTL编码和验证\n- 参与芯片架构设计和性能优化，提高芯片效率\n- 使用EDA工具进行芯片设计和仿真",
+    "个人简历\n姓名：郑一157\n求职意向：后端工程师\n学历：博士\n专业：电子工程\n工作年限：10年\n技能：Python, React, PyTorch\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：清华大学\n薪资期望：37K55K\n证书：AWS SAA\n语言能力：英语四级",
+    "个人简历\n姓名：吴十39\n求职意向：后端工程师\n学历：博士\n专业：人工智能\n工作年限：3年\n技能：Go, Java, Git\n项目经验：在华为参与后端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：南京大学\n薪资期望：15K55K\n证书：PMP\n语言能力：英语六级",
+    "岗位：DevOps工程师\n学历要求：本科\n工作年限：3年\n技能要求：Docker, Kubernetes, Jenkins, Terraform\n方向关键词：CI/CD, 云原生\n具备云平台经验（AWS/Azure/GCP）。",
+    "个人简历\n姓名：卫五136\n求职意向：数据科学家\n学历：本科\n专业：人工智能\n工作年限：10年\n技能：Rust, Azure, Linux\n项目经验：在字节跳动参与数据科学家相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：北京大学\n薪资期望：28K57K\n语言能力：英语四级",
+    "个人简历\n姓名：陈三193\n求职意向：算法工程师\n学历：博士\n专业：数学\n工作年限：9年\n技能：Jenkins, XGBoost, TypeScript\n项目经验：在百度参与算法工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：中国科学技术大学\n薪资期望：21K55K\n语言能力：雅思",
+    "岗位名称：产品经理\n所属行业：电子商务\n学历要求：本科及以上\n工作年限：3-5年\n技能要求：用户研究, 项目管理, 产品设计, 敏捷开发, 数据分析\n岗位职责：\n- 负责产品的全生命周期管理，包括需求分析、产品设计和项目协调\n- 通过用户研究和数据分析，不断优化产品功能和用户体验\n- 与研发、设计、市场等团队紧密合作，推动产品落地",
+    "个人简历\n姓名：周九26\n求职意向：DevOps工程师\n学历：本科\n专业：计算机科学\n工作年限：1年\n技能：LightGBM, GCP, MySQL, Go, Scala\n项目经验：在京东参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：上海交通大学\n薪资期望：38K66K\n语言能力：雅思",
+    "个人简历\n姓名：张三192\n求职意向：后端工程师\n学历：本科\n专业：电子工程\n工作年限：1年\n技能：PyTorch, Elasticsearch, C, Linux, Airflow, Rust\n项目经验：在阿里巴巴参与后端工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：清华大学\n薪资期望：25K69K\n证书：CKA\n语言能力：CET6",
+    "个人简历\n姓名：陈三66\n求职意向：DevOps工程师\n学历：硕士\n专业：计算机科学\n工作年限：7年\n技能：GCP, MongoDB, Angular, MySQL, Node.js\n项目经验：在美团参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：北京大学\n薪资期望：27K76K\n证书：RHCE\n语言能力：英语四级",
+    "个人简历\n姓名：张三174\n求职意向：架构师\n学历：大专\n专业：电子工程\n工作年限：5年\n技能：Scala, Python, Jenkins, MySQL, Linux, Milvus\n项目经验：在华为参与架构师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：浙江大学\n薪资期望：26K71K\n语言能力：雅思",
+    "个人简历\n姓名：郑一27\n求职意向：前端工程师\n学历：大专\n专业：数学\n工作年限：3年\n技能：Go, Angular, Python, LangChain, RAG\n项目经验：在华为参与前端工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：上海交通大学\n薪资期望：28K50K\n语言能力：日语N1",
+    "岗位：后端工程师\n学历要求：本科\n工作年限：3年\n技能要求：Java, Go, MySQL, Redis, Kafka\n方向关键词：微服务, REST, 高并发\n了解 Docker/Kubernetes，具备云原生经验。",
+    "个人简历\n姓名：孙八158\n求职意向：后端工程师\n学历：大专\n专业：统计学\n工作年限：7年\n技能：Python, RAG, AWS\n项目经验：在京东参与后端工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：清华大学\n薪资期望：15K79K\n证书：CKAD\n语言能力：日语N1",
+    "个人简历\n姓名：卫五107\n求职意向：架构师\n学历：本科\n专业：软件工程\n工作年限：0年\n技能：RAG, Spark, LightGBM, Node.js, Elasticsearch\n项目经验：在腾讯参与架构师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：南京大学\n薪资期望：19K50K\n语言能力：日语N1",
+    "个人简历\n姓名：楮四169\n求职意向：计算机视觉工程师\n学历：硕士\n专业：信息工程\n工作年限：1年\n技能：MongoDB, Python, Vue, Spark\n项目经验：在京东参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：南京大学\n薪资期望：42K67K\n证书：RHCE\n语言能力：雅思",
+    "岗位名称：芯片设计工程师\n所属行业：半导体/芯片\n学历要求：硕士及以上\n工作年限：3-5年\n技能要求：FPGA开发, EDA工具, Verilog, 数字电路设计\n岗位职责：\n- 从事芯片设计工作，负责数字/模拟电路的RTL编码和验证\n- 参与芯片架构设计和性能优化，提高芯片效率\n- 使用EDA工具进行芯片设计和仿真",
+    "个人简历\n姓名：李四125\n求职意向：NLP工程师\n学历：硕士\n专业：人工智能\n工作年限：11年\n技能：Vue, Kafka, Go, C, Azure\n项目经验：在华为参与NLP工程师相关项目，负责模块开发与优化\n公司名称：华为\n毕业院校：上海交通大学\n薪资期望：32K64K\n证书：AWS SAA\n语言能力：英语四级",
+    "个人简历\n姓名：冯二50\n求职意向：架构师\n学历：硕士\n专业：电子工程\n工作年限：8年\n技能：TypeScript, Jenkins, MongoDB, Angular, GCP, C\n项目经验：在阿里巴巴参与架构师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：21K59K\n语言能力：CET6",
+    "个人简历\n姓名：张三14\n求职意向：前端工程师\n学历：博士\n专业：信息工程\n工作年限：11年\n技能：Scala, Git, Docker, RAG, TypeScript\n项目经验：在腾讯参与前端工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：浙江大学\n薪资期望：20K63K\n证书：PMP\n语言能力：雅思",
+    "个人简历\n姓名：赵六189\n求职意向：计算机视觉工程师\n学历：本科\n专业：人工智能\n工作年限：4年\n技能：AWS, Azure, PyTorch, Faiss, Spark\n项目经验：在字节跳动参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：清华大学\n薪资期望：18K75K\n证书：CKA\n语言能力：英语四级",
+    "个人简历\n姓名：吴十10\n求职意向：后端工程师\n学历：博士\n专业：人工智能\n工作年限：12年\n技能：Git, C, Azure, Rust, Faiss\n项目经验：在阿里巴巴参与后端工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：32K54K\n语言能力：英语六级",
+    "岗位名称：电池研发工程师\n所属行业：新能源\n学历要求：本科及以上\n工作年限：5-10年\n技能要求：电化学, 材料科学, 电池管理系统, 循环寿命测试\n岗位职责：\n- 负责新能源电池的研发工作，参与电池材料选型和性能测试\n- 优化电池制造工艺，提升电池能量密度和循环寿命\n- 解决电池研发和生产中的技术难题",
+    "个人简历\n姓名：孙八67\n求职意向：架构师\n学历：本科\n专业：统计学\n工作年限：4年\n技能：Vue, PostgreSQL, Python\n项目经验：在字节跳动参与架构师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：复旦大学\n薪资期望：38K77K\n语言能力：CET6",
+    "个人简历\n姓名：赵六184\n求职意向：NLP工程师\n学历：博士\n专业：统计学\n工作年限：10年\n技能：MongoDB, Go, TypeScript, MySQL\n项目经验：在百度参与NLP工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：南京大学\n薪资期望：41K51K\n语言能力：雅思",
+    "个人简历\n姓名：陈三22\n求职意向：数据科学家\n学历：硕士\n专业：统计学\n工作年限：7年\n技能：AWS, Python, TensorFlow, C, scikitlearn, RAG\n项目经验：在字节跳动参与数据科学家相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：南京大学\n薪资期望：26K55K\n证书：CKAD\n语言能力：雅思",
+    "个人简历\n姓名：卫五64\n求职意向：前端工程师\n学历：大专\n专业：软件工程\n工作年限：11年\n技能：Java, Go, Hadoop, C, Redis\n项目经验：在百度参与前端工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：上海交通大学\n薪资期望：28K55K\n语言能力：英语六级",
+    "个人简历\n姓名：钱七70\n求职意向：机器学习工程师\n学历：博士\n专业：信息工程\n工作年限：1年\n技能：Linux, Vue, AWS, Kafka\n项目经验：在阿里巴巴参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：南京大学\n薪资期望：27K46K\n语言能力：CET6",
+    "个人简历\n姓名：赵六140\n求职意向：计算机视觉工程师\n学历：本科\n专业：人工智能\n工作年限：4年\n技能：MySQL, Kafka, Git\n项目经验：在字节跳动参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：中国科学技术大学\n薪资期望：18K75K\n证书：RHCE\n语言能力：CET6",
+    "个人简历\n姓名：楮四115\n求职意向：计算机视觉工程师\n学历：博士\n专业：电子工程\n工作年限：10年\n技能：Flink, C, AWS, RAG, Redis\n项目经验：在美团参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：南京大学\n薪资期望：20K57K\n语言能力：CET6",
+    "岗位名称：算法工程师\n所属行业：互联网\n学历要求：本科及以上\n工作年限：3-5年\n技能要求：NLP, 深度学习, TensorFlow, Python, 计算机视觉, PyTorch\n岗位职责：\n- 负责互联网领域的算法研发工作，包括模型设计、训练与优化\n- 解决实际业务中的算法问题，提升产品性能和用户体验\n- 跟踪和研究前沿算法技术，推动技术创新和应用",
+    "个人简历\n姓名：钱七168\n求职意向：数据科学家\n学历：本科\n专业：信息工程\n工作年限：2年\n技能：XGBoost, Angular, PostgreSQL\n项目经验：在京东参与数据科学家相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：上海交通大学\n薪资期望：30K50K\n证书：CKA\n语言能力：CET6",
+    "个人简历\n姓名：郑一179\n求职意向：机器学习工程师\n学历：大专\n专业：数学\n工作年限：6年\n技能：Flink, Node.js, Jenkins\n项目经验：在腾讯参与机器学习工程师相关项目，负责模块开发与优化\n公司名称：腾讯\n毕业院校：南京大学\n薪资期望：36K65K\n语言能力：托福",
+    "个人简历\n姓名：孙八171\n求职意向：NLP工程师\n学历：本科\n专业：电子工程\n工作年限：12年\n技能：Kafka, TensorFlow, Azure, Docker, RAG, LightGBM\n项目经验：在字节跳动参与NLP工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：中国科学技术大学\n薪资期望：29K59K\n语言能力：雅思",
+    "个人简历\n姓名：吴十132\n求职意向：DevOps工程师\n学历：本科\n专业：数学\n工作年限：5年\n技能：Jenkins, Elasticsearch, Docker, Git, PostgreSQL\n项目经验：在美团参与DevOps工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：北京大学\n薪资期望：45K65K\n语言能力：CET6",
+    "个人简历\n姓名：周九37\n求职意向：算法工程师\n学历：大专\n专业：软件工程\n工作年限：9年\n技能：Vue, GCP, Azure\n项目经验：在字节跳动参与算法工程师相关项目，负责模块开发与优化\n公司名称：字节跳动\n毕业院校：清华大学\n薪资期望：35K73K\n语言能力：英语六级",
+    "个人简历\n姓名：郑一11\n求职意向：算法工程师\n学历：本科\n专业：数学\n工作年限：9年\n技能：Kubernetes, RAG, Docker, MongoDB, Vue, Kafka\n项目经验：在小米参与算法工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：复旦大学\n薪资期望：29K53K\n证书：CKAD\n语言能力：英语六级",
+    "岗位：数据工程师\n学历要求：本科\n工作年限：6年\n技能要求：Spark, Hadoop, Kafka, Airflow\n方向关键词：数据仓库, ETL\n熟悉Linux环境与脚本，掌握SQL优化。",
+    "岗位名称：芯片设计工程师\n所属行业：半导体/芯片\n学历要求：硕士及以上\n工作年限：1-3年\n技能要求：VHDL, Verilog, 数字电路设计, EDA工具\n岗位职责：\n- 从事芯片设计工作，负责数字/模拟电路的RTL编码和验证\n- 参与芯片架构设计和性能优化，提高芯片效率\n- 使用EDA工具进行芯片设计和仿真",
+    "个人简历\n姓名：赵六156\n求职意向：计算机视觉工程师\n学历：本科\n专业：人工智能\n工作年限：12年\n技能：Faiss, Node.js, XGBoost, Flink, GCP, PyTorch\n项目经验：在小米参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：小米\n毕业院校：北京大学\n薪资期望：44K80K\n语言能力：日语N1",
+    "个人简历\n姓名：孙八128\n求职意向：算法工程师\n学历：大专\n专业：数学\n工作年限：11年\n技能：GCP, Spark, Milvus, RAG, Faiss\n项目经验：在美团参与算法工程师相关项目，负责模块开发与优化\n公司名称：美团\n毕业院校：浙江大学\n薪资期望：41K47K\n证书：PMP\n语言能力：CET6",
+    "个人简历\n姓名：钱七78\n求职意向：计算机视觉工程师\n学历：博士\n专业：计算机科学\n工作年限：7年\n技能：Angular, Scala, Faiss, TypeScript, C, Rust\n项目经验：在百度参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：复旦大学\n薪资期望：19K50K\n证书：RHCE\n语言能力：英语六级",
+    "岗位名称：产品经理\n所属行业：互联网\n学历要求：本科及以上\n工作年限：1-3年\n技能要求：用户研究, 数据分析, 项目管理, 需求分析, 产品设计, 敏捷开发\n岗位职责：\n- 负责产品的全生命周期管理，包括需求分析、产品设计和项目协调\n- 通过用户研究和数据分析，不断优化产品功能和用户体验\n- 与研发、设计、市场等团队紧密合作，推动产品落地",
+    "个人简历\n姓名：陈三0\n求职意向：前端工程师\n学历：博士\n专业：统计学\n工作年限：4年\n技能：Linux, PyTorch, Scala, RAG\n项目经验：在阿里巴巴参与前端工程师相关项目，负责模块开发与优化\n公司名称：阿里巴巴\n毕业院校：复旦大学\n薪资期望：28K48K\n证书：CKA\n语言能力：英语四级",
+    "个人简历\n姓名：陈三6\n求职意向：计算机视觉工程师\n学历：硕士\n专业：人工智能\n工作年限：2年\n技能：AWS, RAG, MySQL, GCP\n项目经验：在京东参与计算机视觉工程师相关项目，负责模块开发与优化\n公司名称：京东\n毕业院校：复旦大学\n薪资期望：27K69K\n语言能力：英语六级",
+    "岗位名称：产品经理\n所属行业：电子商务\n学历要求：本科及以上\n工作年限：1-3年\n技能要求：用户研究, 敏捷开发, 项目管理, 产品设计\n岗位职责：\n- 负责产品的全生命周期管理，包括需求分析、产品设计和项目协调\n- 通过用户研究和数据分析，不断优化产品功能和用户体验\n- 与研发、设计、市场等团队紧密合作，推动产品落地",
+    "岗位：DevOps工程师\n学历要求：本科\n工作年限：2年\n技能要求：Docker, Kubernetes, Jenkins, Terraform\n方向关键词：CI/CD, 云原生\n具备云平台经验（AWS/Azure/GCP）。",
+    "个人简历\n姓名：赵六131\n求职意向：NLP工程师\n学历：大专\n专业：电子工程\n工作年限：11年\n技能：PyTorch, LangChain, Kubernetes\n项目经验：在百度参与NLP工程师相关项目，负责模块开发与优化\n公司名称：百度\n毕业院校：中国科学技术大学\n薪资期望：30K79K\n证书：CKA\n语言能力：雅思"
+  ],
+  "annotations": [
+    [
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "不断优"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Skill",
+        "value": "数据分析"
+      },
+      {
+        "label": "Skill",
+        "value": "敏捷开发"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "40K50K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "字节跳动"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "7"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "7"
+      },
+      {
+        "label": "Salary",
+        "value": "40K50K"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "Airflow"
+      },
+      {
+        "label": "Skill",
+        "value": "MySQL"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "27K63K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "腾讯"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "腾讯参与算法"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Salary",
+        "value": "27K63K"
+      },
+      {
+        "label": "Skill",
+        "value": "Git"
+      },
+      {
+        "label": "Skill",
+        "value": "XGBoost"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "腾讯"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Skill",
+        "value": "MySQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Docker"
+      },
+      {
+        "label": "Skill",
+        "value": "Git"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "22K47K"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "阿里巴巴"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "阿里巴巴参与数据"
+      },
+      {
+        "label": "Years",
+        "value": "0"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "0"
+      },
+      {
+        "label": "Salary",
+        "value": "22K47K"
+      },
+      {
+        "label": "Skill",
+        "value": "Vue"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "Airflow"
+      },
+      {
+        "label": "Skill",
+        "value": "Git"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "37K59K"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "小米"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Salary",
+        "value": "37K59K"
+      },
+      {
+        "label": "Skill",
+        "value": "MongoDB"
+      },
+      {
+        "label": "Skill",
+        "value": "TensorFlow"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      },
+      {
+        "label": "Skill",
+        "value": "Docker"
+      },
+      {
+        "label": "Skill",
+        "value": "Kubernetes"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "工作, 问题"
+      },
+      {
+        "label": "Salary",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "- 跟踪, 、训练, 人工, 实际, 括模, 计算机"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Salary",
+        "value": "10"
+      },
+      {
+        "label": "Skill",
+        "value": "TensorFlow"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      },
+      {
+        "label": "Skill",
+        "value": "深度学习"
+      },
+      {
+        "label": "Skill",
+        "value": "计算机视觉"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "工作"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "测试, 解决"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "10, 30K66K"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "腾讯"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "腾讯参与数据"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Salary",
+        "value": "10, 30K66K"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "Vue"
+      },
+      {
+        "label": "Skill",
+        "value": "Angular"
+      },
+      {
+        "label": "Skill",
+        "value": "Hadoop"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "工作"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "解决"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "优化, 制定, 包括"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "10, 21K54K"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "腾讯"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "腾讯参与计算机视觉"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Salary",
+        "value": "10, 21K54K"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "计算机视觉"
+      },
+      {
+        "label": "Skill",
+        "value": "Redis"
+      },
+      {
+        "label": "Skill",
+        "value": "Node.js"
+      },
+      {
+        "label": "Skill",
+        "value": "React"
+      },
+      {
+        "label": "Skill",
+        "value": "Airflow"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "京东"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "8"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "8"
+      },
+      {
+        "label": "Skill",
+        "value": "Redis"
+      },
+      {
+        "label": "Skill",
+        "value": "Kubernetes"
+      },
+      {
+        "label": "Skill",
+        "value": "MongoDB"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "34K76K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "美团"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "美团参与后端"
+      },
+      {
+        "label": "Years",
+        "value": "8"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "8"
+      },
+      {
+        "label": "Salary",
+        "value": "34K76K"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "GCP"
+      },
+      {
+        "label": "Skill",
+        "value": "Flink"
+      },
+      {
+        "label": "Skill",
+        "value": "Kubernetes"
+      },
+      {
+        "label": "Skill",
+        "value": "Git"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "工作, 问题"
+      },
+      {
+        "label": "Salary",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "、训练, 人工, 实际, 计算机"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Salary",
+        "value": "10"
+      },
+      {
+        "label": "Skill",
+        "value": "TensorFlow"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      },
+      {
+        "label": "Skill",
+        "value": "深度学习"
+      },
+      {
+        "label": "Skill",
+        "value": "计算机视觉"
+      },
+      {
+        "label": "Skill",
+        "value": "PyTorch"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位"
+      },
+      {
+        "label": "Years",
+        "value": "1"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "1"
+      },
+      {
+        "label": "Skill",
+        "value": "性能优化"
+      },
+      {
+        "label": "Skill",
+        "value": "TypeScript"
+      },
+      {
+        "label": "Skill",
+        "value": "Node.js"
+      },
+      {
+        "label": "Skill",
+        "value": "React"
+      },
+      {
+        "label": "Skill",
+        "value": "Webpack"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "41K61K"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "百度"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "百度参与数据"
+      },
+      {
+        "label": "Years",
+        "value": "12"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "12"
+      },
+      {
+        "label": "Salary",
+        "value": "41K61K"
+      },
+      {
+        "label": "Skill",
+        "value": "Redis"
+      },
+      {
+        "label": "Skill",
+        "value": "Jenkins"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "字节跳动"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Skill",
+        "value": "TensorFlow"
+      },
+      {
+        "label": "Skill",
+        "value": "MySQL"
+      },
+      {
+        "label": "Skill",
+        "value": "LightGBM"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "Docker, 备良, 架构, 计算, 量代码"
+      },
+      {
+        "label": "JobTitle",
+        "value": "招聘高级软件工程师"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      },
+      {
+        "label": "Skill",
+        "value": "Docker"
+      },
+      {
+        "label": "Skill",
+        "value": "Java"
+      },
+      {
+        "label": "Skill",
+        "value": "Kubernetes"
+      },
+      {
+        "label": "Skill",
+        "value": "Linux"
+      },
+      {
+        "label": "Skill",
+        "value": "安全"
+      },
+      {
+        "label": "Skill",
+        "value": "Git"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Skill",
+        "value": "ETL"
+      },
+      {
+        "label": "Skill",
+        "value": "Hadoop"
+      },
+      {
+        "label": "Skill",
+        "value": "SQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Spark"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "数据仓库"
+      },
+      {
+        "label": "Skill",
+        "value": "Airflow"
+      },
+      {
+        "label": "Skill",
+        "value": "Linux"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "方向关"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "Jenkins"
+      },
+      {
+        "label": "Skill",
+        "value": "Azure"
+      },
+      {
+        "label": "Skill",
+        "value": "GCP"
+      },
+      {
+        "label": "Skill",
+        "value": "Docker"
+      },
+      {
+        "label": "Skill",
+        "value": "CI/CD"
+      },
+      {
+        "label": "Skill",
+        "value": "Kubernetes"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "Go, MySQL, Redis"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Skill",
+        "value": "高并发"
+      },
+      {
+        "label": "Skill",
+        "value": "Go"
+      },
+      {
+        "label": "Skill",
+        "value": "Docker"
+      },
+      {
+        "label": "Skill",
+        "value": "Redis"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "REST"
+      },
+      {
+        "label": "Skill",
+        "value": "MySQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Java"
+      },
+      {
+        "label": "Skill",
+        "value": "微服务"
+      },
+      {
+        "label": "Skill",
+        "value": "Kubernetes"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "学历"
+      },
+      {
+        "label": "Salary",
+        "value": "34K50K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "腾讯"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "腾讯参与机器学习"
+      },
+      {
+        "label": "Years",
+        "value": "9"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "9"
+      },
+      {
+        "label": "Salary",
+        "value": "34K50K"
+      },
+      {
+        "label": "Skill",
+        "value": "机器学习"
+      },
+      {
+        "label": "Skill",
+        "value": "Jenkins"
+      },
+      {
+        "label": "Skill",
+        "value": "XGBoost"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "31K60K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "阿里巴巴"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "阿里巴巴参与算法"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Salary",
+        "value": "31K60K"
+      },
+      {
+        "label": "Skill",
+        "value": "TypeScript"
+      },
+      {
+        "label": "Skill",
+        "value": "TensorFlow"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "Elasticsearch"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "32K70K"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "华为"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Salary",
+        "value": "32K70K"
+      },
+      {
+        "label": "Skill",
+        "value": "PostgreSQL"
+      },
+      {
+        "label": "Skill",
+        "value": "TypeScript"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "美团"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "美团参与计算机视觉"
+      },
+      {
+        "label": "Years",
+        "value": "1"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "1"
+      },
+      {
+        "label": "Skill",
+        "value": "计算机视觉"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "Azure"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "阿里巴巴"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "阿里巴巴参与机器学习"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Skill",
+        "value": "机器学习"
+      },
+      {
+        "label": "Skill",
+        "value": "Node.js"
+      },
+      {
+        "label": "Skill",
+        "value": "Flink"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "17K54K"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "华为"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "华为参与后端"
+      },
+      {
+        "label": "Years",
+        "value": "4"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "4"
+      },
+      {
+        "label": "Salary",
+        "value": "17K54K"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "Angular"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "工作, 问题"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "- 跟踪, NLP, PyTorch, 、训练, 人工, 实际, 计算机"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Skill",
+        "value": "TensorFlow"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      },
+      {
+        "label": "Skill",
+        "value": "深度学习"
+      },
+      {
+        "label": "Skill",
+        "value": "计算机视觉"
+      },
+      {
+        "label": "Skill",
+        "value": "PyTorch"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "华为"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "华为参与数据"
+      },
+      {
+        "label": "Years",
+        "value": "6"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "6"
+      },
+      {
+        "label": "Skill",
+        "value": "Vue"
+      },
+      {
+        "label": "Skill",
+        "value": "MongoDB"
+      },
+      {
+        "label": "Skill",
+        "value": "Spark"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "22K80K"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "阿里巴巴"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Salary",
+        "value": "22K80K"
+      },
+      {
+        "label": "Skill",
+        "value": "MongoDB"
+      },
+      {
+        "label": "Skill",
+        "value": "Go"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "字节跳动"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "字节跳动参与算法"
+      },
+      {
+        "label": "Years",
+        "value": "9"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "9"
+      },
+      {
+        "label": "Skill",
+        "value": "MongoDB"
+      },
+      {
+        "label": "Skill",
+        "value": "Angular"
+      },
+      {
+        "label": "Skill",
+        "value": "Git"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "36K79K"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "小米"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "9"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "9"
+      },
+      {
+        "label": "Salary",
+        "value": "36K79K"
+      },
+      {
+        "label": "Skill",
+        "value": "PyTorch"
+      },
+      {
+        "label": "Skill",
+        "value": "Hadoop"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "43K78K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "美团"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "8"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "8"
+      },
+      {
+        "label": "Salary",
+        "value": "43K78K"
+      },
+      {
+        "label": "Skill",
+        "value": "Redis"
+      },
+      {
+        "label": "Skill",
+        "value": "XGBoost"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "22K50K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "阿里巴巴"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "12"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "12"
+      },
+      {
+        "label": "Salary",
+        "value": "22K50K"
+      },
+      {
+        "label": "Skill",
+        "value": "Flink"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "40K49K"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "美团"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "7"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "7"
+      },
+      {
+        "label": "Salary",
+        "value": "40K49K"
+      },
+      {
+        "label": "Skill",
+        "value": "TypeScript"
+      },
+      {
+        "label": "Skill",
+        "value": "Angular"
+      },
+      {
+        "label": "Skill",
+        "value": "Jenkins"
+      },
+      {
+        "label": "Skill",
+        "value": "Go"
+      },
+      {
+        "label": "Skill",
+        "value": "Flink"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "40K54K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "京东"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "京东参与数据"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Salary",
+        "value": "40K54K"
+      },
+      {
+        "label": "Skill",
+        "value": "Airflow"
+      },
+      {
+        "label": "Skill",
+        "value": "Flink"
+      },
+      {
+        "label": "Skill",
+        "value": "GCP"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "23K53K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "阿里巴巴"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "阿里巴巴参与数据"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Salary",
+        "value": "23K53K"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "MongoDB"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "28K68K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "阿里巴巴"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "7"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "7"
+      },
+      {
+        "label": "Salary",
+        "value": "28K68K"
+      },
+      {
+        "label": "Skill",
+        "value": "Vue"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      },
+      {
+        "label": "Skill",
+        "value": "MySQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Java"
+      },
+      {
+        "label": "Skill",
+        "value": "Kubernetes"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "11, 19K60K"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "阿里巴巴"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "11"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "11"
+      },
+      {
+        "label": "Salary",
+        "value": "11, 19K60K"
+      },
+      {
+        "label": "Skill",
+        "value": "PostgreSQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Spark"
+      },
+      {
+        "label": "Skill",
+        "value": "Hadoop"
+      },
+      {
+        "label": "Skill",
+        "value": "Git"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "45K72K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "美团"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "美团参与后端"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Salary",
+        "value": "45K72K"
+      },
+      {
+        "label": "Skill",
+        "value": "Airflow"
+      },
+      {
+        "label": "Skill",
+        "value": "Spark"
+      },
+      {
+        "label": "Skill",
+        "value": "Node.js"
+      },
+      {
+        "label": "Skill",
+        "value": "Hadoop"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "10, 45K77K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "华为"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Salary",
+        "value": "10, 45K77K"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "MongoDB"
+      },
+      {
+        "label": "Skill",
+        "value": "LightGBM"
+      },
+      {
+        "label": "Skill",
+        "value": "Java"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "不断优"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Skill",
+        "value": "数据分析"
+      },
+      {
+        "label": "Skill",
+        "value": "敏捷开发"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "百度"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "0"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "0"
+      },
+      {
+        "label": "Skill",
+        "value": "Redis"
+      },
+      {
+        "label": "Skill",
+        "value": "TensorFlow"
+      },
+      {
+        "label": "Skill",
+        "value": "React"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "工作, 问题"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "- 跟踪, 、训练, 人工, 括模"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Skill",
+        "value": "计算机视觉"
+      },
+      {
+        "label": "Skill",
+        "value": "PyTorch"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "20K46K"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "美团"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "美团参与算法"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Salary",
+        "value": "20K46K"
+      },
+      {
+        "label": "Skill",
+        "value": "Spark"
+      },
+      {
+        "label": "Skill",
+        "value": "Node.js"
+      },
+      {
+        "label": "Skill",
+        "value": "XGBoost"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "32K69K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "百度"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "9"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "9"
+      },
+      {
+        "label": "Salary",
+        "value": "32K69K"
+      },
+      {
+        "label": "Skill",
+        "value": "Linux"
+      },
+      {
+        "label": "Skill",
+        "value": "Elasticsearch"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "36K48K"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "美团"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "美团参与前端"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Salary",
+        "value": "36K48K"
+      },
+      {
+        "label": "Skill",
+        "value": "Docker"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Skill",
+        "value": "ETL"
+      },
+      {
+        "label": "Skill",
+        "value": "Hadoop"
+      },
+      {
+        "label": "Skill",
+        "value": "SQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Spark"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "数据仓库"
+      },
+      {
+        "label": "Skill",
+        "value": "Airflow"
+      },
+      {
+        "label": "Skill",
+        "value": "Linux"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "18K63K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "华为"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "华为参与机器学习"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Salary",
+        "value": "18K63K"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "Hadoop"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "机器学习"
+      },
+      {
+        "label": "Skill",
+        "value": "PyTorch"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "方向关"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位"
+      },
+      {
+        "label": "Years",
+        "value": "4"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "4"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "Jenkins"
+      },
+      {
+        "label": "Skill",
+        "value": "Azure"
+      },
+      {
+        "label": "Skill",
+        "value": "GCP"
+      },
+      {
+        "label": "Skill",
+        "value": "Docker"
+      },
+      {
+        "label": "Skill",
+        "value": "CI/CD"
+      },
+      {
+        "label": "Skill",
+        "value": "Kubernetes"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "工作"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Skill",
+        "value": "TensorFlow"
+      },
+      {
+        "label": "Skill",
+        "value": "推荐系统"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      },
+      {
+        "label": "Skill",
+        "value": "机器学习"
+      },
+      {
+        "label": "Skill",
+        "value": "PyTorch"
+      },
+      {
+        "label": "Skill",
+        "value": "scikit-learn"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "工作"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "优化, 模拟, 进行"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Skill",
+        "value": "性能优化"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "10, 37K55K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "华为"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "华为参与后端"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Salary",
+        "value": "10, 37K55K"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "PyTorch"
+      },
+      {
+        "label": "Skill",
+        "value": "React"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "15K55K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "华为"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "华为参与后端"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Salary",
+        "value": "15K55K"
+      },
+      {
+        "label": "Skill",
+        "value": "Git"
+      },
+      {
+        "label": "Skill",
+        "value": "Go"
+      },
+      {
+        "label": "Skill",
+        "value": "Java"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "方向关"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "Jenkins"
+      },
+      {
+        "label": "Skill",
+        "value": "Azure"
+      },
+      {
+        "label": "Skill",
+        "value": "GCP"
+      },
+      {
+        "label": "Skill",
+        "value": "Docker"
+      },
+      {
+        "label": "Skill",
+        "value": "CI/CD"
+      },
+      {
+        "label": "Skill",
+        "value": "Kubernetes"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "字节跳动"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Salary",
+        "value": "10"
+      },
+      {
+        "label": "Skill",
+        "value": "Linux"
+      },
+      {
+        "label": "Skill",
+        "value": "Azure"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "21K55K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "百度"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "百度参与算法"
+      },
+      {
+        "label": "Years",
+        "value": "9"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "9"
+      },
+      {
+        "label": "Salary",
+        "value": "21K55K"
+      },
+      {
+        "label": "Skill",
+        "value": "TypeScript"
+      },
+      {
+        "label": "Skill",
+        "value": "Jenkins"
+      },
+      {
+        "label": "Skill",
+        "value": "XGBoost"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "不断优"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Skill",
+        "value": "数据分析"
+      },
+      {
+        "label": "Skill",
+        "value": "敏捷开发"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "38K66K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "京东"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "1"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "1"
+      },
+      {
+        "label": "Salary",
+        "value": "38K66K"
+      },
+      {
+        "label": "Skill",
+        "value": "Go"
+      },
+      {
+        "label": "Skill",
+        "value": "LightGBM"
+      },
+      {
+        "label": "Skill",
+        "value": "GCP"
+      },
+      {
+        "label": "Skill",
+        "value": "MySQL"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "25K69K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "阿里巴巴"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "阿里巴巴参与后端"
+      },
+      {
+        "label": "Years",
+        "value": "1"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "1"
+      },
+      {
+        "label": "Salary",
+        "value": "25K69K"
+      },
+      {
+        "label": "Skill",
+        "value": "Airflow"
+      },
+      {
+        "label": "Skill",
+        "value": "PyTorch"
+      },
+      {
+        "label": "Skill",
+        "value": "Linux"
+      },
+      {
+        "label": "Skill",
+        "value": "Elasticsearch"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "27K76K"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "美团"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "7"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "7"
+      },
+      {
+        "label": "Salary",
+        "value": "27K76K"
+      },
+      {
+        "label": "Skill",
+        "value": "MongoDB"
+      },
+      {
+        "label": "Skill",
+        "value": "Angular"
+      },
+      {
+        "label": "Skill",
+        "value": "GCP"
+      },
+      {
+        "label": "Skill",
+        "value": "MySQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Node.js"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "26K71K"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "华为"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Salary",
+        "value": "26K71K"
+      },
+      {
+        "label": "Skill",
+        "value": "MySQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Jenkins"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      },
+      {
+        "label": "Skill",
+        "value": "Linux"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "28K50K"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "华为"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "华为参与前端"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Salary",
+        "value": "28K50K"
+      },
+      {
+        "label": "Skill",
+        "value": "Angular"
+      },
+      {
+        "label": "Skill",
+        "value": "Go"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "Go, MySQL, Redis"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Skill",
+        "value": "高并发"
+      },
+      {
+        "label": "Skill",
+        "value": "Go"
+      },
+      {
+        "label": "Skill",
+        "value": "Docker"
+      },
+      {
+        "label": "Skill",
+        "value": "Redis"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "REST"
+      },
+      {
+        "label": "Skill",
+        "value": "MySQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Java"
+      },
+      {
+        "label": "Skill",
+        "value": "微服务"
+      },
+      {
+        "label": "Skill",
+        "value": "Kubernetes"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "15K79K"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "京东"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "京东参与后端"
+      },
+      {
+        "label": "Years",
+        "value": "7"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "7"
+      },
+      {
+        "label": "Salary",
+        "value": "15K79K"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "19K50K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "腾讯"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "0"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "0"
+      },
+      {
+        "label": "Salary",
+        "value": "19K50K"
+      },
+      {
+        "label": "Skill",
+        "value": "LightGBM"
+      },
+      {
+        "label": "Skill",
+        "value": "Node.js"
+      },
+      {
+        "label": "Skill",
+        "value": "Elasticsearch"
+      },
+      {
+        "label": "Skill",
+        "value": "Spark"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "42K67K"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "京东"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "京东参与计算机视觉"
+      },
+      {
+        "label": "Years",
+        "value": "1"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "1"
+      },
+      {
+        "label": "Salary",
+        "value": "42K67K"
+      },
+      {
+        "label": "Skill",
+        "value": "Vue"
+      },
+      {
+        "label": "Skill",
+        "value": "MongoDB"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      },
+      {
+        "label": "Skill",
+        "value": "Spark"
+      },
+      {
+        "label": "Skill",
+        "value": "计算机视觉"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "工作"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "优化, 模拟, 进行"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Skill",
+        "value": "性能优化"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "11, 32K64K"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "华为"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "11"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "11"
+      },
+      {
+        "label": "Salary",
+        "value": "11, 32K64K"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "Vue"
+      },
+      {
+        "label": "Skill",
+        "value": "Azure"
+      },
+      {
+        "label": "Skill",
+        "value": "Go"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "21K59K"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "阿里巴巴"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "8"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "8"
+      },
+      {
+        "label": "Salary",
+        "value": "21K59K"
+      },
+      {
+        "label": "Skill",
+        "value": "MongoDB"
+      },
+      {
+        "label": "Skill",
+        "value": "TypeScript"
+      },
+      {
+        "label": "Skill",
+        "value": "Angular"
+      },
+      {
+        "label": "Skill",
+        "value": "Jenkins"
+      },
+      {
+        "label": "Skill",
+        "value": "GCP"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "11, 20K63K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "腾讯"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "腾讯参与前端"
+      },
+      {
+        "label": "Years",
+        "value": "11"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "11"
+      },
+      {
+        "label": "Salary",
+        "value": "11, 20K63K"
+      },
+      {
+        "label": "Skill",
+        "value": "TypeScript"
+      },
+      {
+        "label": "Skill",
+        "value": "Docker"
+      },
+      {
+        "label": "Skill",
+        "value": "Git"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "18K75K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "字节跳动"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "字节跳动参与计算机视觉"
+      },
+      {
+        "label": "Years",
+        "value": "4"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "4"
+      },
+      {
+        "label": "Salary",
+        "value": "18K75K"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "Azure"
+      },
+      {
+        "label": "Skill",
+        "value": "Spark"
+      },
+      {
+        "label": "Skill",
+        "value": "计算机视觉"
+      },
+      {
+        "label": "Skill",
+        "value": "PyTorch"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "12, 32K54K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "阿里巴巴"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "阿里巴巴参与后端"
+      },
+      {
+        "label": "Years",
+        "value": "12"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "12"
+      },
+      {
+        "label": "Salary",
+        "value": "12, 32K54K"
+      },
+      {
+        "label": "Skill",
+        "value": "Git"
+      },
+      {
+        "label": "Skill",
+        "value": "Azure"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "工作"
+      },
+      {
+        "label": "Salary",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "解决"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Salary",
+        "value": "10"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "字节跳动"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "4"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "4"
+      },
+      {
+        "label": "Skill",
+        "value": "PostgreSQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Vue"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "百度"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Salary",
+        "value": "10"
+      },
+      {
+        "label": "Skill",
+        "value": "TypeScript"
+      },
+      {
+        "label": "Skill",
+        "value": "MongoDB"
+      },
+      {
+        "label": "Skill",
+        "value": "MySQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Go"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "26K55K"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "字节跳动"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "7"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "7"
+      },
+      {
+        "label": "Salary",
+        "value": "26K55K"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "TensorFlow"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "11"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "百度"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "百度参与前端"
+      },
+      {
+        "label": "Years",
+        "value": "11"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "11"
+      },
+      {
+        "label": "Salary",
+        "value": "11"
+      },
+      {
+        "label": "Skill",
+        "value": "Redis"
+      },
+      {
+        "label": "Skill",
+        "value": "Go"
+      },
+      {
+        "label": "Skill",
+        "value": "Java"
+      },
+      {
+        "label": "Skill",
+        "value": "Hadoop"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "27K46K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "阿里巴巴"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "阿里巴巴参与机器学习"
+      },
+      {
+        "label": "Years",
+        "value": "1"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "1"
+      },
+      {
+        "label": "Salary",
+        "value": "27K46K"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "Vue"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "机器学习"
+      },
+      {
+        "label": "Skill",
+        "value": "Linux"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "18K75K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "字节跳动"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "字节跳动参与计算机视觉"
+      },
+      {
+        "label": "Years",
+        "value": "4"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "4"
+      },
+      {
+        "label": "Salary",
+        "value": "18K75K"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      },
+      {
+        "label": "Skill",
+        "value": "计算机视觉"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "MySQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Git"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "10, 20K57K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "美团"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "美团参与计算机视觉"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "10"
+      },
+      {
+        "label": "Salary",
+        "value": "10, 20K57K"
+      },
+      {
+        "label": "Skill",
+        "value": "计算机视觉"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "Redis"
+      },
+      {
+        "label": "Skill",
+        "value": "Flink"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "问题"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "- 跟踪, 、训练, 实际, 算法, 计算机"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Skill",
+        "value": "TensorFlow"
+      },
+      {
+        "label": "Skill",
+        "value": "Python"
+      },
+      {
+        "label": "Skill",
+        "value": "深度学习"
+      },
+      {
+        "label": "Skill",
+        "value": "计算机视觉"
+      },
+      {
+        "label": "Skill",
+        "value": "PyTorch"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "30K50K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "京东"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Salary",
+        "value": "30K50K"
+      },
+      {
+        "label": "Skill",
+        "value": "PostgreSQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Angular"
+      },
+      {
+        "label": "Skill",
+        "value": "XGBoost"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "腾讯"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "腾讯参与机器学习"
+      },
+      {
+        "label": "Years",
+        "value": "6"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "6"
+      },
+      {
+        "label": "Skill",
+        "value": "Jenkins"
+      },
+      {
+        "label": "Skill",
+        "value": "机器学习"
+      },
+      {
+        "label": "Skill",
+        "value": "Node.js"
+      },
+      {
+        "label": "Skill",
+        "value": "Flink"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "字节跳动"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "12"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "12"
+      },
+      {
+        "label": "Skill",
+        "value": "TensorFlow"
+      },
+      {
+        "label": "Skill",
+        "value": "Azure"
+      },
+      {
+        "label": "Skill",
+        "value": "Docker"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "LightGBM"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "45K65K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "美团"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "5"
+      },
+      {
+        "label": "Salary",
+        "value": "45K65K"
+      },
+      {
+        "label": "Skill",
+        "value": "Jenkins"
+      },
+      {
+        "label": "Skill",
+        "value": "Docker"
+      },
+      {
+        "label": "Skill",
+        "value": "Elasticsearch"
+      },
+      {
+        "label": "Skill",
+        "value": "PostgreSQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Git"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "字节跳动"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "字节跳动参与算法"
+      },
+      {
+        "label": "Years",
+        "value": "9"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "9"
+      },
+      {
+        "label": "Skill",
+        "value": "Vue"
+      },
+      {
+        "label": "Skill",
+        "value": "Azure"
+      },
+      {
+        "label": "Skill",
+        "value": "GCP"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "29K53K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "小米"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "小米参与算法"
+      },
+      {
+        "label": "Years",
+        "value": "9"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "9"
+      },
+      {
+        "label": "Salary",
+        "value": "29K53K"
+      },
+      {
+        "label": "Skill",
+        "value": "Vue"
+      },
+      {
+        "label": "Skill",
+        "value": "MongoDB"
+      },
+      {
+        "label": "Skill",
+        "value": "Docker"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "Kubernetes"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位"
+      },
+      {
+        "label": "Years",
+        "value": "6"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "6"
+      },
+      {
+        "label": "Skill",
+        "value": "ETL"
+      },
+      {
+        "label": "Skill",
+        "value": "Hadoop"
+      },
+      {
+        "label": "Skill",
+        "value": "SQL"
+      },
+      {
+        "label": "Skill",
+        "value": "Spark"
+      },
+      {
+        "label": "Skill",
+        "value": "Kafka"
+      },
+      {
+        "label": "Skill",
+        "value": "数据仓库"
+      },
+      {
+        "label": "Skill",
+        "value": "Airflow"
+      },
+      {
+        "label": "Skill",
+        "value": "Linux"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "优化, 模拟, 进行"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Skill",
+        "value": "性能优化"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "本科"
+      },
+      {
+        "label": "Salary",
+        "value": "44K80K"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "小米"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "小米参与计算机视觉"
+      },
+      {
+        "label": "Years",
+        "value": "12"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "12"
+      },
+      {
+        "label": "Salary",
+        "value": "44K80K"
+      },
+      {
+        "label": "Skill",
+        "value": "GCP"
+      },
+      {
+        "label": "Skill",
+        "value": "计算机视觉"
+      },
+      {
+        "label": "Skill",
+        "value": "PyTorch"
+      },
+      {
+        "label": "Skill",
+        "value": "Node.js"
+      },
+      {
+        "label": "Skill",
+        "value": "Flink"
+      },
+      {
+        "label": "Skill",
+        "value": "XGBoost"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "11, 41K47K"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "美团"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "美团参与算法"
+      },
+      {
+        "label": "Years",
+        "value": "11"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "11"
+      },
+      {
+        "label": "Salary",
+        "value": "11, 41K47K"
+      },
+      {
+        "label": "Skill",
+        "value": "GCP"
+      },
+      {
+        "label": "Skill",
+        "value": "Spark"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "19K50K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "百度"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "百度参与计算机视觉"
+      },
+      {
+        "label": "Years",
+        "value": "7"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "7"
+      },
+      {
+        "label": "Salary",
+        "value": "19K50K"
+      },
+      {
+        "label": "Skill",
+        "value": "计算机视觉"
+      },
+      {
+        "label": "Skill",
+        "value": "TypeScript"
+      },
+      {
+        "label": "Skill",
+        "value": "Angular"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "不断优"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Skill",
+        "value": "数据分析"
+      },
+      {
+        "label": "Skill",
+        "value": "敏捷开发"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "28K48K"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Company",
+        "value": "阿里巴巴"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "阿里巴巴参与前端"
+      },
+      {
+        "label": "Years",
+        "value": "4"
+      },
+      {
+        "label": "Degree",
+        "value": "博士"
+      },
+      {
+        "label": "Years",
+        "value": "4"
+      },
+      {
+        "label": "Salary",
+        "value": "28K48K"
+      },
+      {
+        "label": "Skill",
+        "value": "PyTorch"
+      },
+      {
+        "label": "Skill",
+        "value": "Linux"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Company",
+        "value": "京东"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Location",
+        "value": "京东参与计算机视觉"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Degree",
+        "value": "硕士"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "GCP"
+      },
+      {
+        "label": "Skill",
+        "value": "计算机视觉"
+      },
+      {
+        "label": "Skill",
+        "value": "MySQL"
+      },
+      {
+        "label": "Skill",
+        "value": "人工智能"
+      }
+    ],
+    [
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Company",
+        "value": "不断优"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位名称"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "3"
+      },
+      {
+        "label": "Skill",
+        "value": "数据分析"
+      },
+      {
+        "label": "Skill",
+        "value": "敏捷开发"
+      }
+    ],
+    [
+      {
+        "label": "JobTitle",
+        "value": "方向关"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "JobTitle",
+        "value": "岗位"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Degree",
+        "value": "本科"
+      },
+      {
+        "label": "Years",
+        "value": "2"
+      },
+      {
+        "label": "Skill",
+        "value": "AWS"
+      },
+      {
+        "label": "Skill",
+        "value": "Jenkins"
+      },
+      {
+        "label": "Skill",
+        "value": "Azure"
+      },
+      {
+        "label": "Skill",
+        "value": "GCP"
+      },
+      {
+        "label": "Skill",
+        "value": "Docker"
+      },
+      {
+        "label": "Skill",
+        "value": "CI/CD"
+      },
+      {
+        "label": "Skill",
+        "value": "Kubernetes"
+      }
+    ],
+    [
+      {
+        "label": "Salary",
+        "value": "11, 30K79K"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Company",
+        "value": "百度"
+      },
+      {
+        "label": "JobTitle",
+        "value": "个人简历"
+      },
+      {
+        "label": "Years",
+        "value": "11"
+      },
+      {
+        "label": "Degree",
+        "value": "大专"
+      },
+      {
+        "label": "Years",
+        "value": "11"
+      },
+      {
+        "label": "Salary",
+        "value": "11, 30K79K"
+      },
+      {
+        "label": "Skill",
+        "value": "Kubernetes"
+      },
+      {
+        "label": "Skill",
+        "value": "PyTorch"
+      }
+    ]
+  ]
+}

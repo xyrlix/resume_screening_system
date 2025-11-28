@@ -221,6 +221,7 @@ with role_tabs[0]:
                 jd = recruiter_service.add_job(jd_content, meta=meta)
                 st.success(f"✅ JD上传成功！")
                 st.info(f"JD ID: {jd['job_id']}")
+                st.session_state['recruiter_jd_done'] = True
 
                 with st.expander("📋 查看JD结构化信息"):
                     st.write(f"**职位名称**: {jd['entities'].get('职位名称', '未提取到')}")
@@ -250,6 +251,35 @@ with role_tabs[0]:
 
                     st.subheader("完整实体信息")
                     st.json(jd['entities'], expanded=False)
+
+                with st.expander("🔎 解析过程与日志"):
+                    log_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'logs', 'app.log'))
+                    lines = []
+                    try:
+                        if os.path.isfile(log_path):
+                            with open(log_path, 'r', encoding='utf-8') as lf:
+                                lines = lf.read().splitlines()[-200:]
+                    except Exception:
+                        lines = []
+                    focus = []
+                    for ln in lines:
+                        if ('使用NER提取实体' in ln) or ('使用正则表达式提取JD实体' in ln) or ('LLM补全实体' in ln):
+                            focus.append(ln)
+                    if focus:
+                        st.text_area("解析日志", value="\n".join(focus), height=160, disabled=True)
+                    else:
+                        st.info("暂无解析日志")
+                    try:
+                        parsed_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'data', 'processed', 'parsed_jds.jsonl'))
+                        if os.path.isfile(parsed_path):
+                            with open(parsed_path, 'r', encoding='utf-8') as pf:
+                                rows = pf.read().splitlines()
+                                if rows:
+                                    import json as _json
+                                    st.subheader("解析落盘结果")
+                                    st.json(_json.loads(rows[-1]), expanded=False)
+                    except Exception:
+                        pass
         else:
             st.error("❌ 请输入职位描述内容或上传JD文件")
 
@@ -319,7 +349,7 @@ with role_tabs[0]:
                                             accept_multiple_files=True,
                                             key="recruiter_resume_files")
 
-            if st.button("上传简历", key="recruiter_upload_resume"):
+            if st.button("上传简历", key="recruiter_upload_resume", disabled=not st.session_state.get('recruiter_jd_done')):
                 uploaded_count = 0
                 if resume_files:
                     with st.spinner(f"处理 {len(resume_files)} 份简历中..."):
@@ -364,6 +394,35 @@ with role_tabs[0]:
 
                 if uploaded_count > 0:
                     st.success(f"✅ 成功上传 {uploaded_count} 份简历！")
+                    st.session_state['recruiter_resume_done'] = True
+                    with st.expander("🔎 解析过程与日志"):
+                        log_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'logs', 'app.log'))
+                        lines = []
+                        try:
+                            if os.path.isfile(log_path):
+                                with open(log_path, 'r', encoding='utf-8') as lf:
+                                    lines = lf.read().splitlines()[-200:]
+                        except Exception:
+                            lines = []
+                        focus = []
+                        for ln in lines:
+                            if ('使用NER提取实体' in ln) or ('使用正则表达式提取JD实体' in ln) or ('LLM补全实体' in ln):
+                                focus.append(ln)
+                        if focus:
+                            st.text_area("解析日志", value="\n".join(focus), height=160, disabled=True)
+                        else:
+                            st.info("暂无解析日志")
+                        try:
+                            parsed_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'data', 'processed', 'parsed_resumes.jsonl'))
+                            if os.path.isfile(parsed_path):
+                                with open(parsed_path, 'r', encoding='utf-8') as pf:
+                                    rows = pf.read().splitlines()
+                                    if rows:
+                                        import json as _json
+                                        st.subheader("解析落盘结果")
+                                        st.json(_json.loads(rows[-1]), expanded=False)
+                        except Exception:
+                            pass
                 else:
                     st.error("❌ 请输入简历内容或上传简历文件")
     else:
@@ -580,7 +639,7 @@ with role_tabs[0]:
             seg_exp = st.slider("段权重-经验", 0.0, 1.0, 0.5, 0.01, key="cfg_seg_exp")
             seg_skill = st.slider("段权重-技能", 0.0, 1.0, 0.3, 0.01, key="cfg_seg_skill")
             seg_edu = st.slider("段权重-教育", 0.0, 1.0, 0.2, 0.01, key="cfg_seg_edu")
-        if st.button("开始匹配", key="recruiter_match"):
+        if st.button("开始匹配", key="recruiter_match", disabled=not st.session_state.get('recruiter_resume_done')):
             resumes = recruiter_service.get_resume_list()
             if not resumes:
                 st.error("❌ 请先上传简历")
@@ -622,14 +681,20 @@ with role_tabs[0]:
 
                     st.success(f"✅ 匹配完成！共找到 {len(results)} 份匹配简历")
 
-                    # 日志展示区域
                     st.subheader("📋 匹配日志")
-                    logs = log_capture.get_logs()
-                    if logs:
-                        st.text_area("日志输出",
-                                     value="\n".join(logs),
-                                     height=200,
-                                     disabled=True)
+                    log_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'logs', 'app.log'))
+                    out_lines = []
+                    try:
+                        if os.path.isfile(log_path):
+                            with open(log_path, 'r', encoding='utf-8') as lf:
+                                lines = lf.read().splitlines()[-300:]
+                                for ln in lines:
+                                    if ('matcher' in ln) or ('匹配' in ln) or ('llm_chain' in ln):
+                                        out_lines.append(ln)
+                    except Exception:
+                        out_lines = []
+                    if out_lines:
+                        st.text_area("日志输出", value="\n".join(out_lines), height=200, disabled=True)
                     else:
                         st.info("暂无日志输出")
 

@@ -438,12 +438,12 @@ class BaseLLMProvider:
 
     # 模型名称映射：简短名称 -> 完整名称
     MODEL_NAME_MAPPING = {
-        'qwen': 'qwen-1.8b',
+        'qwen': 'Qwen3-Max',
         'deepseek': 'deepseek-chat',
-        'openai': 'gpt-3.5-turbo',
         'openrouter': 'gpt-3.5-turbo',
         'moonshot': 'moonshot-v1-8k',
-        'doubao': 'Doubao-Seed-1.6'
+        'doubao': 'Doubao-Seed-1.6',
+        'openai': 'gpt-3.5-turbo',
     }
 
     def __init__(self, name: str):

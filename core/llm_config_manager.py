@@ -47,7 +47,7 @@ class LLMConfigManager:
         ]
 
         # 区域与优先级配置
-        self.default_region = 'domestic'
+        self.default_region = 'international'
 
         # 初始化加密器
         self.cipher_suite = self._init_encryption(encryption_key)
@@ -161,8 +161,8 @@ class LLMConfigManager:
             'default_model': None,
             'region': self.default_region,
             'preferred_orders': {
-                'domestic': ['qwen', 'moonshot', 'doubao', 'deepseek', 'openrouter'],
-                'international': ['openai', 'openrouter', 'deepseek', 'moonshot', 'doubao']
+                'domestic': ['deepseek', 'qwen', 'openrouter', 'moonshot', 'doubao'],
+                'international': ['moonshot', 'openrouter', 'deepseek', 'doubao', 'qwen']
             },
             'prompts': {}
         }
@@ -315,7 +315,7 @@ class LLMConfigManager:
         return True
 
     def default_preferred_order(self, region: str) -> List[str]:
-        return ['qwen', 'moonshot', 'doubao', 'deepseek', 'openrouter'] if region == 'domestic' else ['openai', 'openrouter', 'deepseek', 'moonshot', 'doubao']
+        return ['qwen', 'moonshot', 'doubao', 'deepseek', 'openrouter'] if region == 'domestic' else ['moonshot', 'openrouter', 'deepseek', 'doubao', 'qwen']
 
     def get_model_config(self, model_name: str) -> Dict[str, Any]:
         """

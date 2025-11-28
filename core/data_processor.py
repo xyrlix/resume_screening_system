@@ -113,46 +113,65 @@ class DataProcessor:
         # 初始化所有实体为空
         entities = {entity: "" for entity in entity_list}
 
-        # 如果使用LLM提取实体
-        if use_llm:
+        # LLM 补全将在正则之后执行
+
+        from core.ner_model import get_ner
+        ner = get_ner()
+        if ner:
             try:
-                # 导入LLMChain类
-                from core.llm_chain import LLMChain
-
-                # 创建LLMChain实例
-                llm_chain = LLMChain()
-
-                from core.llm_config_manager import LLMConfigManager
-                tmpl = LLMConfigManager().get_prompt('jd_extract_entities')
-                prompt = tmpl.replace('{text}', text).replace('{entity_list}', ', '.join(entity_list))
-
-                providers = [
-                    llm_chain.llm_providers[name]
-                    for name in getattr(llm_chain, 'active_provider_names', [])
-                    if name in llm_chain.llm_providers
-                ] or list(llm_chain.llm_providers.values())
-                import json
-                for p in providers:
-                    try:
-                        response = p._call_llm(prompt)
-                        llm_entities = json.loads(response)
-                        for key, value in llm_entities.items():
-                            if key in entities:
-                                entities[key] = value
-                        logger.info(
-                            f"使用LLM成功提取JD实体，共提取 {sum(1 for v in entities.values() if v)} 个非空实体"
-                        )
-                        return entities
-                    except Exception as e:
-                        logger.error(f"使用LLM提取实体失败: {str(e)}")
-                        continue
-                
-                
+                spans = ner.predict(text)
+                agg = {}
+                for s in spans:
+                    lab = s['label']
+                    val = s['text']
+                    if lab not in agg:
+                        agg[lab] = []
+                    agg[lab].append(val)
+                def _valid(label: str, value: str) -> bool:
+                    if not value or len(value.strip()) < 2:
+                        return False
+                    if label in ["Years", "Salary"]:
+                        return bool(re.search(r"\d", value))
+                    if label in ["Phone"]:
+                        return bool(re.fullmatch(r"1[3-9]\d{9}", value))
+                    if label in ["Email"]:
+                        return bool(re.fullmatch(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", value))
+                    if label in ["Degree"]:
+                        return value in ["博士","硕士","本科","大专","中专","高中"]
+                    if label in ["Language"]:
+                        return bool(re.search(r"英语|雅思|托福|CET", value))
+                    if label in ["Certificate"]:
+                        return bool(re.search(r"PMP|CKA|CKAD|RHCE|AWS", value))
+                    # Company/JobTitle/Location/Skill: basic character check
+                    return bool(re.search(r"[\u4e00-\u9fa5A-Za-z]{2,}", value))
+                def assign(key, lab):
+                    if key in entity_list and lab in agg and agg[lab]:
+                        vals = [v.strip() for v in agg[lab] if _valid(lab, v.strip())]
+                        if vals:
+                            entities[key] = ", ".join(sorted(list(set(vals))))
+                assign("职位名称", "JobTitle")
+                assign("期望职位", "JobTitle")
+                assign("公司名称", "Company")
+                assign("学历层次", "Degree")
+                assign("学历要求", "Degree")
+                assign("总工作经验年限", "Years")
+                assign("工作年限要求", "Years")
+                assign("技能要求", "Skill")
+                assign("工作地点", "Location")
+                assign("现居地", "Location")
+                assign("薪资范围", "Salary")
+                assign("期望薪资", "Salary")
+                assign("联系电话", "Phone")
+                assign("电子邮箱", "Email")
+                assign("语言要求", "Language")
+                assign("语言能力", "Language")
+                assign("证书要求", "Certificate")
+                assign("证书资质", "Certificate")
+                logger.info(
+                    f"使用NER提取实体，共提取 {sum(1 for v in entities.values() if v)} 个非空实体")
             except Exception as e:
-                logger.error(f"使用LLM提取实体失败: {str(e)}")
-                logger.info("回退到正则表达式提取实体")
-
-        # 如果不使用LLM或LLM提取失败，使用正则表达式提取实体
+                logger.error(f"使用NER提取实体失败: {str(e)}")
+        # 如果不使用LLM或NER提取失败，使用正则表达式提取实体
         # 增强规则提取，提高实体提取准确率
 
         # 1. 提取职位名称（JD和简历通用）
@@ -164,7 +183,7 @@ class DataProcessor:
         ]
         for pattern in position_patterns:
             position_match = re.search(pattern, text)
-            if position_match:
+            if position_match and not entities.get("职位名称"):
                 entities["职位名称"] = position_match.group(1)
                 break
 
@@ -177,7 +196,7 @@ class DataProcessor:
         ]
         for pattern in company_patterns:
             company_match = re.search(pattern, text)
-            if company_match:
+            if company_match and not entities.get("公司名称"):
                 entities["公司名称"] = company_match.group(1)
                 break
 
@@ -185,14 +204,18 @@ class DataProcessor:
         education_pattern = r'(博士|硕士|本科|大专|中专|高中)'
         education_match = re.search(education_pattern, text)
         if education_match:
-            entities["学历层次"] = education_match.group(1)
-            entities["学历要求"] = education_match.group(1)  # JD特定字段
+            if not entities.get("学历层次"):
+                entities["学历层次"] = education_match.group(1)
+            if not entities.get("学历要求"):
+                entities["学历要求"] = education_match.group(1)
 
         # 4. 提取工作经验（JD和简历通用）
         experience_match = re.search(r'(\d+)年', text)
         if experience_match:
-            entities["总工作经验年限"] = experience_match.group(1)
-            entities["工作年限要求"] = experience_match.group(1)  # JD特定字段
+            if not entities.get("总工作经验年限"):
+                entities["总工作经验年限"] = experience_match.group(1)
+            if not entities.get("工作年限要求"):
+                entities["工作年限要求"] = experience_match.group(1)
 
         # 5. JD特定实体提取
         if "薪资范围" in entity_list:
@@ -204,10 +227,9 @@ class DataProcessor:
             ]
             for pattern in salary_patterns:
                 salary_match = re.search(pattern, text)
-                if salary_match:
+                if salary_match and not entities.get("薪资范围"):
                     if len(salary_match.groups()) == 2:
-                        entities[
-                            "薪资范围"] = f"{salary_match.group(1)}K-{salary_match.group(2)}K"
+                        entities["薪资范围"] = f"{salary_match.group(1)}K-{salary_match.group(2)}K"
                     else:
                         entities["薪资范围"] = f"{salary_match.group(1)}K"
                     break
@@ -221,7 +243,7 @@ class DataProcessor:
             ]
             for pattern in location_patterns:
                 location_match = re.search(pattern, text)
-                if location_match:
+                if location_match and not entities.get("工作地点"):
                     entities["工作地点"] = location_match.group(1)
                     break
 
@@ -245,52 +267,78 @@ class DataProcessor:
                                         re.IGNORECASE)
                 skills.extend(req_skills)
 
-            if skills:
+            if skills and not entities.get("技能要求"):
                 entities["技能要求"] = ", ".join(list(set(skills)))
 
         if "岗位职责" in entity_list:
             # 提取岗位职责
             duty_pattern = r'(岗位职责|工作内容|职位描述)[:：]?([\s\S]*?)(?=(任职要求|资格要求|岗位要求|福利待遇|薪资|工作地点|$))'
             duty_match = re.search(duty_pattern, text)
-            if duty_match and duty_match.group(2):
+            if duty_match and duty_match.group(2) and not entities.get("岗位职责"):
                 entities["岗位职责"] = duty_match.group(2).strip()
 
         if "任职要求" in entity_list:
             # 提取任职要求
             req_pattern = r'(任职要求|资格要求|岗位要求|招聘要求)[:：]?([\s\S]*?)(?=(福利待遇|薪资|工作地点|$))'
             req_match = re.search(req_pattern, text)
-            if req_match and req_match.group(2):
+            if req_match and req_match.group(2) and not entities.get("任职要求"):
                 entities["任职要求"] = req_match.group(2).strip()
 
         # 6. 提取联系方式（简历特定）
         if "联系电话" in entity_list:
             phone_match = re.search(r'1[3-9]\d{9}', text)
-            if phone_match:
+            if phone_match and not entities.get("联系电话"):
                 entities["联系电话"] = phone_match.group(0)
 
         if "电子邮箱" in entity_list:
-            email_match = re.search(
-                r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', text)
-            if email_match:
+            email_match = re.search(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', text)
+            if email_match and not entities.get("电子邮箱"):
                 entities["电子邮箱"] = email_match.group(0)
 
         # 7. 提取期望相关信息（简历特定）
         if "期望职位" in entity_list:
             expected_position_pattern = r'期望职位[:：]?\s*([\u4e00-\u9fa5a-zA-Z&\-]+)'
-            expected_position_match = re.search(expected_position_pattern,
-                                                text)
-            if expected_position_match:
+            expected_position_match = re.search(expected_position_pattern, text)
+            if expected_position_match and not entities.get("期望职位"):
                 entities["期望职位"] = expected_position_match.group(1)
 
         if "期望薪资" in entity_list:
             salary_pattern = r'期望薪资[:：]?\s*(\d+)[kK]?'
             salary_match = re.search(salary_pattern, text)
-            if salary_match:
+            if salary_match and not entities.get("期望薪资"):
                 entities["期望薪资"] = salary_match.group(1) + "K"
 
-        logger.info(
-            f"使用正则表达式提取JD实体，共提取 {sum(1 for v in entities.values() if v)} 个非空实体"
-        )
+        # 使用LLM进行最后补全
+        if use_llm:
+            try:
+                from core.llm_chain import LLMChain
+                llm_chain = LLMChain()
+                from core.llm_config_manager import LLMConfigManager
+                tmpl = LLMConfigManager().get_prompt('jd_extract_entities')
+                prompt = tmpl.replace('{text}', text).replace('{entity_list}', ', '.join(entity_list))
+                providers = [
+                    llm_chain.llm_providers[name]
+                    for name in getattr(llm_chain, 'active_provider_names', [])
+                    if name in llm_chain.llm_providers
+                ] or list(llm_chain.llm_providers.values())
+                import json
+                for p in providers:
+                    try:
+                        response = p._call_llm(prompt)
+                        llm_entities = json.loads(response)
+                        for key, value in llm_entities.items():
+                            if key in entities and not entities.get(key):
+                                entities[key] = value
+                        logger.info(
+                            f"LLM补全实体，共提取 {sum(1 for v in entities.values() if v)} 个非空实体"
+                        )
+                        break
+                    except Exception as e:
+                        logger.error(f"LLM补全实体失败: {str(e)}")
+                        continue
+            except Exception as e:
+                logger.error(f"LLM补全实体失败: {str(e)}")
+        logger.info(f"使用正则表达式提取JD实体，共提取 {sum(1 for v in entities.values() if v)} 个非空实体")
         return entities
 
     def process_resume_text(self, resume_text: str) -> Dict[str, Any]:
@@ -345,7 +393,7 @@ class DataProcessor:
 
         # 提取实体信息
         logger.info(f"🔍 正在提取实体信息...")
-        entities = self.extract_entities(cleaned_text, self.resume_entities)
+        entities = self.extract_entities(cleaned_text, self.resume_entities, use_llm=True)
         # 统计非空实体数量
         non_empty_entities = sum(1 for v in entities.values() if v)
         logger.info(f"✅ 实体信息提取完成，共提取 {non_empty_entities} 个非空实体")
@@ -364,6 +412,13 @@ class DataProcessor:
             }
         }
 
+        # 落盘
+        try:
+            os.makedirs(os.path.join('data','processed'), exist_ok=True)
+            with open(os.path.join('data','processed','parsed_resumes.jsonl'), 'a', encoding='utf-8') as f:
+                f.write(json.dumps(result, ensure_ascii=False) + "\n")
+        except Exception as e:
+            pass
         logger.info(f"📄 简历处理完成")
         return result
 
@@ -411,7 +466,7 @@ class DataProcessor:
 
         # 提取实体信息
         logger.info(f"🔍 正在提取实体信息...")
-        entities = self.extract_entities(cleaned_text, self.jd_entities)
+        entities = self.extract_entities(cleaned_text, self.jd_entities, use_llm=True)
         # 统计非空实体数量
         non_empty_entities = sum(1 for v in entities.values() if v)
         logger.info(f"✅ 实体信息提取完成，共提取 {non_empty_entities} 个非空实体")
@@ -429,6 +484,13 @@ class DataProcessor:
             }
         }
 
+        # 落盘
+        try:
+            os.makedirs(os.path.join('data','processed'), exist_ok=True)
+            with open(os.path.join('data','processed','parsed_jds.jsonl'), 'a', encoding='utf-8') as f:
+                f.write(json.dumps(result, ensure_ascii=False) + "\n")
+        except Exception as e:
+            pass
         logger.info(f"📄 JD处理完成")
         return result
 

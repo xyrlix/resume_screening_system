@@ -1,53 +1,85 @@
 {
+  "model_mappings": {
+    "qwen": "qwen-plus",
+    "deepseek": "deepseek-chat",
+    "openrouter": "tngtech/tng-r1t-chimera:free",
+    "moonshot": "moonshot-v1-8k",
+    "kimi": "kimi-k2-turbo-preview",
+    "glm": "glm-4.6",
+    "hunyuan": "hunyuan-lite",
+    "siliconflow": "qwen2.5-72b-instruct",
+    "spark": "spark-x",
+    "zhipu": "glm-4.6"
+  },
+  "supported_models": [
+    "qwen-plus",
+    "deepseek-chat",
+    "moonshot-v1-8k",
+    "kimi-k2-turbo-preview",
+    "tngtech/tng-r1t-chimera:free",
+    "glm-4.6",
+    "hunyuan-lite"
+  ],
   "models": {
-    "qwen-1.8b": {
-      "api_key": "gAAAAABpKUY0AT1Krm5aMp4BmbQQPDlrGhei-4I2TV05PUT8K1OdQJ_Sphu5uP5_d44X0ViVRehUGHqAG37rTdmkivvqhUAUig==",
-      "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    "qwen-plus": {
+      "api_key": "gAAAAABpLQ-jPfJhTEu2hBvCHHy1skU_OY9yhhFzs8LIPt8JAJlTfNjN2ukSVEphyM-qorhbMIbeT_wX0HNO2lgyUyv5PAX0LPs3Unhju0KvaDDcPiCblCQ_0ekrSG6QnW7_Y2RRGUgC",
+      "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "domestic_base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "international_base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
     },
-    "deepseek-llm-7b-chat": {
-      "api_key": "gAAAAABpKUY08RSk--YeOxrOKRSYFBPdXwfwwgG_5gsh-93ZcfPYpjtoIbKgiAYYSds9IZrcr2IhXvjHWtQEVRw_OohoiT6PI1YUV2QDBlynOPyUVZxwToLlSIpRD2VVbKv9gmvpth6C",
-      "base_url": "https://api.deepseek.com/v1"
+    "deepseek-chat": {
+      "api_key": "gAAAAABpLQ-jm_mqcta20oGNP1b2zhQyqe6Xm8H3vD2OJOXiJzNSwnt98KTcBcphHxnG3UJBZn9dEg4Na-u-lNo_NAaTgJTLT5p1ZL97vHP5LaiRu40ozaEakVjr9LRm3sxplU_j9ra4",
+      "base_url": "https://api.deepseek.com"
     },
     "moonshot-v1-8k": {
-      "api_key": "gAAAAABpKUY0Ft4U9tNfEXZr40kokNO4TdkNh_rXEK4lPYx3SFiEO7_9-r_e28qSBU9OY7J6T3VIzwfrSsHiAPTiWTkPwvaYLeIrPOAuqRxqMwEkr8K6bAoHIVaykHNGUUnousiC3bVbIx8wFU0Zkcy4HA-hxNUOfg==",
+      "api_key": "gAAAAABpLQ-jngVs9xl4cJqGUeOgNrCopjBdrDjP8TL6srAYFhhrE5vXCnTxJ60qo22xqaz6bWhXa1GMlqCKfr9M5GfjKtr47HMDNBZm4iEhQrtioarP6zN3wSLXuUUvGCUMzra4_FmDkb4z0Mqqg6Eb-aBexO1W1Q==",
       "base_url": "https://api.moonshot.cn/v1"
     },
-    "gpt-3.5-turbo": {
-      "api_key": "gAAAAABpKUY0H2NIugArL1eGQth880eqHwdY95BqgIEYRDQpaS1dMvDS_RDUveK2wiLekqQiJBYr_W-ndVmGIMpRo5LnymVXT1Z5LGeZ7o1ZvqsiXuA7Cv2bNlSBK1DgKjDjzNIqLofbknC_M6pXWkCWC_GCVhaeNSiCrcZ_VHxfz5euw7zPaWU=",
-      "base_url": "https://openrouter.ai/api/v1"
+    "kimi-k2-turbo-preview": {
+      "api_key": "gAAAAABpLQ-jdTuQsvRNuMfPWH3V-NHWerMVGWwaDmUqMjkjKSOg34W-JEVdlvJf2FnNmEdc6CCxdcRUfu6mAP35HXKRYnPRBrxqYMkwoGutPx49k-aIjEPrnz_86-IIjtMXId1JVvq_9kOhoNqjEEX3m_sqJSOFhg==",
+      "base_url": "https://api.moonshot.cn/v1"
     },
-    "gpt-4": {
-      "api_key": "gAAAAABpKUY0wejk4ytg4V7aahTHoGuUykL-w5jnHqqkXkZQJngeuV520GqiKPf6HPIR8EyzIXVP4dB3dycbhXOTndNPcSsGSoolMEVIc8lgeNi80EyrF_ENFBg7G7W8OvUMarBz4uF1VH2eG-mqttOez8lUWh4u_3lU9n2LVyalk0Sdr6NBYq4=",
-      "base_url": "https://openrouter.ai/api/v1"
+    "tngtech/tng-r1t-chimera:free": {
+      "api_key": "gAAAAABpLQ-jWzWfwLtyiqbv50mpIrGKaf5WCDqZrdk9AKQH4Id8UdYaBmB6uBLn-BqfzLIozgwSmzFEUmarn7d7hB119OX2Trv1jiWw_JLEWXHyj3NfHy3FXH1JT1MIxzD9tLWc4ScJcj1p_AAOFJk89a5GEpET2HA0hkTsGswaVZtPTxnSZjs=",
+      "base_url": "https://openrouter.ai/api/v1/chat/completions"
+    },
+    "hunyuan-lite": {
+      "api_key": "gAAAAABpLQ-j6E_XRtEJpVmx592V3qMx4HrrxUPK5Dd54VdXhfFyMNh6USEClWfeLl1jVhkDldp7wGFdjlQSL-BLHjKOVXMTYXEoNCr5kItQ5rw5x6IG7EaM2-ik_NUYZ-BgZBNfLrAv2g0OkhH0gUt0g6BGPQfI4w==",
+      "base_url": "https://api.hunyuan.cloud.tencent.com/v1"
+    },
+    "glm-4.6": {
+      "api_key": "gAAAAABpLQ-jAgl4ipPsi9927Uy8ybAvoDcdbOPu5tAgxfMZL2ax-elfbD4QkNh8P13HMKNi-IYpUJ4ydyot46rpN8jjO1H1EZlCGV1cmKlTo-8esGQqcS0MIXYYnNu8G1XjW8eAWCiiVeYkgRaQT0gulRd6lgAk_w==",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4/chat/completions"
     }
   },
   "chains": [
     [
-      "deepseek-llm-7b-chat",
-      "qwen-1.8b"
+      "qwen-plus",
+      "deepseek-chat",
+      "moonshot-v1-8k"
+    ],
+    [
+      "tngtech/tng-r1t-chimera:free",
+      "glm-4.6",
+      "kimi-k2-turbo-preview"
+    ],
+    [
+      "hunyuan-lite"
     ]
   ],
-  "default_model": "deepseek-llm-7b-chat",
-  "region": "international",
-  "prompts": {
-    "extract_entities": "请从以下职位描述(JD)和简历中提取实体信息，返回JSON格式。\n\nJD文本：{jd_text}\n\n简历文本：{resume_text}\n\n需要提取的JD实体包括：技能、学历要求、工作年限要求、职位名称\n需要提取的简历实体包括：技能、教育背景、工作经验、职位\n\n返回格式：\n{\n    \"jd_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"学历要求\"],\n        \"experience\": [\"工作年限要求\"],\n        \"position\": \"职位名称\"\n    },\n    \"resume_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"教育背景\"],\n        \"experience\": [\"工作经验\"],\n        \"position\": \"职位\"\n    }\n}",
-    "validate_entities": "请验证并修正以下提取的实体信息，确保信息准确无误。\n\n提取的实体信息：\n{extracted_json}\n\n请检查：\n1. 技能是否准确\n2. 学历要求和教育背景是否合理\n3. 工作年限要求和工作经验是否匹配\n4. 职位名称是否准确\n\n返回修正后的JSON格式：\n{\n    \"jd_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"学历要求\"],\n        \"experience\": [\"工作年限要求\"],\n        \"position\": \"职位名称\"\n    },\n    \"resume_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"教育背景\"],\n        \"experience\": [\"工作经验\"],\n        \"position\": \"职位\"\n    }\n}",
-    "analyze_match": "请分析以下简历和JD的匹配度，返回JSON格式。\n\n验证后的实体信息：\n{validated_json}\n\n需要分析的维度：\n1. 技能匹配：计算匹配的技能数量和匹配率\n2. 教育背景匹配：判断是否满足要求\n3. 工作经验匹配：判断是否满足要求\n\n返回格式：\n{\n    \"skill_match\": {\n        \"matching_skills\": [\"匹配的技能1\", \"匹配的技能2\"],\n        \"jd_skills\": [\"JD技能1\", \"JD技能2\"],\n        \"resume_skills\": [\"简历技能1\", \"简历技能2\"],\n        \"match_rate\": 0.8\n    },\n    \"education_match\": {\n        \"match\": true,\n        \"reason\": \"教育背景满足要求\"\n    },\n    \"experience_match\": {\n        \"match\": true,\n        \"reason\": \"工作经验满足要求\"\n    }\n}",
-    "generate_score": "请根据以下匹配度分析，生成综合匹配分数，返回JSON格式。\n\n匹配度分析：\n{analyzed_json}\n\n评分标准：\n- 技能匹配率权重：50%\n- 教育背景匹配权重：25%\n- 工作经验匹配权重：25%\n\n返回格式：\n{\n    \"score\": 0.85,\n    \"reason\": \"技能匹配度高，教育背景和工作经验满足要求\",\n    \"details\": {\n        \"skill_weight\": 0.5,\n        \"education_weight\": 0.25,\n        \"experience_weight\": 0.25\n    }\n}",
-    "generate_suggestions": "请根据以下简历和JD生成优化建议，返回JSON格式。\n\n简历文本：{resume_text}\n\nJD文本：{jd_text}\n\n需要生成的内容包括：\n1. 优化建议列表\n2. 简历的优势\n3. 简历的劣势\n\n返回格式：\n{\n    \"suggestions\": [\"建议1\", \"建议2\"],\n    \"strengths\": [\"优势1\", \"优势2\"],\n    \"weaknesses\": [\"劣势1\", \"劣势2\"]\n}",
-    "generate_interview_questions": "请根据以下简历和JD生成面试题，返回JSON格式。\n\n简历文本：{resume_text}\n\nJD文本：{jd_text}\n\n需要生成5-10道面试题，涵盖技能、经验、项目等方面。\n\n返回格式：\n[\n    \"面试题1\",\n    \"面试题2\",\n    \"面试题3\"\n]",
-    "evaluate_interview_answer": "请基于以下简历与JD，对候选人的面试回答进行评分并给出改进建议，返回JSON格式。\n\n简历：{resume_text}\n\nJD：{jd_text}\n\n回答：{answer}\n\n返回格式：\n{\n  \"score\": 0.0,\n  \"strengths\": [\"...\"],\n  \"weaknesses\": [\"...\"],\n  \"suggestions\": [\"...\"]\n}",
-    "analyze_rejection": "请分析以下拒信文本，归纳拒绝原因并提出改进建议，返回JSON格式。\n\n拒信：{rejection_text}\n简历：{resume_text}\nJD：{jd_text}\n\n返回格式：\n{\n  \"reasons\": [\"...\"],\n  \"suggestions\": [\"...\"],\n  \"priority\": [\"...\"]\n}",
-    "generate_learning_path": "请根据缺失技能为候选人生成学习成长路径，返回JSON格式。\n\n目标岗位：{target_job}\n缺失技能：{missing_skills}\n\n返回格式：\n{\n  \"steps\": [\"...\"],\n  \"courses\": [\"...\"],\n  \"projects\": [\"...\"],\n  \"certifications\": [\"...\"]\n}",
-    "jd_extract_entities": "请从以下职位描述(JD)中提取完整的实体信息，返回JSON格式。\n\nJD文本：{text}\n\n需要提取的实体包括：{entity_list}\n\n返回格式：\n{\n    \"职位名称\": \"\",\n    \"公司名称\": \"\",\n    \"学历要求\": \"\",\n    \"工作年限要求\": \"\",\n    \"薪资范围\": \"\",\n    \"工作地点\": \"\",\n    \"技能要求\": \"\",\n    \"岗位职责\": \"\",\n    \"任职要求\": \"\",\n    \"行业\": \"\",\n    \"招聘人数\": \"\",\n    \"发布时间\": \"\",\n    \"截止时间\": \"\",\n    \"职位类型\": \"\",\n    \"语言要求\": \"\",\n    \"证书要求\": \"\",\n    \"福利\": \"\",\n    \"团队情况\": \"\"\n}"
-  },
+  "default_model": "qwen-plus",
+  "region": "domestic",
   "preferred_orders": {
+    "domestic": [
+      "qwen-plus",
+      "deepseek-chat",
+      "hunyuan-lite",
+      "moonshot-v1-8k",
+      "glm-4.6"
+    ],
     "international": [
-      "moonshot",
-      "openrouter",
-      "deepseek",
-      "doubao",
-      "qwen"
+      "tngtech/tng-r1t-chimera:free",
+      "kimi-k2-turbo-preview"
     ]
   }
 }

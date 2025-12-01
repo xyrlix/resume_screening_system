@@ -1,4 +1,11 @@
 import re
+'''
+语言处理工具模块
+
+此模块包含了用于处理文本语言的各种函数，如检测语言、翻译文本、分词等。
+'''
+
+
 
 def detect_language(text: str) -> str:
     t = text or ""

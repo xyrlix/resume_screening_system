@@ -1,14 +1,24 @@
 import logging
 import os
 from logging.handlers import RotatingFileHandler
+'''
+日志工具模块
+
+此模块包含了用于配置和获取日志记录器的函数。
+'''
+
 
 def get_logger(name: str):
     os.makedirs("logs", exist_ok=True)
     root = logging.getLogger()
     if not root.handlers:
         root.setLevel(logging.INFO)
-        fmt = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
-        fh = RotatingFileHandler(os.path.join("logs", "app.log"), maxBytes=2*1024*1024, backupCount=3, encoding="utf-8")
+        fmt = logging.Formatter(
+            "%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+        fh = RotatingFileHandler(os.path.join("logs", "app.log"),
+                                 maxBytes=2 * 1024 * 1024,
+                                 backupCount=3,
+                                 encoding="utf-8")
         fh.setFormatter(fmt)
         root.addHandler(fh)
         sh = logging.StreamHandler()

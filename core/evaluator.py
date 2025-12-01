@@ -304,8 +304,7 @@ class ModelEvaluator:
             评估报告字符串
         """
         report = """模型评估报告
-================
-"""
+        """
 
         for metric, value in evaluation_results.items():
             if metric == 'mse':

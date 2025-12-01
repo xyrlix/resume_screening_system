@@ -26,7 +26,7 @@ SYSTEM_INFO = {
 
 # 启动命令模板
 MAIN_COMMAND = [
-    sys.executable, "-m", "streamlit", "run", "frontend/combined_app.py"
+    sys.executable, "-m", "streamlit", "run", "frontend/main_app.py"
 ]
 
 
@@ -48,9 +48,9 @@ def start_frontend(port: int = None):
     Args:
         port: 端口号
     """
-    # 如果没有指定端口，使用默认端口8501
+    # 如果没有指定端口，使用默认端口8801
     if not port:
-        port = 8501
+        port = 8801
 
     # 尝试启动应用，如果失败，则尝试其他端口
     for try_port in range(port, port + 10):
@@ -106,8 +106,8 @@ def main():
     # 添加命令行参数
     parser.add_argument("--port",
                         type=int,
-                        default=8501,
-                        help="指定前端服务端口号，默认8501")
+                        default=8801,
+                        help="指定前端服务端口号，默认8801")
     parser.add_argument("--info", action="store_true", help="显示系统信息")
 
     # 解析参数

@@ -161,18 +161,27 @@ class ResumeMatcher:
         weights = weights or default_weights
 
         if resume.get('segment_vectors') and jd.get('segment_vectors'):
-            seg_w = segment_weights or {'experience': 0.5, 'skills': 0.3, 'education': 0.2}
+            seg_w = segment_weights or {
+                'experience': 0.5,
+                'skills': 0.3,
+                'education': 0.2
+            }
             sim_parts = []
             total = 0.0
             for k, w in seg_w.items():
                 rv = resume['segment_vectors'].get(k)
                 jv = jd['segment_vectors'].get(k)
                 if rv is not None and jv is not None:
-                    sim_parts.append(self.calculate_similarity_score(rv, jv) * w)
+                    sim_parts.append(
+                        self.calculate_similarity_score(rv, jv) * w)
                     total += w
-            similarity_score = (sum(sim_parts) / total) if total > 0 else self.calculate_similarity_score(resume['vector'], jd['vector'])
+            similarity_score = (
+                sum(sim_parts) /
+                total) if total > 0 else self.calculate_similarity_score(
+                    resume['vector'], jd['vector'])
         else:
-            similarity_score = self.calculate_similarity_score(resume['vector'], jd['vector'])
+            similarity_score = self.calculate_similarity_score(
+                resume['vector'], jd['vector'])
 
         skill_score = self.calculate_skill_match_score(resume['skills'],
                                                        jd['skills'])
@@ -196,7 +205,8 @@ class ResumeMatcher:
         resumes: List[Dict[str, Any]],
         jd: Dict[str, Any],
         top_k: int = 10,
-        config: Dict[str, Any] = None
+        config: Dict[str, Any] = None,
+        progress_callback: callable = None
     ) -> List[Tuple[Dict[str, Any], float, Dict[str, Any], Dict[str, Any]]]:
         """
         三级漏斗筛选：向量粗筛 → 规则精筛 → LLM补筛
@@ -231,11 +241,19 @@ class ResumeMatcher:
         # 1. 一级向量粗筛：使用余弦相似度，筛选Top50相关简历
         logger.info(f"开始一级向量粗筛：共 {len(resumes)} 份简历")
         stage1_results = []
-        for resume in resumes:
+        total_resumes = len(resumes)
+        for i, resume in enumerate(resumes):
             similarity_score = self.calculate_similarity_score(
                 resume['vector'], jd['vector'])
             if similarity_score >= filter_details['stage1']['threshold']:
                 stage1_results.append((resume, similarity_score))
+
+            # 每处理10%的简历更新一次进度
+            if progress_callback and (i + 1) % max(1,
+                                                   total_resumes // 10) == 0:
+                progress = min(20 + (i / total_resumes) * 30, 50)  # 1-50%进度
+                progress_callback(progress,
+                                  f"正在进行向量粗筛... {i + 1}/{total_resumes}")
 
         # 按相似度分数降序排序，取Top50
         stage1_results.sort(key=lambda x: x[1], reverse=True)
@@ -248,6 +266,10 @@ class ResumeMatcher:
         # 2. 二级规则精筛：使用规则过滤，仅保留10份左右
         logger.info(f"开始二级规则精筛：共 {len(stage1_results)} 份简历")
         stage2_results = []
+
+        # 更新进度
+        if progress_callback:
+            progress_callback(50, "开始二级规则精筛...")
 
         # 定义筛选规则
         rules = {
@@ -262,18 +284,29 @@ class ResumeMatcher:
                 'field': 'skills'
             },
             'experience': {
-                'operator': 'gte',
-                'value': jd.get('entities', {}).get('工作年限要求', str(cfg.get('required_years', 3))),
-                'field': 'experience'
+                'operator':
+                'gte',
+                'value':
+                jd.get('entities', {}).get('工作年限要求',
+                                           str(cfg.get('required_years', 3))),
+                'field':
+                'experience'
             }
         }
 
         filter_details['stage2']['rules'] = rules
 
-        for resume, similarity_score in stage1_results:
+        total_stage1 = len(stage1_results)
+        for i, (resume, similarity_score) in enumerate(stage1_results):
             # 检查是否满足所有规则
             match = True
             reasons = []
+
+            # 更新进度
+            if progress_callback:
+                progress = 50 + (i / total_stage1) * 30  # 50-80%进度
+                progress_callback(progress,
+                                  f"正在进行规则精筛... {i + 1}/{total_stage1}")
 
             # 学历规则
             if 'education' in rules:
@@ -353,7 +386,9 @@ class ResumeMatcher:
                 resume_years = max((extract_years(exp) for exp in resume_exp),
                                    default=0)
 
-                required_years = int(required_exp) if str(required_exp).isdigit() else int(cfg.get('required_years', 3))
+                required_years = int(required_exp) if str(
+                    required_exp).isdigit() else int(
+                        cfg.get('required_years', 3))
 
                 if resume_years < required_years:
                     match = False
@@ -384,24 +419,39 @@ class ResumeMatcher:
         logger.info(f"开始三级LLM补筛：共 {len(stage2_results)} 份简历")
         stage3_results = []
 
+        # 更新进度
+        if progress_callback:
+            progress_callback(80, "开始三级LLM补筛...")
+
         # 导入LLMChain
         from core.llm_chain import LLMChain
         llm_chain = LLMChain()
 
         boundary = cfg.get('llm_boundary', None)
-        for resume, similarity_score in stage2_results:
+        total_stage2 = len(stage2_results)
+        for i, (resume, similarity_score) in enumerate(stage2_results):
+            # 更新进度
+            if progress_callback:
+                progress = 80 + (i / total_stage2) * 20  # 80-100%进度
+                progress_callback(progress,
+                                  f"正在进行LLM补筛... {i + 1}/{total_stage2}")
+
             use_llm = filter_details['stage3']['enabled']
-            if boundary and isinstance(boundary, (list, tuple)) and len(boundary) == 2:
+            if boundary and isinstance(boundary,
+                                       (list, tuple)) and len(boundary) == 2:
                 lo, hi = float(boundary[0]), float(boundary[1])
-                use_llm = use_llm and (similarity_score >= lo and similarity_score <= hi)
+                use_llm = use_llm and (similarity_score >= lo
+                                       and similarity_score <= hi)
             if use_llm:
-                llm_analysis = llm_chain.process_resume(jd['cleaned_text'], resume['cleaned_text'])
-                overall_score = (
-                    self.calculate_overall_match_score(resume, jd, segment_weights=cfg.get('segment_weights')) * 0.7 +
-                    llm_analysis['final_score'] * 0.3)
+                llm_analysis = llm_chain.process_resume(
+                    jd['cleaned_text'], resume['cleaned_text'])
+                overall_score = (self.calculate_overall_match_score(
+                    resume, jd, segment_weights=cfg.get('segment_weights')) *
+                                 0.7 + llm_analysis['final_score'] * 0.3)
                 stage3_results.append((resume, overall_score, llm_analysis))
             else:
-                overall_score = self.calculate_overall_match_score(resume, jd, segment_weights=cfg.get('segment_weights'))
+                overall_score = self.calculate_overall_match_score(
+                    resume, jd, segment_weights=cfg.get('segment_weights'))
                 llm_analysis = {'final_score': overall_score}
                 stage3_results.append((resume, overall_score, llm_analysis))
 
@@ -421,6 +471,10 @@ class ResumeMatcher:
         final_results = []
         for resume, score, llm_analysis in stage3_results[:top_k]:
             final_results.append((resume, score, filter_details, llm_analysis))
+
+        # 完成所有处理
+        if progress_callback:
+            progress_callback(100, "匹配完成！")
 
         logger.info(f"三级漏斗筛选完成：最终通过 {len(final_results)} 份简历")
         return final_results
@@ -466,7 +520,8 @@ class ResumeMatcher:
         resumes: List[Dict[str, Any]],
         jd: Dict[str, Any],
         top_k: int = 10,
-        config: Dict[str, Any] = None
+        config: Dict[str, Any] = None,
+        progress_callback: callable = None
     ) -> List[Tuple[Dict[str, Any], float, Dict[str, Any], Dict[str, Any]]]:
         """
         将多个简历与单个JD进行匹配，返回匹配度最高的前k个简历，包含LLM分析结果
@@ -475,11 +530,14 @@ class ResumeMatcher:
             resumes: 简历列表
             jd: JD信息
             top_k: 返回的匹配结果数量
+            config: 匹配配置
+            progress_callback: 进度回调函数，接收(progress_percent, status_message)参数
         
         Returns:
             匹配结果列表，每个元素是(简历, 匹配分数, 筛选详情, LLM分析结果)的元组，按匹配分数降序排列
         """
-        return self.three_stage_filter(resumes, jd, top_k, config)
+        return self.three_stage_filter(resumes, jd, top_k, config,
+                                       progress_callback)
 
     def match_resume_to_jds(
             self,

@@ -41,29 +41,42 @@ class RecruiterService:
         self.resumes = []  # 存储简历信息
         self.matching_results = []  # 存储匹配结果
 
-    def add_job(self, jd_text: str, job_id: str = None, meta: Dict[str, Any] = None) -> Dict[str, Any]:
+    def add_job(self,
+                jd_text: str,
+                job_id: str = None,
+                meta: Dict[str, Any] = None,
+                progress_callback: callable = None) -> Dict[str, Any]:
         """
         添加新的JD
         
         Args:
             jd_text: JD文本
             job_id: 可选的JD ID
+            meta: 元数据
+            progress_callback: 进度回调函数，接收(progress_percent, status_message)参数
         
         Returns:
             添加的JD信息
         """
         logger.info(f"开始处理添加JD请求，job_id: {job_id}")
 
+        def update_progress(percent, message):
+            if progress_callback:
+                progress_callback(percent, message)
+
         # 处理JD文本
+        update_progress(20, "正在处理JD文本...")
         logger.info("正在处理JD文本")
         processed_jd = self.data_processor.process_jd_text(jd_text)
 
         # 提取特征
+        update_progress(60, "正在提取JD特征...")
         logger.info("正在提取JD特征")
         featured_jd = self.feature_engine.extract_features_from_jd(
             processed_jd)
 
         # 设置JD ID
+        update_progress(80, "正在生成JD信息...")
         featured_jd['job_id'] = job_id or f"job_{len(self.jobs) + 1}"
         if meta:
             for k, v in meta.items():
@@ -71,8 +84,11 @@ class RecruiterService:
         logger.info(f"生成JD ID: {featured_jd['job_id']}")
 
         # 添加到JD列表
+        update_progress(90, "正在保存JD信息...")
         self.jobs.append(featured_jd)
         logger.info(f"JD添加成功，当前JD总数: {len(self.jobs)}")
+
+        update_progress(100, "JD处理完成！")
 
         return featured_jd
 
@@ -114,49 +130,6 @@ class RecruiterService:
         logger.info(f"简历上传成功，当前简历总数: {len(self.resumes)}")
 
         return featured_resume
-
-    def match_resumes_to_job(
-            self,
-            job_id: str,
-            top_k: int = 10,
-            config: Dict[str, Any] = None) -> List[Tuple[Dict[str, Any], float]]:
-        """
-        将简历与指定JD进行匹配
-        
-        Args:
-            job_id: JD ID
-            top_k: 返回的匹配结果数量
-        
-        Returns:
-            匹配结果列表，每个元素是(简历, 匹配分数)的元组
-        """
-        logger.info(f"开始处理简历匹配请求，job_id: {job_id}, top_k: {top_k}")
-
-        # 查找指定的JD
-        job = next((j for j in self.jobs if j['job_id'] == job_id), None)
-        if not job:
-            logger.error(f"未找到ID为 {job_id} 的JD")
-            raise ValueError(f"未找到ID为{job_id}的JD")
-        logger.info(f"找到JD: {job_id}")
-
-        # 匹配简历
-        logger.info(f"开始匹配简历，共 {len(self.resumes)} 份简历")
-        if config:
-            _results = self.matcher.three_stage_filter(self.resumes, job, top_k, config)
-            results = [(resume, score) for resume, score, _, _ in _results]
-        else:
-            results = self.matcher.match_resumes_to_jd(self.resumes, job, top_k)
-        logger.info(f"简历匹配完成，找到 {len(results)} 份匹配简历")
-
-        # 存储匹配结果
-        self.matching_results.append({
-            'job_id': job_id,
-            'results': results,
-            'timestamp': self._get_current_timestamp()
-        })
-        logger.info(f"匹配结果保存成功")
-
-        return results
 
     def apply_filter_rules(
             self, resumes: List[Dict[str, Any]],
@@ -307,6 +280,41 @@ class RecruiterService:
             简历列表
         """
         return self.resumes
+
+    def match_resumes_to_jd_with_llm(
+        self,
+        resumes: List[Dict[str, Any]],
+        jd: Dict[str, Any],
+        top_k: int = 10,
+        config: Dict[str, Any] = None,
+        progress_callback: callable = None
+    ) -> List[Tuple[Dict[str, Any], float, Dict[str, Any], Dict[str, Any]]]:
+        """
+        将多个简历与单个JD进行匹配，返回匹配度最高的前k个简历，包含LLM分析结果
+        
+        Args:
+            resumes: 简历列表
+            jd: JD信息
+            top_k: 返回的匹配结果数量
+            config: 匹配配置
+            progress_callback: 进度回调函数，接收(progress_percent, status_message)参数
+        
+        Returns:
+            匹配结果列表，每个元素是(简历, 匹配分数, 筛选详情, LLM分析结果)的元组，按匹配分数降序排列
+        """
+        logger.info(f"开始匹配简历，共 {len(resumes)} 份简历")
+
+        # 初始进度更新
+        if progress_callback:
+            progress_callback(0, "开始匹配简历...")
+
+        # 使用matcher的three_stage_filter方法进行匹配
+        results = self.matcher.three_stage_filter(resumes, jd, top_k, config,
+                                                  progress_callback)
+
+        logger.info(f"简历匹配完成，找到 {len(results)} 份匹配简历")
+
+        return results
 
     def get_matching_results(self, job_id: str = None) -> List[Dict[str, Any]]:
         """

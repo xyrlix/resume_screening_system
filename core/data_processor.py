@@ -9,43 +9,103 @@
 import os
 import json
 import re
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional, Pattern
 from utils.logger import get_logger
+from utils.clean_tools import clean_text as utils_clean_text, remove_special_chars, normalize_whitespace
 
 # 初始化日志记录器
 logger = get_logger("data_processor")
 
 
-class DataProcessor:
+# 配置管理器
+class ConfigManager:
     """
-    数据处理类，负责简历和JD的数据收集、清洗和初步处理
+    配置管理类，负责加载和管理各种配置文件
     """
+    _instance = None
+    _initialized = False
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(ConfigManager, cls).__new__(cls)
+        return cls._instance
 
     def __init__(self):
-        """
-        初始化数据处理类
-        """
-        # 定义需要提取的实体列表
-        self.resume_entities = [
-            "姓名", "性别", "出生日期", "年龄", "联系电话", "电子邮箱", "现居地", "户籍地", "政治面貌",
-            "婚姻状况", "期望职位", "期望行业", "期望工作城市", "期望薪资", "到岗时间", "学校名称", "学历层次",
-            "专业名称", "入学时间", "毕业时间", "是否全日制", "GPA/排名/荣誉", "公司名称", "公司所属行业",
-            "在职开始时间", "在职结束时间", "职位名称", "工作地点", "工作内容关键词", "汇报对象", "团队规模",
-            "项目名称", "项目开始时间", "项目结束时间", "项目角色", "技术栈", "项目成果指标", "编程语言",
-            "框架/工具", "数据库", "操作系统/平台", "语言能力", "证书资质", "软技能", "作品集/个人链接",
-            "自我评价关键词", "兴趣爱好", "总工作经验年限"
-        ]
+        if self._initialized:
+            return
 
-        self.jd_entities = [
-            "职位名称", "行业", "岗位职责", "任职要求", "学历要求", "工作年限要求", "薪资范围", "工作地点",
-            "公司名称", "公司规模", "公司行业", "招聘人数", "发布时间", "截止时间", "职位类型", "技能要求",
-            "语言要求", "证书要求", "福利", "团队情况"
-        ]
+        self.base_dir = os.path.dirname(
+            os.path.dirname(os.path.abspath(__file__)))
+        self.config_dir = os.path.join(self.base_dir, 'config')
+
+        # 加载配置文件
+        self.prompts = self._load_prompts()
+        self.entity_config = self._load_entity_config()
+
+        self._initialized = True
+
+    def _load_prompts(self) -> Dict[str, str]:
+        """加载提示词配置"""
+        prompts_path = os.path.join(self.config_dir, 'prompts.json')
+        try:
+            with open(prompts_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            logger.error(f"提示词文件未找到: {prompts_path}")
+            raise
+        except json.JSONDecodeError:
+            logger.error(f"提示词JSON解析错误: {prompts_path}")
+            raise
+
+    def _load_entity_config(self) -> Dict[str, List[str]]:
+        """加载实体配置"""
+        config_path = os.path.join(self.config_dir, 'entity_config.json')
+        try:
+            with open(config_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error(f"加载实体配置失败: {str(e)}")
+            # 返回默认配置
+            return {
+                'resume_entities': [
+                    "姓名", "性别", "出生日期", "年龄", "联系电话", "电子邮箱", "现居地", "户籍地",
+                    "政治面貌", "婚姻状况", "期望职位", "期望行业", "期望工作城市", "期望薪资", "到岗时间",
+                    "学校名称", "学历层次", "专业名称", "入学时间", "毕业时间", "是否全日制",
+                    "GPA/排名/荣誉", "公司名称", "公司所属行业", "在职开始时间", "在职结束时间", "职位名称",
+                    "工作地点", "工作内容关键词", "汇报对象", "团队规模", "项目名称", "项目开始时间",
+                    "项目结束时间", "项目角色", "技术栈", "项目成果指标", "编程语言", "框架/工具", "数据库",
+                    "操作系统/平台", "语言能力", "证书资质", "软技能", "作品集/个人链接", "自我评价关键词",
+                    "兴趣爱好", "总工作经验年限"
+                ],
+                'jd_entities': [
+                    "职位名称", "行业", "岗位职责", "任职要求", "学历要求", "工作年限要求", "薪资范围",
+                    "工作地点", "公司名称", "公司规模", "公司行业", "招聘人数", "发布时间", "截止时间",
+                    "职位类型", "技能要求", "语言要求", "证书要求", "福利", "团队情况"
+                ]
+            }
+
+    @property
+    def resume_entities(self) -> List[str]:
+        """获取简历实体列表"""
+        return self.entity_config.get('resume_entities', [])
+
+    @property
+    def jd_entities(self) -> List[str]:
+        """获取JD实体列表"""
+        return self.entity_config.get('jd_entities', [])
+
+
+# 文本处理工具
+class TextProcessor:
+    """
+    文本处理工具类，提供文本清理、解析等功能
+    """
 
     @staticmethod
     def clean_text(text: str) -> str:
         """
         清理文本，去除多余的空格、换行符和特殊字符
+        使用utils.clean_tools中的实现以避免代码重复
         
         Args:
             text: 原始文本
@@ -53,14 +113,748 @@ class DataProcessor:
         Returns:
             清理后的文本
         """
-        # 去除多余的空格和换行符
-        text = re.sub(r'\s+', ' ', text)
-        # 去除特殊字符
-        text = re.sub(r'[^一-龥a-zA-Z0-9\s.,!?;:()\[\]{}\-_+=@#$%^&*]', '', text)
-        return text.strip()
+        return utils_clean_text(text)
 
     @staticmethod
-    def parse_resume_file(file_path: str) -> str:
+    def parse_text_file(file_path: str) -> str:
+        """
+        解析文本文件，提取文本内容
+        
+        Args:
+            file_path: 文件路径
+        
+        Returns:
+            提取的文本内容
+        """
+        ext = os.path.splitext(file_path)[1].lower()
+
+        if ext in ['.txt', '.md']:
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    return f.read()
+            except Exception as e:
+                logger.error(f"解析文件失败 {file_path}: {e}")
+                return ""
+        else:
+            # 对于其他格式，返回空字符串
+            logger.warning(f"不支持的文件格式: {ext}")
+            return ""
+
+
+# 实体验证器
+class EntityValidator:
+    """
+    实体验证器，负责验证提取的实体是否有效
+    """
+
+    @staticmethod
+    def is_valid_entity(label: str, value: Any) -> bool:
+        """
+        验证实体是否有效
+        
+        Args:
+            label: 实体标签
+            value: 实体值
+        
+        Returns:
+            bool: 实体是否有效
+        """
+        if not value or len(str(value).strip()) < 2:
+            return False
+
+        value_str = str(value).strip()
+
+        # 根据不同实体类型进行特定验证
+        validation_rules = {
+            # 经验/年限相关
+            "EXPERIENCE":
+            lambda v: bool(re.search(r"\d", v)),
+            "Years":
+            lambda v: bool(re.search(r"\d", v)),
+            "总工作经验年限":
+            lambda v: bool(re.search(r"\d", v)),
+            "工作年限要求":
+            lambda v: bool(re.search(r"\d", v)),
+
+            # 联系方式
+            "PHONE":
+            lambda v: bool(re.fullmatch(r"1[3-9]\d{9}", v)),
+            "Phone":
+            lambda v: bool(re.fullmatch(r"1[3-9]\d{9}", v)),
+            "联系电话":
+            lambda v: bool(re.fullmatch(r"1[3-9]\d{9}", v)),
+
+            # 邮箱
+            "EMAIL":
+            lambda v: bool(
+                re.fullmatch(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}",
+                             v)),
+            "Email":
+            lambda v: bool(
+                re.fullmatch(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}",
+                             v)),
+            "电子邮箱":
+            lambda v: bool(
+                re.fullmatch(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}",
+                             v)),
+
+            # 学历
+            "EDUCATION":
+            lambda v: bool(re.search(r"博士|硕士|本科|大专|中专|高中|初中", v)),
+            "Degree":
+            lambda v: bool(re.search(r"博士|硕士|本科|大专|中专|高中|初中", v)),
+            "学历层次":
+            lambda v: bool(re.search(r"博士|硕士|本科|大专|中专|高中|初中", v)),
+            "学历要求":
+            lambda v: bool(re.search(r"博士|硕士|本科|大专|中专|高中|初中", v)),
+
+            # 语言
+            "LANGUAGE":
+            lambda v: bool(
+                re.search(r"英语|雅思|托福|CET|日语|德语|法语|韩语|西班牙语|葡萄牙语|俄语|意大利语", v)),
+            "Language":
+            lambda v: bool(
+                re.search(r"英语|雅思|托福|CET|日语|德语|法语|韩语|西班牙语|葡萄牙语|俄语|意大利语", v)),
+            "语言能力":
+            lambda v: bool(
+                re.search(r"英语|雅思|托福|CET|日语|德语|法语|韩语|西班牙语|葡萄牙语|俄语|意大利语", v)),
+            "语言要求":
+            lambda v: bool(
+                re.search(r"英语|雅思|托福|CET|日语|德语|法语|韩语|西班牙语|葡萄牙语|俄语|意大利语", v)),
+
+            # 证书
+            "CERTIFICATE":
+            lambda v: bool(
+                re.search(
+                    r"PMP|CKA|CKAD|RHCE|AWS|微软|Oracle|思科|华为|软考|CCNA|CCNP|CFA|CPA|ACCA|FRM|证书",
+                    v)),
+            "Certificate":
+            lambda v: bool(
+                re.search(
+                    r"PMP|CKA|CKAD|RHCE|AWS|微软|Oracle|思科|华为|软考|CCNA|CCNP|CFA|CPA|ACCA|FRM|证书",
+                    v)),
+            "证书资质":
+            lambda v: bool(
+                re.search(
+                    r"PMP|CKA|CKAD|RHCE|AWS|微软|Oracle|思科|华为|软考|CCNA|CCNP|CFA|CPA|ACCA|FRM|证书",
+                    v)),
+            "证书要求":
+            lambda v: bool(
+                re.search(
+                    r"PMP|CKA|CKAD|RHCE|AWS|微软|Oracle|思科|华为|软考|CCNA|CCNP|CFA|CPA|ACCA|FRM|证书",
+                    v)),
+
+            # 技能
+            "SKILL":
+            lambda v: bool(re.search(r"[\u4e00-\u9fa5A-Za-z]{2,}", v)) and
+            not re.fullmatch(r"\d+", v),
+            "Skill":
+            lambda v: bool(re.search(r"[\u4e00-\u9fa5A-Za-z]{2,}", v)
+                           ) and not re.fullmatch(r"\d+", v),
+            "技能要求":
+            lambda v: bool(re.search(r"[\u4e00-\u9fa5A-Za-z]{2,}", v)
+                           ) and not re.fullmatch(r"\d+", v),
+            "编程语言":
+            lambda v: bool(re.search(r"[\u4e00-\u9fa5A-Za-z]{2,}", v)
+                           ) and not re.fullmatch(r"\d+", v),
+            "框架/工具":
+            lambda v: bool(re.search(r"[\u4e00-\u9fa5A-Za-z]{2,}", v)
+                           ) and not re.fullmatch(r"\d+", v),
+            "数据库":
+            lambda v: bool(re.search(r"[\u4e00-\u9fa5A-Za-z]{2,}", v)
+                           ) and not re.fullmatch(r"\d+", v),
+        }
+
+        # 如果有特定规则，使用特定规则
+        if label in validation_rules:
+            return validation_rules[label](value_str)
+
+        # 通用验证：至少包含2个汉字或英文单词
+        return bool(re.search(r"[\u4e00-\u9fa5]{2,}|[A-Za-z]{2,}", value_str))
+
+
+# 正则表达式模式管理器
+class RegexPatternManager:
+    """
+    正则表达式模式管理器，负责管理和提供各种正则表达式模式
+    """
+
+    def __init__(self):
+        # 预编译常用正则表达式模式
+        self._patterns = {
+            # 职位相关实体
+            "职位名称": [
+                re.compile(r'招聘职位[:：]?\s*([\u4e00-\u9fa5a-zA-Z&\-\(\)\[\]]+)'),
+                re.compile(r'岗位名称[:：]?\s*([\u4e00-\u9fa5a-zA-Z&\-\(\)\[\]]+)'),
+                re.compile(r'^([\u4e00-\u9fa5a-zA-Z&\-\(\)\[\]]+?)[\s\-_\|]+'),
+                re.compile(r'[招骋]\s*([\u4e00-\u9fa5a-zA-Z&\-\(\)\[\]]+)'),
+            ],
+
+            # 公司相关实体
+            "公司名称": [
+                re.compile(
+                    r'([\u4e00-\u9fa5a-zA-Z0-9&\-\(\)\[\]]+)(?:公司|企业|集团|有限公司|股份有限公司)'
+                ),
+            ],
+
+            # 地点相关实体
+            "工作地点": [
+                re.compile(r'工作地点[:：]?\s*([\u4e00-\u9fa5a-zA-Z&\-\(\)\[\]]+)'),
+                re.compile(
+                    r'(北京|上海|广州|深圳|杭州|南京|武汉|成都|西安|天津|重庆|苏州|厦门|长沙|青岛|大连|宁波|济南|沈阳|哈尔滨|福州|昆明|南宁|兰州|太原|石家庄|郑州|合肥|南昌|贵阳|海口|西宁|银川|呼和浩特|乌鲁木齐|拉萨)'
+                ),
+            ],
+
+            # 技能要求
+            "技能要求": [
+                re.compile(
+                    r'技术专长[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+                re.compile(
+                    r'技能要求[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+                re.compile(
+                    r'AI技能[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+                re.compile(r'精通[:：]?\s*(.*?)(?=\s*及|\s*或|\s*，|\s*。|$)'),
+                re.compile(r'熟练[:：]?\s*(.*?)(?=\s*及|\s*或|\s*，|\s*。|$)'),
+                re.compile(
+                    r'(Python|PyTorch|TensorFlow|OCR|NLP|FastAPI|SQL|NoSQL|Azure|GPT|Claude|LLM|Machine Learning|Deep Learning)',
+                    re.IGNORECASE),
+            ],
+
+            # 岗位职责
+            "岗位职责": [
+                re.compile(
+                    r'文档智能处理[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+                re.compile(
+                    r'智能内容生成[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+                re.compile(
+                    r'端到端系统集成[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+                re.compile(
+                    r'岗位职责[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+                re.compile(
+                    r'工作内容[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+            ],
+
+            # 任职要求
+            "任职要求": [
+                re.compile(
+                    r'必备资质与经验[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+                re.compile(
+                    r'任职要求[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+                re.compile(
+                    r'资格要求[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+                re.compile(
+                    r'岗位要求[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+            ],
+        }
+
+    def get_patterns(self, entity_name: str) -> List[Pattern[str]]:
+        """
+        获取指定实体的正则表达式模式列表
+        
+        Args:
+            entity_name: 实体名称
+        
+        Returns:
+            List[Pattern]: 正则表达式模式列表
+        """
+        return self._patterns.get(entity_name, [])
+
+
+# 实体提取器基类
+class BaseEntityExtractor:
+    """
+    实体提取器基类，定义提取器接口
+    """
+
+    def extract(self, text: str, entity_list: List[str],
+                entities: Dict[str, Any], stats: Dict[str, int]) -> None:
+        """
+        提取实体
+        
+        Args:
+            text: 待提取的文本
+            entity_list: 要提取的实体列表
+            entities: 实体字典（将被更新）
+            stats: 统计信息（将被更新）
+        """
+        raise NotImplementedError("子类必须实现此方法")
+
+
+# 结构化提取器
+class StructuredExtractor(BaseEntityExtractor):
+    """
+    结构化提取器，基于文本结构提取实体
+    """
+
+    def extract(self, text: str, entity_list: List[str],
+                entities: Dict[str, Any], stats: Dict[str, int]) -> None:
+        """使用结构化方法提取实体"""
+        # 提取公司所属行业
+        if "公司所属行业" in entity_list and not entities["公司所属行业"]:
+            match = re.search(r'所属行业([^\s]+)', text)
+            if match:
+                industry = match.group(1).strip()
+                if EntityValidator.is_valid_entity("公司所属行业", industry):
+                    entities["公司所属行业"] = industry
+                    stats['struct_count'] += 1
+                    logger.debug(f"结构化提取: 行业 = {industry}")
+
+        # 提取学历要求
+        if "学历要求" in entity_list and not entities["学历要求"]:
+            match = re.search(r'学历要求([^\s]+)', text)
+            if match:
+                education = match.group(1).strip()
+                if EntityValidator.is_valid_entity("学历要求", education):
+                    entities["学历要求"] = education
+                    stats['struct_count'] += 1
+                    logger.debug(f"结构化提取: 学历要求 = {education}")
+
+        # 提取工作年限
+        if "工作年限要求" in entity_list and not entities["工作年限要求"]:
+            match = re.search(r'工作年限要求([^\s]+)', text)
+            if match:
+                experience = match.group(1).strip()
+                if EntityValidator.is_valid_entity("工作年限要求", experience):
+                    entities["工作年限要求"] = experience
+                    stats['struct_count'] += 1
+                    logger.debug(f"结构化提取: 工作年限要求 = {experience}")
+
+        # 提取技能要求
+        if "技能要求" in entity_list and not entities["技能要求"]:
+            # 匹配从"技能要求"开始到下一个关键词"岗位职责"为止的所有内容
+            match = re.search(r'技能要求(.*?)(?=\s*岗位职责|$)', text, re.DOTALL)
+            if match:
+                skills = match.group(1).strip()
+                if EntityValidator.is_valid_entity("技能要求", skills):
+                    entities["技能要求"] = skills
+                    stats['struct_count'] += 1
+                    logger.debug(f"结构化提取: 技能要求 = {skills}")
+
+        # 提取岗位职责
+        if "岗位职责" in entity_list and not entities["岗位职责"]:
+            match = re.search(r'岗位职责\s*(-.*?)(?=\s*[\u4e00-\u9fa5]{2,}[:：]|$)',
+                              text, re.DOTALL)
+            if match:
+                responsibilities = match.group(1).strip()
+                if EntityValidator.is_valid_entity("岗位职责", responsibilities):
+                    entities["岗位职责"] = responsibilities
+                    stats['struct_count'] += 1
+                    logger.debug(f"结构化提取: 岗位职责 = {responsibilities}")
+
+
+# 关键词提取器
+class KeywordExtractor(BaseEntityExtractor):
+    """
+    关键词提取器，基于关键词提取实体
+    """
+
+    def __init__(self):
+        # 实体关键词映射
+        self._entity_keywords = {
+            "职位名称": ["招聘职位", "岗位名称", "职位", "岗位"],
+            "公司名称": ["公司名称", "企业名称", "单位名称"],
+            "工作地点": ["工作地点", "上班地点", "办公地点"],
+            "学历要求": ["学历要求", "学历", "教育背景"],
+            "工作年限要求": ["工作年限", "经验要求", "工作经验"],
+            "技能要求": ["技能要求", "技能", "专业技能", "技术要求"],
+            "岗位职责": ["岗位职责", "工作内容", "职位职责"],
+            "任职要求": ["任职要求", "岗位要求", "应聘要求"],
+        }
+
+    def extract(self, text: str, entity_list: List[str],
+                entities: Dict[str, Any], stats: Dict[str, int]) -> None:
+        """使用关键词提取实体"""
+        # 通用提取方法：基于关键词的提取
+        for entity_name in entity_list:
+            if entities.get(entity_name):
+                continue  # 跳过已提取的实体
+
+            logger.debug(f"尝试使用关键词提取: {entity_name}")
+
+            # 获取该实体的关键词
+            keywords = self._entity_keywords.get(entity_name, [])
+
+            # 遍历关键词进行匹配
+            for keyword in keywords:
+                # 构建匹配模式
+                if entity_name == "技能要求":
+                    # 技能要求可能包含多个逗号分隔的值
+                    pattern = f'{keyword}[:：]?\s*([^\s]+(?:[,，]\s*[^\s]+)*)'
+                else:
+                    # 其他实体通常是单个值，直到遇到下一个关键词或结束
+                    pattern = f'{keyword}[:：]?\s*([^\s]+)'
+
+                try:
+                    # 对于关键词提取，使用普通的re.search，因为pattern是字符串
+                    match = re.search(pattern, text, re.DOTALL)
+                    if match and match.group(1):
+                        extracted_value = match.group(1).strip()
+                        if EntityValidator.is_valid_entity(
+                                entity_name, extracted_value):
+                            entities[entity_name] = extracted_value
+                            stats['keyword_count'] += 1
+                            logger.debug(
+                                f"关键词提取: {entity_name} = {extracted_value}")
+                            break  # 找到匹配后退出关键词循环
+                except Exception as e:
+                    logger.debug(f"关键词提取时出错: {e}")
+                    continue  # 出错时继续尝试下一个关键词
+
+
+# 正则表达式提取器
+class RegexExtractor(BaseEntityExtractor):
+    """
+    正则表达式提取器，基于正则表达式提取实体
+    """
+
+    def __init__(self):
+        self._pattern_manager = RegexPatternManager()
+
+    def extract(self, text: str, entity_list: List[str],
+                entities: Dict[str, Any], stats: Dict[str, int]) -> None:
+        """使用正则表达式提取实体"""
+        for entity_name in entity_list:
+            if entities.get(entity_name):
+                continue  # 跳过已提取的实体
+
+            logger.debug(f"尝试使用正则表达式提取: {entity_name}")
+
+            # 获取该实体的正则表达式模式
+            patterns = self._pattern_manager.get_patterns(entity_name)
+
+            # 遍历模式进行匹配
+            for pattern in patterns:
+                try:
+                    # 严格检查pattern是否为预编译的正则表达式对象
+                    if isinstance(pattern, re.Pattern):
+                        if entity_name == "技能要求":
+                            # 对于技能要求，使用findall提取所有匹配项
+                            matches = pattern.findall(text)
+                            if matches:
+                                # 扁平化匹配结果
+                                flat_matches = []
+                                for match in matches:
+                                    if isinstance(match, tuple):
+                                        flat_matches.extend(
+                                            [m for m in match if m])
+                                    else:
+                                        flat_matches.append(match)
+
+                                # 去重并合并
+                                unique_skills = list(set(flat_matches))
+                                if unique_skills:
+                                    entities[entity_name] = ", ".join(
+                                        unique_skills)
+                                    stats['regex_count'] = stats.get(
+                                        'regex_count', 0) + 1
+                                    logger.debug(
+                                        f"正则表达式提取: {entity_name} = {entities[entity_name]}"
+                                    )
+                                    break
+                        else:
+                            # 对于其他实体，使用search提取
+                            match = pattern.search(text)
+                            if match:
+                                # 根据模式获取匹配的组
+                                extracted_value = match.group(1).strip(
+                                ) if match.groups() else match.group(
+                                    0).strip()
+                                if EntityValidator.is_valid_entity(
+                                        entity_name, extracted_value):
+                                    entities[entity_name] = extracted_value
+                                    stats['regex_count'] = stats.get(
+                                        'regex_count', 0) + 1
+                                    logger.debug(
+                                        f"正则表达式提取: {entity_name} = {extracted_value}"
+                                    )
+                                    break
+                    else:
+                        logger.error(
+                            f"无效的正则表达式模式: {type(pattern)}，期望re.Pattern类型")
+                        logger.error(f"模式内容: {pattern}")
+                        # 跳过无效模式，继续下一个
+                        continue
+                except Exception as e:
+                    logger.error(f"正则表达式提取{entity_name}时出错: {e}")
+                    logger.error(f"错误类型: {type(e).__name__}")
+                    # 添加更多调试信息
+                    logger.debug(f"模式类型: {type(pattern)}, 模式内容: {pattern}")
+                    logger.debug(f"文本内容(前100字符): {text[:100]}")
+                    # 继续尝试下一个模式
+
+
+# LLM提取器（按需导入，避免循环导入）
+class LLMEntityExtractor(BaseEntityExtractor):
+    """
+    LLM实体提取器，基于LLM提取实体
+    """
+
+    def extract(self, text: str, entity_list: List[str],
+                entities: Dict[str, Any], stats: Dict[str, int]) -> None:
+        """使用LLM提取实体"""
+        try:
+            # 延迟导入，避免循环导入
+            from core.llm_chain import LLMChain
+
+            logger.info("🔍 开始使用LLM提取实体...")
+
+            # 初始化LLMChain实例（单例模式）
+            llm_chain = LLMChain()
+
+            # 调用LLMChain提取实体
+            llm_result = llm_chain.extract_jd_entities(text)
+            logger.debug(f"LLM调用成功，返回结果长度: {len(str(llm_result))} 字符")
+
+            # 解析LLM结果
+            if llm_result:
+                self._parse_llm_result(llm_result, entity_list, entities,
+                                       stats)
+            else:
+                logger.warning("⚠️ LLM返回了空结果")
+
+        except Exception as e:
+            logger.error(f"LLM调用出错：{str(e)}")
+
+    def _parse_llm_result(self, llm_result: Any, entity_list: List[str],
+                          entities: Dict[str, Any], stats: Dict[str,
+                                                                int]) -> None:
+        """解析LLM返回的结果"""
+        try:
+            logger.debug(f"原始LLM结果: {llm_result}...")
+
+            # 根据llm_result的类型进行不同处理
+            if isinstance(llm_result, dict):
+                # 如果已经是字典格式，直接使用
+                logger.debug(f"LLM返回的结果已经是字典格式，包含{len(llm_result)}个实体")
+                llm_entities = llm_result
+            else:
+                # 如果是字符串，需要清理和预处理
+                processed_result = str(llm_result).strip()
+
+                # 移除可能的代码块标记
+                processed_result = re.sub(r'^```json|```$',
+                                          '',
+                                          processed_result,
+                                          flags=re.MULTILINE)
+                # 移除多余的空白字符和换行符
+                processed_result = processed_result.strip()
+
+                logger.debug(f"处理后的LLM结果: {processed_result[:200]}...")
+
+                # 尝试解析JSON格式的结果
+                if processed_result and processed_result.startswith(
+                        '{') and processed_result.endswith('}'):
+                    try:
+                        llm_entities = json.loads(processed_result)
+                    except json.JSONDecodeError as e:
+                        logger.warning(f"JSON解析失败: {e}，尝试修复格式")
+                        # 尝试简单的格式修复
+                        try:
+                            # 移除可能的尾随逗号
+                            processed_result = re.sub(r',\s*}', '}',
+                                                      processed_result)
+                            processed_result = re.sub(r',\s*\]', ']',
+                                                      processed_result)
+                            llm_entities = json.loads(processed_result)
+                        except:
+                            # 如果修复失败，尝试使用更健壮的解析方式
+                            llm_entities = self._parse_as_key_value_pairs(
+                                processed_result)
+                else:
+                    # 不是有效的JSON格式，尝试使用键值对解析
+                    logger.warning(
+                        f"LLM返回的结果不是有效的JSON格式: {processed_result[:100]}...")
+                    llm_entities = self._parse_as_key_value_pairs(
+                        processed_result)
+
+            # 更新实体字典
+            if isinstance(llm_entities, dict):
+                for entity_name, value in llm_entities.items():
+                    if entity_name in entity_list and value and EntityValidator.is_valid_entity(
+                            entity_name, value):
+                        entities[entity_name] = value
+                        stats['llm_count'] += 1
+                        logger.debug(f"LLM提取: {entity_name} = {value}")
+            else:
+                logger.warning(f"LLM返回的结果不是字典格式: {type(llm_entities)}")
+
+        except json.JSONDecodeError as e:
+            logger.warning(f"JSON解析失败: {e}，尝试使用增强的文本解析方式")
+            # 使用更健壮的键值对解析方式
+            self._parse_as_key_value_pairs(str(llm_result), entity_list,
+                                           entities, stats)
+        except Exception as e:
+            logger.error(f"解析LLM结果时出错: {e}")
+
+    def _parse_as_key_value_pairs(self, text: str, entity_list: List[str],
+                                  entities: Dict[str, Any],
+                                  stats: Dict[str, int]) -> Dict[str, str]:
+        """将文本解析为键值对"""
+        result = {}
+
+        # 首先尝试提取所有可能的JSON对象
+        json_pattern = r'\{[^\{\}]*\}'
+        json_matches = re.findall(json_pattern, text)
+
+        if json_matches:
+            # 尝试解析每个找到的JSON片段
+            for json_str in json_matches:
+                try:
+                    fragment = json.loads(json_str)
+                    if isinstance(fragment, dict):
+                        for entity_name, value in fragment.items():
+                            if entity_name in entity_list and value and EntityValidator.is_valid_entity(
+                                    entity_name, value):
+                                entities[entity_name] = value
+                                stats['llm_count'] += 1
+                                logger.debug(
+                                    f"片段解析提取: {entity_name} = {value}")
+                                result[entity_name] = value
+                except:
+                    continue
+
+        # 最后尝试传统的键值对解析
+        lines = text.split('\n')
+        for line in lines:
+            line = line.strip()
+            if ':' in line and len(line) > 3:
+                try:
+                    entity_name, value = line.split(':', 1)
+                    entity_name = entity_name.strip()
+                    value = value.strip()
+
+                    # 清理可能的JSON格式残留
+                    entity_name = re.sub(r'["\{\}\[\]]', '', entity_name)
+                    value = re.sub(r'["\{\},\[\]]', '', value)
+
+                    # 进一步清理和验证
+                    entity_name = entity_name.strip()
+                    value = value.strip()
+
+                    if entity_name in entity_list and value and EntityValidator.is_valid_entity(
+                            entity_name, value):
+                        entities[entity_name] = value
+                        stats['llm_count'] += 1
+                        logger.debug(f"文本解析提取: {entity_name} = {value}")
+                        result[entity_name] = value
+                except:
+                    continue
+
+        return result
+
+
+# 实体提取协调器
+class EntityExtractionCoordinator:
+    """
+    实体提取协调器，协调不同的提取器按顺序工作
+    """
+
+    def __init__(self):
+        # 初始化各种提取器
+        self._extractors = [
+            StructuredExtractor(),
+            KeywordExtractor(),
+            RegexExtractor(),
+        ]
+
+        # LLM提取器在需要时才初始化，避免不必要的依赖
+        self._llm_extractor = None
+
+    def extract_entities(self,
+                         text: str,
+                         entity_list: List[str],
+                         use_llm: bool = True) -> Dict[str, Any]:
+        """
+        从文本中提取实体信息，优先使用LLM进行提取，然后使用正则和关键词进行补充和验证
+        
+        Args:
+            text: 待提取的文本
+            entity_list: 要提取的实体列表
+            use_llm: 是否使用LLM提取实体，默认为True
+        
+        Returns:
+            Dict[str, Any]: 提取的实体字典
+        """
+        # 初始化所有实体为空
+        entities = {entity: "" for entity in entity_list}
+
+        # 记录提取过程的统计信息
+        extraction_stats = {
+            'llm_count': 0,
+            'keyword_count': 0,
+            'struct_count': 0,
+            'regex_count': 0,
+            'ner_count': 0
+        }
+
+        # 清理和标准化文本
+        cleaned_text = TextProcessor.clean_text(text)
+
+        # 首先使用LLM提取（如果启用）
+        if use_llm:
+            self._llm_extractor = LLMEntityExtractor()
+            self._llm_extractor.extract(cleaned_text, entity_list, entities,
+                                        extraction_stats)
+
+        # 然后使用其他提取器进行补充
+        for extractor in self._extractors:
+            extractor.extract(cleaned_text, entity_list, entities,
+                              extraction_stats)
+
+        logger.info(f"实体提取完成，统计信息: {extraction_stats}")
+        return entities
+
+
+# 主数据处理器
+class DataProcessor:
+    """
+    数据处理类，负责简历和JD的数据收集、清洗和初步处理
+    使用单例模式确保全局只有一个实例
+    """
+
+    _instance = None
+    _initialized = False
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(DataProcessor, cls).__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        """
+        初始化数据处理类
+        """
+        if self._initialized:
+            return
+
+        # 初始化各个组件
+        self.config_manager = ConfigManager()
+        self.text_processor = TextProcessor()
+        self.entity_extractor = EntityExtractionCoordinator()
+
+        # 获取实体配置
+        self.resume_entities = self.config_manager.resume_entities
+        self.jd_entities = self.config_manager.jd_entities
+
+        logger.info(
+            f"成功初始化DataProcessor，简历实体数量: {len(self.resume_entities)}，JD实体数量: {len(self.jd_entities)}"
+        )
+
+        self._initialized = True
+
+    def parse_resume_file(self, file_path: str) -> str:
         """
         解析简历文件，提取文本内容
         
@@ -70,20 +864,9 @@ class DataProcessor:
         Returns:
             提取的文本内容
         """
-        ext = os.path.splitext(file_path)[1].lower()
+        return self.text_processor.parse_text_file(file_path)
 
-        if ext == '.txt':
-            with open(file_path, 'r', encoding='utf-8') as f:
-                return f.read()
-        elif ext == '.md':
-            with open(file_path, 'r', encoding='utf-8') as f:
-                return f.read()
-        else:
-            # 对于其他格式，返回空字符串
-            return ""
-
-    @staticmethod
-    def parse_jd_file(file_path: str) -> str:
+    def parse_jd_file(self, file_path: str) -> str:
         """
         解析JD文件，提取文本内容
         
@@ -93,7 +876,7 @@ class DataProcessor:
         Returns:
             提取的文本内容
         """
-        return DataProcessor.parse_resume_file(file_path)
+        return self.text_processor.parse_text_file(file_path)
 
     def extract_entities(self,
                          text: str,
@@ -105,458 +888,126 @@ class DataProcessor:
         Args:
             text: 待提取的文本
             entity_list: 要提取的实体列表
-            use_llm: 是否使用LLM提取实体，默认为True
+            use_llm: 是否使用LLM提取实体
         
         Returns:
             提取的实体字典
         """
-        # 初始化所有实体为空
-        entities = {entity: "" for entity in entity_list}
+        return self.entity_extractor.extract_entities(text, entity_list,
+                                                      use_llm)
 
-        # LLM 补全将在正则之后执行
-
-        from core.ner_model import get_ner
-        ner = get_ner()
-        if ner:
-            try:
-                spans = ner.predict(text)
-                agg = {}
-                for s in spans:
-                    lab = s['label']
-                    val = s['text']
-                    if lab not in agg:
-                        agg[lab] = []
-                    agg[lab].append(val)
-                def _valid(label: str, value: str) -> bool:
-                    if not value or len(value.strip()) < 2:
-                        return False
-                    if label in ["Years", "Salary"]:
-                        return bool(re.search(r"\d", value))
-                    if label in ["Phone"]:
-                        return bool(re.fullmatch(r"1[3-9]\d{9}", value))
-                    if label in ["Email"]:
-                        return bool(re.fullmatch(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", value))
-                    if label in ["Degree"]:
-                        return value in ["博士","硕士","本科","大专","中专","高中"]
-                    if label in ["Language"]:
-                        return bool(re.search(r"英语|雅思|托福|CET", value))
-                    if label in ["Certificate"]:
-                        return bool(re.search(r"PMP|CKA|CKAD|RHCE|AWS", value))
-                    # Company/JobTitle/Location/Skill: basic character check
-                    return bool(re.search(r"[\u4e00-\u9fa5A-Za-z]{2,}", value))
-                def assign(key, lab):
-                    if key in entity_list and lab in agg and agg[lab]:
-                        vals = [v.strip() for v in agg[lab] if _valid(lab, v.strip())]
-                        if vals:
-                            entities[key] = ", ".join(sorted(list(set(vals))))
-                assign("职位名称", "JobTitle")
-                assign("期望职位", "JobTitle")
-                assign("公司名称", "Company")
-                assign("学历层次", "Degree")
-                assign("学历要求", "Degree")
-                assign("总工作经验年限", "Years")
-                assign("工作年限要求", "Years")
-                assign("技能要求", "Skill")
-                assign("工作地点", "Location")
-                assign("现居地", "Location")
-                assign("薪资范围", "Salary")
-                assign("期望薪资", "Salary")
-                assign("联系电话", "Phone")
-                assign("电子邮箱", "Email")
-                assign("语言要求", "Language")
-                assign("语言能力", "Language")
-                assign("证书要求", "Certificate")
-                assign("证书资质", "Certificate")
-                logger.info(
-                    f"使用NER提取实体，共提取 {sum(1 for v in entities.values() if v)} 个非空实体")
-            except Exception as e:
-                logger.error(f"使用NER提取实体失败: {str(e)}")
-        # 如果不使用LLM或NER提取失败，使用正则表达式提取实体
-        # 增强规则提取，提高实体提取准确率
-
-        # 1. 提取职位名称（JD和简历通用）
-        position_patterns = [
-            r'^([\u4e00-\u9fa5a-zA-Z&\-]+)',  # 职位名称在开头
-            r'职位名称[:：]?\s*([\u4e00-\u9fa5a-zA-Z&\-]+)',
-            r'招聘[:：]?\s*([\u4e00-\u9fa5a-zA-Z&\-]+)',
-            r'[招聘]\s*([\u4e00-\u9fa5a-zA-Z&\-]+)',
-        ]
-        for pattern in position_patterns:
-            position_match = re.search(pattern, text)
-            if position_match and not entities.get("职位名称"):
-                entities["职位名称"] = position_match.group(1)
-                break
-
-        # 2. 提取公司名称（JD和简历通用）
-        company_patterns = [
-            r'公司名称[:：]?\s*([\u4e00-\u9fa5a-zA-Z0-9&\-]+)',
-            r'[招聘]\s*([\u4e00-\u9fa5a-zA-Z0-9&\-]+)\s*[招聘]',
-            r'任职于[:：]?\s*([\u4e00-\u9fa5a-zA-Z0-9&\-]+)',
-            r'在[:：]?\s*([\u4e00-\u9fa5a-zA-Z0-9&\-]+)\s*工作',
-        ]
-        for pattern in company_patterns:
-            company_match = re.search(pattern, text)
-            if company_match and not entities.get("公司名称"):
-                entities["公司名称"] = company_match.group(1)
-                break
-
-        # 3. 提取学历（JD和简历通用）
-        education_pattern = r'(博士|硕士|本科|大专|中专|高中)'
-        education_match = re.search(education_pattern, text)
-        if education_match:
-            if not entities.get("学历层次"):
-                entities["学历层次"] = education_match.group(1)
-            if not entities.get("学历要求"):
-                entities["学历要求"] = education_match.group(1)
-
-        # 4. 提取工作经验（JD和简历通用）
-        experience_match = re.search(r'(\d+)年', text)
-        if experience_match:
-            if not entities.get("总工作经验年限"):
-                entities["总工作经验年限"] = experience_match.group(1)
-            if not entities.get("工作年限要求"):
-                entities["工作年限要求"] = experience_match.group(1)
-
-        # 5. JD特定实体提取
-        if "薪资范围" in entity_list:
-            # 提取薪资范围
-            salary_patterns = [
-                r'薪资[:：]?\s*(\d+)[kK]?\s*[-—]\s*(\d+)[kK]?',
-                r'薪资[:：]?\s*(\d+)[kK]?',
-                r'待遇[:：]?\s*(\d+)[kK]?\s*[-—]\s*(\d+)[kK]?',
-            ]
-            for pattern in salary_patterns:
-                salary_match = re.search(pattern, text)
-                if salary_match and not entities.get("薪资范围"):
-                    if len(salary_match.groups()) == 2:
-                        entities["薪资范围"] = f"{salary_match.group(1)}K-{salary_match.group(2)}K"
-                    else:
-                        entities["薪资范围"] = f"{salary_match.group(1)}K"
-                    break
-
-        if "工作地点" in entity_list:
-            # 提取工作地点
-            location_patterns = [
-                r'工作地点[:：]?\s*([\u4e00-\u9fa5]+)',
-                r'地点[:：]?\s*([\u4e00-\u9fa5]+)',
-                r'[在]\s*([\u4e00-\u9fa5]+)\s*[工作]',
-            ]
-            for pattern in location_patterns:
-                location_match = re.search(pattern, text)
-                if location_match and not entities.get("工作地点"):
-                    entities["工作地点"] = location_match.group(1)
-                    break
-
-        if "技能要求" in entity_list:
-            # 提取技能要求
-            skill_patterns = [
-                r'(Python|Java|C\+\+|JavaScript|Go|SQL|MySQL|PostgreSQL|MongoDB|Redis|Kafka|Spark|Hadoop|Docker|Kubernetes|AWS|Azure|GCP|Oracle|SQLite|Elasticsearch|Flask|Django|Spring|React|Vue|Angular|Node\.js|TypeScript|HTML|CSS|Sass|Less|Webpack|Vite|Git|SVN|Linux|Windows|MacOS|iOS|Android|Swift|Kotlin|React Native|Flutter|TensorFlow|PyTorch|Scikit-learn|XGBoost|LightGBM|NLTK|spaCy|Transformers|GraphQL|REST|gRPC|Thrift|ZooKeeper|HBase|Hive|Pig|Storm|Flink|Airflow|Jenkins|CI/CD|敏捷开发|Scrum|Kanban|TDD|BDD|微服务|分布式|高并发|高可用|性能优化|安全|加密|区块链|物联网|云计算|边缘计算|大数据|人工智能|机器学习|深度学习|自然语言处理|计算机视觉|语音识别|推荐系统|搜索算法|排序算法|数据挖掘|数据分析|数据可视化|ETL|数据仓库|数据湖)',
-            ]
-            skills = []
-            for pattern in skill_patterns:
-                matches = re.findall(pattern, text, re.IGNORECASE)
-                skills.extend(matches)
-
-            # 从岗位职责和任职要求中提取技能
-            if "岗位职责" in entities and entities["岗位职责"]:
-                duty_skills = re.findall(skill_patterns[0], entities["岗位职责"],
-                                         re.IGNORECASE)
-                skills.extend(duty_skills)
-            if "任职要求" in entities and entities["任职要求"]:
-                req_skills = re.findall(skill_patterns[0], entities["任职要求"],
-                                        re.IGNORECASE)
-                skills.extend(req_skills)
-
-            if skills and not entities.get("技能要求"):
-                entities["技能要求"] = ", ".join(list(set(skills)))
-
-        if "岗位职责" in entity_list:
-            # 提取岗位职责
-            duty_pattern = r'(岗位职责|工作内容|职位描述)[:：]?([\s\S]*?)(?=(任职要求|资格要求|岗位要求|福利待遇|薪资|工作地点|$))'
-            duty_match = re.search(duty_pattern, text)
-            if duty_match and duty_match.group(2) and not entities.get("岗位职责"):
-                entities["岗位职责"] = duty_match.group(2).strip()
-
-        if "任职要求" in entity_list:
-            # 提取任职要求
-            req_pattern = r'(任职要求|资格要求|岗位要求|招聘要求)[:：]?([\s\S]*?)(?=(福利待遇|薪资|工作地点|$))'
-            req_match = re.search(req_pattern, text)
-            if req_match and req_match.group(2) and not entities.get("任职要求"):
-                entities["任职要求"] = req_match.group(2).strip()
-
-        # 6. 提取联系方式（简历特定）
-        if "联系电话" in entity_list:
-            phone_match = re.search(r'1[3-9]\d{9}', text)
-            if phone_match and not entities.get("联系电话"):
-                entities["联系电话"] = phone_match.group(0)
-
-        if "电子邮箱" in entity_list:
-            email_match = re.search(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', text)
-            if email_match and not entities.get("电子邮箱"):
-                entities["电子邮箱"] = email_match.group(0)
-
-        # 7. 提取期望相关信息（简历特定）
-        if "期望职位" in entity_list:
-            expected_position_pattern = r'期望职位[:：]?\s*([\u4e00-\u9fa5a-zA-Z&\-]+)'
-            expected_position_match = re.search(expected_position_pattern, text)
-            if expected_position_match and not entities.get("期望职位"):
-                entities["期望职位"] = expected_position_match.group(1)
-
-        if "期望薪资" in entity_list:
-            salary_pattern = r'期望薪资[:：]?\s*(\d+)[kK]?'
-            salary_match = re.search(salary_pattern, text)
-            if salary_match and not entities.get("期望薪资"):
-                entities["期望薪资"] = salary_match.group(1) + "K"
-
-        # 使用LLM进行最后补全
-        if use_llm:
-            try:
-                from core.llm_chain import LLMChain
-                llm_chain = LLMChain()
-                from core.llm_config_manager import LLMConfigManager
-                tmpl = LLMConfigManager().get_prompt('jd_extract_entities')
-                prompt = tmpl.replace('{text}', text).replace('{entity_list}', ', '.join(entity_list))
-                providers = [
-                    llm_chain.llm_providers[name]
-                    for name in getattr(llm_chain, 'active_provider_names', [])
-                    if name in llm_chain.llm_providers
-                ] or list(llm_chain.llm_providers.values())
-                import json
-                for p in providers:
-                    try:
-                        response = p._call_llm(prompt)
-                        llm_entities = json.loads(response)
-                        for key, value in llm_entities.items():
-                            if key in entities and not entities.get(key):
-                                entities[key] = value
-                        logger.info(
-                            f"LLM补全实体，共提取 {sum(1 for v in entities.values() if v)} 个非空实体"
-                        )
-                        break
-                    except Exception as e:
-                        logger.error(f"LLM补全实体失败: {str(e)}")
-                        continue
-            except Exception as e:
-                logger.error(f"LLM补全实体失败: {str(e)}")
-        logger.info(f"使用正则表达式提取JD实体，共提取 {sum(1 for v in entities.values() if v)} 个非空实体")
-        return entities
-
-    def process_resume_text(self, resume_text: str) -> Dict[str, Any]:
+    def process_resume(self,
+                       resume_text: str,
+                       use_llm: bool = True) -> Dict[str, Any]:
         """
-        处理简历文本，提取结构化信息
+        处理简历文本，提取所有简历实体
         
         Args:
             resume_text: 简历文本
+            use_llm: 是否使用LLM提取实体
         
         Returns:
-            结构化的简历信息
+            提取的简历实体字典
         """
-        logger.info(f"📄 开始处理简历文本，原始长度: {len(resume_text)} 字符")
+        logger.info("开始处理简历...")
+        return self.extract_entities(resume_text, self.resume_entities,
+                                     use_llm)
 
-        # 清理文本
-        logger.info(f"🧹 正在清理文本...")
-        cleaned_text = self.clean_text(resume_text)
-        logger.info(f"✅ 文本清理完成，清理后长度: {len(cleaned_text)} 字符")
-
-        # 简单的结构化处理，提取关键词
-        skills = []
-        experience = []
-        education = []
-
-        # 提取技能关键词
-        logger.info(f"🔍 正在提取技能关键词...")
-        skill_patterns = [
-            r'(Python|Java|C\+\+|JavaScript|Go|SQL|MySQL|PostgreSQL|MongoDB|Redis|Kafka|Spark|Hadoop|Docker|Kubernetes|AWS|Azure|GCP)',
-            r'(深度学习|机器学习|人工智能|自然语言处理|计算机视觉|大数据|云计算|DevOps|全栈开发|前端开发|后端开发|移动开发)'
-        ]
-
-        for pattern in skill_patterns:
-            matches = re.findall(pattern, cleaned_text, re.IGNORECASE)
-            skills.extend(matches)
-
-        skills = list(set(skills))
-        logger.info(f"✅ 技能提取完成，共找到 {len(skills)} 个技能关键词")
-
-        # 提取工作经验
-        logger.info(f"🔍 正在提取工作经验...")
-        experience_pattern = r'(\d+\s*年.*?经验|工作.*?\d+\s*年)'
-        experience_matches = re.findall(experience_pattern, cleaned_text)
-        experience.extend(experience_matches)
-        logger.info(f"✅ 工作经验提取完成，共找到 {len(experience)} 条经验记录")
-
-        # 提取教育背景
-        logger.info(f"🔍 正在提取教育背景...")
-        education_pattern = r'(本科|硕士|博士|大专|中专|高中)'
-        education_matches = re.findall(education_pattern, cleaned_text)
-        education.extend(education_matches)
-        logger.info(f"✅ 教育背景提取完成，共找到 {len(education)} 条教育记录")
-
-        # 提取实体信息
-        logger.info(f"🔍 正在提取实体信息...")
-        entities = self.extract_entities(cleaned_text, self.resume_entities, use_llm=True)
-        # 统计非空实体数量
-        non_empty_entities = sum(1 for v in entities.values() if v)
-        logger.info(f"✅ 实体信息提取完成，共提取 {non_empty_entities} 个非空实体")
-
-        result = {
-            "raw_text": resume_text,
-            "cleaned_text": cleaned_text,
-            "skills": skills,
-            "experience": experience,
-            "education": education,
-            "entities": entities,
-            "segment_texts": {
-                "skills": ", ".join(skills),
-                "experience": "\n".join(experience),
-                "education": ", ".join(education)
-            }
-        }
-
-        # 落盘
-        try:
-            os.makedirs(os.path.join('data','processed'), exist_ok=True)
-            with open(os.path.join('data','processed','parsed_resumes.jsonl'), 'a', encoding='utf-8') as f:
-                f.write(json.dumps(result, ensure_ascii=False) + "\n")
-        except Exception as e:
-            pass
-        logger.info(f"📄 简历处理完成")
-        return result
-
-    def process_jd_text(self, jd_text: str) -> Dict[str, Any]:
+    def process_jd(self, jd_text: str, use_llm: bool = True) -> Dict[str, Any]:
         """
-        处理JD文本，提取结构化信息
+        处理JD文本，提取所有JD实体
         
         Args:
             jd_text: JD文本
+            use_llm: 是否使用LLM提取实体
         
         Returns:
-            结构化的JD信息
+            提取的JD实体字典
         """
-        logger.info(f"开始处理JD文本，原始长度: {len(jd_text)} 字符")
+        logger.info("开始处理JD...")
+        return self.extract_entities(jd_text, self.jd_entities, use_llm)
 
-        # 清理文本
-        logger.info(f"正在清理文本...")
-        cleaned_text = self.clean_text(jd_text)
-        logger.info(f"文本清理完成，清理后长度: {len(cleaned_text)} 字符")
+    def process_resume_text(self,
+                            resume_text: str,
+                            use_llm: bool = True) -> Dict[str, Any]:
+        """
+        处理简历文本，提供与原始API兼容的方法
+        
+        Args:
+            resume_text: 简历文本
+            use_llm: 是否使用LLM提取实体
+        
+        Returns:
+            处理后的简历数据，包含原始文本、清理后的文本和提取的实体
+        """
+        cleaned_text = self.text_processor.clean_text(resume_text)
+        entities = self.process_resume(resume_text, use_llm)
 
-        # 简单的结构化处理，提取关键词
-        skills = []
-        requirements = []
+        # 构建与原始API兼容的返回格式
+        result = {
+            "raw_text": resume_text,
+            "cleaned_text": cleaned_text,
+            "entities": entities
+        }
 
-        # 提取技能关键词
-        logger.info(f"🔍 正在提取技能关键词...")
-        skill_patterns = [
-            r'(Python|Java|C\+\+|JavaScript|Go|SQL|MySQL|PostgreSQL|MongoDB|Redis|Kafka|Spark|Hadoop|Docker|Kubernetes|AWS|Azure|GCP)',
-            r'(深度学习|机器学习|人工智能|自然语言处理|计算机视觉|大数据|云计算|DevOps|全栈开发|前端开发|后端开发|移动开发)'
-        ]
+        # 从实体中提取结构化信息
+        if "姓名" in entities and entities["姓名"]:
+            result["姓名"] = entities["姓名"]
+        if "联系电话" in entities and entities["联系电话"]:
+            result["联系方式"] = entities["联系电话"]
+        if "电子邮箱" in entities and entities["电子邮箱"]:
+            if "联系方式" in result:
+                result["联系方式"] += f", {entities['电子邮箱']}"
+            else:
+                result["联系方式"] = entities["电子邮箱"]
+        if "总工作经验年限" in entities and entities["总工作经验年限"]:
+            result["工作经验"] = [entities["总工作经验年限"]]
+        if "学历层次" in entities and entities["学历层次"]:
+            result["教育经历"] = [entities["学历层次"]]
+        if "学校名称" in entities and entities["学校名称"]:
+            if "教育机构" not in result:
+                result["教育机构"] = []
+            result["教育机构"].append(entities["学校名称"])
+        if "语言能力" in entities and entities["语言能力"]:
+            result["语言技能"] = [entities["语言能力"]]
+        if "证书资质" in entities and entities["证书资质"]:
+            result["证书"] = [entities["证书资质"]]
 
-        for pattern in skill_patterns:
-            matches = re.findall(pattern, cleaned_text, re.IGNORECASE)
-            skills.extend(matches)
+        return result
 
-        skills = list(set(skills))
-        logger.info(f"✅ 技能提取完成，共找到 {len(skills)} 个技能关键词")
+    def process_jd_text(self,
+                        jd_text: str,
+                        use_llm: bool = True) -> Dict[str, Any]:
+        """
+        处理JD文本，提供与原始API兼容的方法
+        
+        Args:
+            jd_text: JD文本
+            use_llm: 是否使用LLM提取实体
+        
+        Returns:
+            处理后的JD数据，包含原始文本、清理后的文本和提取的实体
+        """
+        cleaned_text = self.text_processor.clean_text(jd_text)
+        entities = self.process_jd(jd_text, use_llm)
 
-        # 提取岗位要求
-        logger.info(f"🔍 正在提取岗位要求...")
-        requirement_pattern = r'(要求|需要|具备|熟悉|精通|掌握).*?'
-        requirement_matches = re.findall(requirement_pattern, cleaned_text)
-        requirements.extend(requirement_matches)
-        logger.info(f"✅ 岗位要求提取完成，共找到 {len(requirements)} 条要求")
-
-        # 提取实体信息
-        logger.info(f"🔍 正在提取实体信息...")
-        entities = self.extract_entities(cleaned_text, self.jd_entities, use_llm=True)
-        # 统计非空实体数量
-        non_empty_entities = sum(1 for v in entities.values() if v)
-        logger.info(f"✅ 实体信息提取完成，共提取 {non_empty_entities} 个非空实体")
-
+        # 构建与原始API兼容的返回格式
         result = {
             "raw_text": jd_text,
             "cleaned_text": cleaned_text,
-            "skills": skills,
-            "requirements": requirements,
-            "entities": entities,
-            "segment_texts": {
-                "skills": ", ".join(skills),
-                "requirements": "\n".join(requirements),
-                "education": entities.get("学历要求", "")
-            }
+            "entities": entities
         }
 
-        # 落盘
-        try:
-            os.makedirs(os.path.join('data','processed'), exist_ok=True)
-            with open(os.path.join('data','processed','parsed_jds.jsonl'), 'a', encoding='utf-8') as f:
-                f.write(json.dumps(result, ensure_ascii=False) + "\n")
-        except Exception as e:
-            pass
-        logger.info(f"📄 JD处理完成")
+        # 从实体中提取结构化信息
+        if "职位名称" in entities and entities["职位名称"]:
+            result["职位名称"] = [entities["职位名称"]]
+        if "薪资范围" in entities and entities["薪资范围"]:
+            result["薪资"] = [entities["薪资范围"]]
+        if "工作地点" in entities and entities["工作地点"]:
+            result["工作地点"] = [entities["工作地点"]]
+        if "工作年限要求" in entities and entities["工作年限要求"]:
+            result["工作年限要求"] = [entities["工作年限要求"]]
+        if "公司名称" in entities and entities["公司名称"]:
+            result["公司信息"] = [entities["公司名称"]]
+
         return result
-
-    def collect_resumes_from_dir(self, dir_path: str) -> List[Dict[str, Any]]:
-        """
-        从目录中收集简历
-        
-        Args:
-            dir_path: 简历目录路径
-        
-        Returns:
-            收集的简历列表
-        """
-        resumes = []
-        for filename in os.listdir(dir_path):
-            file_path = os.path.join(dir_path, filename)
-            if os.path.isfile(file_path):
-                raw_text = self.parse_resume_file(file_path)
-                if raw_text:
-                    processed_resume = self.process_resume_text(raw_text)
-                    processed_resume["filename"] = filename
-                    resumes.append(processed_resume)
-        return resumes
-
-    def collect_jds_from_dir(self, dir_path: str) -> List[Dict[str, Any]]:
-        """
-        从目录中收集JD
-        
-        Args:
-            dir_path: JD目录路径
-        
-        Returns:
-            收集的JD列表
-        """
-        jds = []
-        for filename in os.listdir(dir_path):
-            file_path = os.path.join(dir_path, filename)
-            if os.path.isfile(file_path):
-                raw_text = self.parse_jd_file(file_path)
-                if raw_text:
-                    processed_jd = self.process_jd_text(raw_text)
-                    processed_jd["filename"] = filename
-                    jds.append(processed_jd)
-        return jds
-
-    def save_processed_data(self, data: List[Dict[str, Any]],
-                            file_path: str) -> None:
-        """
-        保存处理后的数据到文件
-        
-        Args:
-            data: 处理后的数据
-            file_path: 保存文件路径
-        """
-        with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-
-    def load_processed_data(self, file_path: str) -> List[Dict[str, Any]]:
-        """
-        从文件加载处理后的数据
-        
-        Args:
-            file_path: 数据文件路径
-        
-        Returns:
-            加载的数据列表
-        """
-        with open(file_path, 'r', encoding='utf-8') as f:
-            return json.load(f)

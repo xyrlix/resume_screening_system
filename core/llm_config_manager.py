@@ -13,14 +13,29 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from typing import List, Dict, Any
+from utils.logger import get_logger
+
+# 初始化日志记录器
+logger = get_logger("llm_config_manager")
 
 
 class LLMConfigManager:
     """
     LLM模型配置管理类，负责管理LLM模型配置
     """
+    # 单例模式实现
+    _instance = None
+    _initialized = False
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(LLMConfigManager, cls).__new__(cls)
+        return cls._instance
 
     def __init__(self, config_file: str = None, encryption_key: str = None):
+        # 防止重复初始化
+        if self._initialized:
+            return
         """
         初始化LLM模型配置管理类
         
@@ -32,6 +47,11 @@ class LLMConfigManager:
             os.path.dirname(os.path.dirname(__file__)), 'config',
             'llm_config.json')
 
+        # prompts配置文件路径
+        self.prompts_file = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), 'config',
+            'prompts.json')
+
         # 密钥文件路径
         self.key_file = os.path.join(
             os.path.dirname(os.path.dirname(__file__)), 'config',
@@ -40,21 +60,26 @@ class LLMConfigManager:
         # 确保配置目录存在
         os.makedirs(os.path.dirname(self.config_file), exist_ok=True)
 
-        # 支持的LLM模型列表
-        self.supported_models = [
-            "gpt-3.5-turbo", "gpt-4", "qwen-1.8b", "Qwen3-Max",
-            "deepseek-llm-7b-chat", "moonshot-v1-8k", "Doubao-Seed-1.6"
-        ]
+        # 区域特定URL的模型列表
+        self.region_specific_models = ['qwen-plus', 'deepseek-chat']
 
         # 区域与优先级配置
-        self.default_region = 'international'
+        self.default_region = 'domestic'
 
         # 初始化加密器
         self.cipher_suite = self._init_encryption(encryption_key)
 
         # 加载配置
         self.config = self._load_config()
-        self._ensure_prompts()
+
+        # 加载prompts配置
+        self._load_prompts()
+
+        # 从配置文件中读取支持的LLM模型列表
+        self.supported_models = self.config.get('supported_models', [])
+
+        # 标记为已初始化
+        self._initialized = True
 
     def _init_encryption(self, encryption_key: str = None) -> Fernet:
         """
@@ -133,6 +158,43 @@ class LLMConfigManager:
         Returns:
             配置字典
         """
+        # 默认配置模板
+        default_config = {
+            'model_mappings': {
+                'qwen': 'qwen-plus',
+                'deepseek': 'deepseek-chat',
+                'openrouter': 'tngtech/tng-r1t-chimera:free',
+                'moonshot': 'moonshot-v1-8k',
+                'kimi': 'kimi-k2-turbo-preview',
+                'siliconflow': 'qwen2.5-72b-instruct',
+                'hunyuan': 'hunyuan-lite',
+                'spark': 'spark-x',
+                'glm': 'glm-4.6',
+                'zhipu': 'glm-4.6'
+            },
+            'supported_models': [
+                'qwen-plus', 'deepseek-chat', 'moonshot-v1-8k',
+                'kimi-k2-turbo-preview', 'tngtech/tng-r1t-chimera:free',
+                'qwen2.5-72b-instruct', 'hunyuan-lite', 'spark-x', 'glm-4.6'
+            ],
+            'models': {},
+            'chains': [],
+            'default_model':
+            None,
+            'region':
+            self.default_region,
+            'preferred_orders': {
+                'domestic': [
+                    'deepseek', 'qwen', 'zhipu', 'openrouter', 'moonshot',
+                    'doubao'
+                ],
+                'international': [
+                    'moonshot', 'openrouter', 'deepseek', 'zhipu', 'doubao',
+                    'qwen'
+                ]
+            }
+        }
+
         if os.path.exists(self.config_file):
             try:
                 with open(self.config_file, 'r', encoding='utf-8') as f:
@@ -147,115 +209,44 @@ class LLMConfigManager:
                                 model_config['api_key'] = self._decrypt(
                                     model_config['api_key'])
                             except Exception as e:
-                                print(f"解密{model_name}的API密钥失败: {e}")
+                                logger.error(f"解密{model_name}的API密钥失败: {e}")
                                 model_config['api_key'] = ''
+
+                # 确保配置中包含所有必要的字段
+                # 如果字段不存在，从默认配置中获取
+                for key, value in default_config.items():
+                    if key not in config:
+                        config[key] = value
+                    # 对于嵌套字典，确保所有键都存在
+                    elif isinstance(value, dict) and isinstance(
+                            config[key], dict):
+                        for sub_key, sub_value in value.items():
+                            if sub_key not in config[key]:
+                                config[key][sub_key] = sub_value
+                    # 对于列表，确保不为空（如果默认配置中不为空）
+                    elif isinstance(value, list) and value and not config[key]:
+                        config[key] = value
 
                 return config
             except Exception as e:
-                print(f"加载LLM配置文件失败: {e}")
+                logger.error(f"加载LLM配置文件失败: {e}")
 
-        # 默认配置
-        return {
-            'models': {},
-            'chains': [],
-            'default_model': None,
-            'region': self.default_region,
-            'preferred_orders': {
-                'domestic': ['deepseek', 'qwen', 'openrouter', 'moonshot', 'doubao'],
-                'international': ['moonshot', 'openrouter', 'deepseek', 'doubao', 'qwen']
-            },
-            'prompts': {}
-        }
+        # 如果配置文件不存在或加载失败，返回默认配置
+        return default_config
 
-    def _ensure_prompts(self) -> None:
+    def _load_prompts(self):
+        """
+        加载prompts配置文件
+        """
         try:
-            prompts = self.config.get('prompts') or {}
-            defaults = {
-                'extract_entities': (
-                    "请从以下职位描述(JD)和简历中提取实体信息，返回JSON格式。\n\n"
-                    "JD文本：{jd_text}\n\n"
-                    "简历文本：{resume_text}\n\n"
-                    "需要提取的JD实体包括：技能、学历要求、工作年限要求、职位名称\n"
-                    "需要提取的简历实体包括：技能、教育背景、工作经验、职位\n\n"
-                    "返回格式：\n{\n    \"jd_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"学历要求\"],\n        \"experience\": [\"工作年限要求\"],\n        \"position\": \"职位名称\"\n    },\n    \"resume_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"教育背景\"],\n        \"experience\": [\"工作经验\"],\n        \"position\": \"职位\"\n    }\n}"
-                ),
-                'validate_entities': (
-                    "请验证并修正以下提取的实体信息，确保信息准确无误。\n\n"
-                    "提取的实体信息：\n{extracted_json}\n\n"
-                    "请检查：\n1. 技能是否准确\n2. 学历要求和教育背景是否合理\n3. 工作年限要求和工作经验是否匹配\n4. 职位名称是否准确\n\n"
-                    "返回修正后的JSON格式：\n{\n    \"jd_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"学历要求\"],\n        \"experience\": [\"工作年限要求\"],\n        \"position\": \"职位名称\"\n    },\n    \"resume_entities\": {\n        \"skills\": [\"技能1\", \"技能2\"],\n        \"education\": [\"教育背景\"],\n        \"experience\": [\"工作经验\"],\n        \"position\": \"职位\"\n    }\n}"
-                ),
-                'analyze_match': (
-                    "请分析以下简历和JD的匹配度，返回JSON格式。\n\n"
-                    "验证后的实体信息：\n{validated_json}\n\n"
-                    "需要分析的维度：\n1. 技能匹配：计算匹配的技能数量和匹配率\n2. 教育背景匹配：判断是否满足要求\n3. 工作经验匹配：判断是否满足要求\n\n"
-                    "返回格式：\n{\n    \"skill_match\": {\n        \"matching_skills\": [\"匹配的技能1\", \"匹配的技能2\"],\n        \"jd_skills\": [\"JD技能1\", \"JD技能2\"],\n        \"resume_skills\": [\"简历技能1\", \"简历技能2\"],\n        \"match_rate\": 0.8\n    },\n    \"education_match\": {\n        \"match\": true,\n        \"reason\": \"教育背景满足要求\"\n    },\n    \"experience_match\": {\n        \"match\": true,\n        \"reason\": \"工作经验满足要求\"\n    }\n}"
-                ),
-                'generate_score': (
-                    "请根据以下匹配度分析，生成综合匹配分数，返回JSON格式。\n\n"
-                    "匹配度分析：\n{analyzed_json}\n\n"
-                    "评分标准：\n- 技能匹配率权重：50%\n- 教育背景匹配权重：25%\n- 工作经验匹配权重：25%\n\n"
-                    "返回格式：\n{\n    \"score\": 0.85,\n    \"reason\": \"技能匹配度高，教育背景和工作经验满足要求\",\n    \"details\": {\n        \"skill_weight\": 0.5,\n        \"education_weight\": 0.25,\n        \"experience_weight\": 0.25\n    }\n}"
-                ),
-                'generate_suggestions': (
-                    "请根据以下简历和JD生成优化建议，返回JSON格式。\n\n"
-                    "简历文本：{resume_text}\n\n"
-                    "JD文本：{jd_text}\n\n"
-                    "需要生成的内容包括：\n1. 优化建议列表\n2. 简历的优势\n3. 简历的劣势\n\n"
-                    "返回格式：\n{\n    \"suggestions\": [\"建议1\", \"建议2\"],\n    \"strengths\": [\"优势1\", \"优势2\"],\n    \"weaknesses\": [\"劣势1\", \"劣势2\"]\n}"
-                ),
-                'generate_interview_questions': (
-                    "请根据以下简历和JD生成面试题，返回JSON格式。\n\n"
-                    "简历文本：{resume_text}\n\n"
-                    "JD文本：{jd_text}\n\n"
-                    "需要生成5-10道面试题，涵盖技能、经验、项目等方面。\n\n"
-                    "返回格式：\n[\n    \"面试题1\",\n    \"面试题2\",\n    \"面试题3\"\n]"
-                ),
-                'evaluate_interview_answer': (
-                    "请基于以下简历与JD，对候选人的面试回答进行评分并给出改进建议，返回JSON格式。\n\n"
-                    "简历：{resume_text}\n\nJD：{jd_text}\n\n回答：{answer}\n\n"
-                    "返回格式：\n{\n  \"score\": 0.0,\n  \"strengths\": [\"...\"],\n  \"weaknesses\": [\"...\"],\n  \"suggestions\": [\"...\"]\n}"
-                ),
-                'analyze_rejection': (
-                    "请分析以下拒信文本，归纳拒绝原因并提出改进建议，返回JSON格式。\n\n"
-                    "拒信：{rejection_text}\n简历：{resume_text}\nJD：{jd_text}\n\n"
-                    "返回格式：\n{\n  \"reasons\": [\"...\"],\n  \"suggestions\": [\"...\"],\n  \"priority\": [\"...\"]\n}"
-                ),
-                'generate_learning_path': (
-                    "请根据缺失技能为候选人生成学习成长路径，返回JSON格式。\n\n"
-                    "目标岗位：{target_job}\n缺失技能：{missing_skills}\n\n"
-                    "返回格式：\n{\n  \"steps\": [\"...\"],\n  \"courses\": [\"...\"],\n  \"projects\": [\"...\"],\n  \"certifications\": [\"...\"]\n}"
-                ),
-                'jd_extract_entities': (
-                    "请从以下职位描述(JD)中提取完整的实体信息，返回JSON格式。\n\n"
-                    "JD文本：{text}\n\n"
-                    "需要提取的实体包括：{entity_list}\n\n"
-                    "返回格式：\n{\n    \"职位名称\": \"\",\n    \"公司名称\": \"\",\n    \"学历要求\": \"\",\n    \"工作年限要求\": \"\",\n    \"薪资范围\": \"\",\n    \"工作地点\": \"\",\n    \"技能要求\": \"\",\n    \"岗位职责\": \"\",\n    \"任职要求\": \"\",\n    \"行业\": \"\",\n    \"招聘人数\": \"\",\n    \"发布时间\": \"\",\n    \"截止时间\": \"\",\n    \"职位类型\": \"\",\n    \"语言要求\": \"\",\n    \"证书要求\": \"\",\n    \"福利\": \"\",\n    \"团队情况\": \"\"\n}"
-                ),
-            }
-            updated = False
-            for k, v in defaults.items():
-                if k not in prompts or not prompts.get(k):
-                    prompts[k] = v
-                    updated = True
-            if updated:
-                self.config['prompts'] = prompts
-                self._save_config()
-        except Exception:
-            pass
-
-    def get_prompt(self, name: str) -> str:
-        return (self.config.get('prompts') or {}).get(name, '')
-
-    def set_prompt(self, name: str, template: str) -> bool:
-        try:
-            if 'prompts' not in self.config:
-                self.config['prompts'] = {}
-            self.config['prompts'][name] = template
-            self._save_config()
-            return True
-        except Exception:
-            return False
+            if os.path.exists(self.prompts_file):
+                with open(self.prompts_file, 'r', encoding='utf-8') as f:
+                    prompts = json.load(f)
+                    # 将prompts合并到config中
+                    self.config['prompts'] = prompts
+                    logger.info(f"成功从 {self.prompts_file} 加载prompts配置")
+        except Exception as e:
+            logger.error(f"加载prompts配置文件失败: {e}")
 
     def _save_config(self) -> None:
         """
@@ -275,24 +266,88 @@ class LLMConfigManager:
 
             with open(self.config_file, 'w', encoding='utf-8') as f:
                 json.dump(config_to_save, f, ensure_ascii=False, indent=2)
+            logger.info(f"LLM配置文件已成功保存到 {self.config_file}")
         except Exception as e:
-            print(f"保存LLM配置文件失败: {e}")
+            logger.error(f"保存LLM配置文件失败: {e}")
 
     def get_supported_models(self) -> List[str]:
         """
         获取支持的LLM模型列表
         
         Returns:
-            支持的LLM模型列表
+            支持的LLM模型列表（包含配置文件中的模型和已配置的模型）
         """
-        return self.supported_models.copy()
+        # 获取配置文件中的支持模型列表和已配置的模型
+        models_from_config = list(self.config.get('models', {}).keys())
+        # 合并并去重
+        all_models = list(set(self.supported_models + models_from_config))
+        return all_models.copy()
+
+    def get_model_mappings(self) -> Dict[str, str]:
+        """
+        获取模型名称映射
+        
+        Returns:
+            模型名称映射字典
+        """
+        return self.config.get('model_mappings', {}).copy()
+
+    def set_model_mapping(self, short_name: str, full_name: str) -> bool:
+        """
+        设置模型名称映射
+        
+        Args:
+            short_name: 简短名称
+            full_name: 完整名称
+        
+        Returns:
+            是否设置成功
+        """
+        if 'model_mappings' not in self.config:
+            self.config['model_mappings'] = {}
+
+        self.config['model_mappings'][short_name] = full_name
+        self._save_config()
+        return True
+
+    def delete_model_mapping(self, short_name: str) -> bool:
+        """
+        删除模型名称映射
+        
+        Args:
+            short_name: 简短名称
+        
+        Returns:
+            是否删除成功
+        """
+        if 'model_mappings' in self.config and short_name in self.config[
+                'model_mappings']:
+            del self.config['model_mappings'][short_name]
+            self._save_config()
+            return True
+        return False
 
     def get_region(self) -> str:
         return self.config.get('region', self.default_region)
 
+    def get_prompt(self, prompt_key):
+        """
+        获取指定类型的提示词模板
+        
+        Args:
+            prompt_key: 提示词模板的键名
+            
+        Returns:
+            提示词模板字符串，如果未找到则返回空字符串
+        """
+        return self.config.get("prompts", {}).get(prompt_key, "")
+
     def set_region(self, region: str) -> bool:
         if region not in ['domestic', 'international']:
             return False
+        logger.info(
+            f"更新LLM区域配置，从 {self.config.get('region', self.default_region)} 变更为 {region}"
+        )
         self.config['region'] = region
         self._save_config()
         return True
@@ -310,49 +365,88 @@ class LLMConfigManager:
             return False
         if not order or not isinstance(order, list):
             return False
+        old_order = self.config.get('preferred_orders', {}).get(region, [])
+        logger.info(
+            f"更新LLM区域{region}的模型优先级顺序，从 {', '.join(old_order)} 变更为 {', '.join(order)}"
+        )
         self.config.setdefault('preferred_orders', {})[region] = order
         self._save_config()
         return True
 
     def default_preferred_order(self, region: str) -> List[str]:
-        return ['qwen', 'moonshot', 'doubao', 'deepseek', 'openrouter'] if region == 'domestic' else ['moonshot', 'openrouter', 'deepseek', 'doubao', 'qwen']
+        return ['qwen', 'moonshot', 'deepseek', 'openrouter'
+                ] if region == 'domestic' else [
+                    'moonshot', 'openrouter', 'deepseek', 'qwen'
+                ]
 
-    def get_model_config(self, model_name: str) -> Dict[str, Any]:
+    def get_model_config(self,
+                         model_name: str,
+                         region: str = None) -> Dict[str, Any]:
         """
         获取指定模型的配置
         
         Args:
             model_name: 模型名称
+            region: 可选的区域，不指定则使用当前配置的区域
         
         Returns:
-            模型配置
+            模型配置，包含根据区域选择的base_url
         """
         config = self.config['models'].get(model_name, {})
         # 确保返回的是配置的副本，避免直接修改原始配置
-        return config.copy()
+        config_copy = config.copy()
+
+        # 根据区域选择合适的base_url
+        if region is None:
+            region = self.get_region()
+
+        # 如果配置了区域特定的base_url，优先使用
+        if region in ['domestic', 'international'
+                      ] and f'{region}_base_url' in config:
+            config_copy['base_url'] = config[f'{region}_base_url']
+
+        return config_copy
 
     def set_model_config(self,
                          model_name: str,
                          api_key: str,
-                         base_url: str = None) -> bool:
+                         base_url: str = None,
+                         domestic_base_url: str = None,
+                         international_base_url: str = None) -> bool:
         """
         设置模型配置
         
         Args:
             model_name: 模型名称
             api_key: API Key
-            base_url: 可选的API基础URL
+            base_url: 可选的默认API基础URL
+            domestic_base_url: 可选的国内API基础URL
+            international_base_url: 可选的国外API基础URL
         
         Returns:
             是否设置成功
         """
-        if model_name not in self.supported_models:
-            return False
+        model_config = {'api_key': api_key}
 
-        self.config['models'][model_name] = {
-            'api_key': api_key,
-            'base_url': base_url
-        }
+        # 如果提供了通用base_url，使用它
+        if base_url:
+            model_config['base_url'] = base_url
+
+        # 如果提供了区域特定的base_url，使用它们
+        if domestic_base_url:
+            model_config['domestic_base_url'] = domestic_base_url
+        if international_base_url:
+            model_config['international_base_url'] = international_base_url
+
+        self.config['models'][model_name] = model_config
+
+        # 如果模型不在支持的模型列表中，自动添加
+        if model_name not in self.supported_models:
+            self.supported_models.append(model_name)
+            if 'supported_models' not in self.config:
+                self.config['supported_models'] = []
+            if model_name not in self.config['supported_models']:
+                self.config['supported_models'].append(model_name)
 
         self._save_config()
         return True
@@ -455,12 +549,13 @@ class LLMConfigManager:
             return True
         return False
 
-    def is_model_configured(self, model_name: str) -> bool:
+    def is_model_configured(self, model_name: str, region: str = None) -> bool:
         """
         检查模型是否已配置
         
         Args:
             model_name: 模型名称
+            region: 可选的区域参数（为了保持API兼容性）
         
         Returns:
             是否已配置

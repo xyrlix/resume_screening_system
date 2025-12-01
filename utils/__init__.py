@@ -7,7 +7,7 @@
 """
 
 # 版本信息
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 
 # 导出工具模块
 from utils.clean_tools import clean_text, remove_special_chars, normalize_whitespace

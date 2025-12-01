@@ -23,14 +23,14 @@ def init_llm_config(test_mode=False):
 
     # 模型配置信息
     model_info = {
-        "qwen-1.8b": {
+        "qwen-plus": {
             "name": "通义千问",
             "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
             "env_var": "LLM_API_KEY_QWEN"
         },
-        "deepseek-llm-7b-chat": {
+        "deepseek-chat": {
             "name": "DeepSeek",
-            "base_url": "https://api.deepseek.com/v1",
+            "base_url": "https://api.deepseek.com",
             "env_var": "LLM_API_KEY_DEEPSEEK"
         },
         "moonshot-v1-8k": {
@@ -38,15 +38,20 @@ def init_llm_config(test_mode=False):
             "base_url": "https://api.moonshot.cn/v1",
             "env_var": "LLM_API_KEY_MOONSHOT"
         },
-        "gpt-3.5-turbo": {
-            "name": "GPT-3.5-Turbo (OpenRouter)",
-            "base_url": "https://openrouter.ai/api/v1",
+        "tngtech/tng-r1t-chimera:free": {
+            "name": "OpenRouter",
+            "base_url": "https://openrouter.ai/api/v1/chat/completions",
             "env_var": "LLM_API_KEY_OPENROUTER"
         },
-        "gpt-4": {
-            "name": "GPT-4 (OpenRouter)",
-            "base_url": "https://openrouter.ai/api/v1",
-            "env_var": "LLM_API_KEY_OPENROUTER"
+        "qwen2.5-72b-instruct": {
+            "name": "SiliconFlow",
+            "base_url": "https://api.siliconflow.cn/v1",
+            "env_var": "LLM_API_KEY_SILICONFLOW"
+        },
+        "hunyuan-lite": {
+            "name": "Hunyuan",
+            "base_url": "https://api.hunyuan.tencent.cn/v1",
+            "env_var": "LLM_API_KEY_HUNYuan"
         }
     }
 
@@ -61,9 +66,9 @@ def init_llm_config(test_mode=False):
     if test_mode:
         print("⚠️  使用测试模式，将使用示例API密钥进行配置")
         api_keys = {
-            "qwen-1.8b": {
+            "qwen-plus": {
                 "api_key": "test_key_qwen",
-                "base_url": model_info["qwen-1.8b"]["base_url"]
+                "base_url": model_info["qwen-plus"]["base_url"]
             }
         }
     else:

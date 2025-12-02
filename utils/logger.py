@@ -14,7 +14,7 @@ def get_logger(name: str):
     if not root.handlers:
         root.setLevel(logging.INFO)
         fmt = logging.Formatter(
-            "%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+            "%(asctime)s [%(levelname)s] %(name)s:%(lineno)d: %(message)s")
         fh = RotatingFileHandler(os.path.join("logs", "app.log"),
                                  maxBytes=2 * 1024 * 1024,
                                  backupCount=3,

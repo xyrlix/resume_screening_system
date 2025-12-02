@@ -7,6 +7,14 @@
 """
 
 import os
+# 使用HF镜像源解决下载问题
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
+os.environ["TRANSFORMERS_OFFLINE"] = "0"  # 允许联网下载
+os.environ["HF_HUB_OFFLINE"] = "0"  # 允许HF Hub联网
+os.environ['HF_HUB_DOWNLOAD_TIMEOUT'] = '30'  # 超时时间30秒
+os.environ['HF_HUB_RETRY'] = '5'  # 重试5次
+os.environ['HF_HUB_RETRY_DELAY'] = '2'  # 重试间隔2秒
+
 import json
 import re
 from typing import List, Dict, Any, Optional, Pattern
@@ -457,60 +465,37 @@ class StructuredExtractor(BaseEntityExtractor):
 # 关键词提取器
 class KeywordExtractor(BaseEntityExtractor):
     """
-    关键词提取器，基于关键词提取实体
+    关键词提取器，基于通用模式提取实体
     """
-
-    def __init__(self):
-        # 实体关键词映射
-        self._entity_keywords = {
-            "职位名称": ["招聘职位", "岗位名称", "职位", "岗位"],
-            "公司名称": ["公司名称", "企业名称", "单位名称"],
-            "工作地点": ["工作地点", "上班地点", "办公地点"],
-            "学历要求": ["学历要求", "学历", "教育背景"],
-            "工作年限要求": ["工作年限", "经验要求", "工作经验"],
-            "技能要求": ["技能要求", "技能", "专业技能", "技术要求"],
-            "岗位职责": ["岗位职责", "工作内容", "职位职责"],
-            "任职要求": ["任职要求", "岗位要求", "应聘要求"],
-        }
 
     def extract(self, text: str, entity_list: List[str],
                 entities: Dict[str, Any], stats: Dict[str, int]) -> None:
-        """使用关键词提取实体"""
-        # 通用提取方法：基于关键词的提取
+        """使用通用模式提取实体"""
+        # 通用提取方法：基于通用模式的提取
         for entity_name in entity_list:
             if entities.get(entity_name):
                 continue  # 跳过已提取的实体
 
             logger.debug(f"尝试使用关键词提取: {entity_name}")
 
-            # 获取该实体的关键词
-            keywords = self._entity_keywords.get(entity_name, [])
+            # 使用通用模式提取实体，不再依赖特定关键词
+            # 构建通用匹配模式，匹配实体名后的值
+            pattern = f'{entity_name}[:：]?\s*([^\s]+(?:[,，]\s*[^\s]+)*)'
 
-            # 遍历关键词进行匹配
-            for keyword in keywords:
-                # 构建匹配模式
-                if entity_name == "技能要求":
-                    # 技能要求可能包含多个逗号分隔的值
-                    pattern = f'{keyword}[:：]?\s*([^\s]+(?:[,，]\s*[^\s]+)*)'
-                else:
-                    # 其他实体通常是单个值，直到遇到下一个关键词或结束
-                    pattern = f'{keyword}[:：]?\s*([^\s]+)'
-
-                try:
-                    # 对于关键词提取，使用普通的re.search，因为pattern是字符串
-                    match = re.search(pattern, text, re.DOTALL)
-                    if match and match.group(1):
-                        extracted_value = match.group(1).strip()
-                        if EntityValidator.is_valid_entity(
-                                entity_name, extracted_value):
-                            entities[entity_name] = extracted_value
-                            stats['keyword_count'] += 1
-                            logger.debug(
-                                f"关键词提取: {entity_name} = {extracted_value}")
-                            break  # 找到匹配后退出关键词循环
-                except Exception as e:
-                    logger.debug(f"关键词提取时出错: {e}")
-                    continue  # 出错时继续尝试下一个关键词
+            try:
+                # 使用通用模式进行匹配
+                match = re.search(pattern, text, re.DOTALL)
+                if match and match.group(1):
+                    extracted_value = match.group(1).strip()
+                    if EntityValidator.is_valid_entity(entity_name,
+                                                       extracted_value):
+                        entities[entity_name] = extracted_value
+                        stats['keyword_count'] += 1
+                        logger.debug(
+                            f"关键词提取: {entity_name} = {extracted_value}")
+            except Exception as e:
+                logger.debug(f"关键词提取时出错: {e}")
+                continue  # 出错时继续
 
 
 # 正则表达式提取器
@@ -755,10 +740,158 @@ class LLMEntityExtractor(BaseEntityExtractor):
         return result
 
 
+# NER实体提取器
+class NerExtractor:
+    """
+    基于BERT+CRF的实体提取器，作为LLM的降级方案
+    """
+
+    def __init__(self):
+        """
+        初始化NER提取器
+        """
+        self._ner_model = None
+        self._ner_loaded = False
+        # 简化的标签映射，只保留最通用的映射关系
+        self._label_map = {
+            # 公司相关
+            'CompanyName': ['公司名称', '公司'],
+            'Company': ['公司名称', '公司'],
+            'COMPANY': ['公司名称', '公司'],
+
+            # 职位相关
+            'JobTitle': ['职位名称', '岗位名称', '职位'],
+            'POSITION': ['职位名称', '岗位名称', '职位'],
+
+            # 教育相关
+            'EducationLevel': ['学历层次', '学历'],
+            'Degree': ['学历要求', '学历'],
+            'EDUCATION': ['学历要求', '学历'],
+
+            # 技能相关
+            'Skill': ['技能', '技能要求'],
+            'SKILL': ['技能', '技能要求'],
+
+            # 经验相关
+            'TotalWorkExperience': ['总工作经验年限'],
+            'ExperienceRequirement': ['工作年限要求', '工作年限'],
+            'EXPERIENCE': ['工作年限', '经验']
+        }
+
+    def _load_ner_model(self):
+        """
+        加载NER模型（懒加载）
+        """
+        if not self._ner_loaded:
+            try:
+                from core.ner_model import get_ner
+                self._ner_model = get_ner()
+                self._ner_loaded = True
+                if self._ner_model:
+                    logger.info("NER模型加载成功")
+                else:
+                    logger.warning("NER模型加载失败，返回了None值")
+            except Exception as e:
+                logger.warning(f"NER模型加载失败: {e}")
+                self._ner_loaded = True  # 避免重复尝试加载
+
+    def extract(self, text: str, entity_list: List[str],
+                entities: Dict[str, Any], stats: Dict[str, int]):
+        """
+        使用NER模型提取实体
+        
+        Args:
+            text: 待提取的文本
+            entity_list: 要提取的实体列表
+            entities: 已提取的实体字典（将被更新）
+            stats: 提取统计信息
+        """
+        # 加载NER模型（懒加载）
+        self._load_ner_model()
+
+        if not self._ner_model:
+            logger.warning("NER模型不可用，跳过NER提取")
+            return
+
+        try:
+            # 使用NER模型预测实体
+            ner_results = self._ner_model.predict(text)
+
+            # 处理NER结果，映射到实体列表
+            for entity in ner_results:
+                ner_label = entity.get('label')
+                ner_text = entity.get('text')
+
+                if not ner_label or not ner_text:
+                    continue
+
+                # 处理BIO格式标签（如'B-CompanyName'、'I-CompanyName'）
+                if '-' in ner_label:
+                    bio_tag, entity_type = ner_label.split('-', 1)
+                    # 只处理开始标签（B-），忽略内部标签（I-）以避免重复
+                    if bio_tag != 'B':
+                        continue
+                    ner_label = entity_type
+
+                # 将NER标签映射到系统实体名称
+                # 首先尝试直接映射
+                mapped = False
+                for sys_entity in entity_list:
+                    if sys_entity in self._label_map.get(ner_label, []):
+                        # 只有在实体为空时才更新（降级策略）
+                        if not entities.get(sys_entity):
+                            entities[sys_entity] = ner_text
+                            stats['ner_count'] = stats.get('ner_count', 0) + 1
+                            logger.debug(f"NER提取: {sys_entity} = {ner_text}")
+                        mapped = True
+                        break
+
+                # 如果直接映射失败，尝试反向映射（英文标签到中文实体）
+                if not mapped:
+                    for sys_entity in entity_list:
+                        for en_label, cn_labels in self._label_map.items():
+                            if sys_entity in cn_labels and en_label.lower(
+                            ) == ner_label.lower():
+                                if not entities.get(sys_entity):
+                                    entities[sys_entity] = ner_text
+                                    stats['ner_count'] = stats.get(
+                                        'ner_count', 0) + 1
+                                    logger.debug(
+                                        f"NER提取（反向映射）: {sys_entity} = {ner_text}"
+                                    )
+                                mapped = True
+                                break
+                        if mapped:
+                            break
+
+                # 针对关键词匹配生成的实体类型进行特殊处理
+                if not mapped:
+                    special_mapping = {
+                        'CompanyName': '公司名称',
+                        'JobTitle': '职位名称',
+                        'ProgrammingLanguage': '编程语言',
+                        'Name': '姓名',
+                        'Degree': '学历层次',
+                        'Location': '工作地点',
+                        'Skill': '技能要求'
+                    }
+
+                    if ner_label in special_mapping:
+                        sys_entity = special_mapping[ner_label]
+                        if sys_entity in entity_list and not entities.get(
+                                sys_entity):
+                            entities[sys_entity] = ner_text
+                            stats['ner_count'] = stats.get('ner_count', 0) + 1
+                            logger.debug(
+                                f"NER提取（特殊映射）: {sys_entity} = {ner_text}")
+        except Exception as e:
+            logger.error(f"NER提取过程中发生错误: {e}")
+
+
 # 实体提取协调器
 class EntityExtractionCoordinator:
     """
-    实体提取协调器，协调不同的提取器按顺序工作
+    实体提取协调器，协调不同的提取器按顺序工作，实现降级策略
     """
 
     def __init__(self):
@@ -769,6 +902,9 @@ class EntityExtractionCoordinator:
             RegexExtractor(),
         ]
 
+        # 初始化NER提取器（作为LLM的降级方案）
+        self._ner_extractor = NerExtractor()
+
         # LLM提取器在需要时才初始化，避免不必要的依赖
         self._llm_extractor = None
 
@@ -777,7 +913,10 @@ class EntityExtractionCoordinator:
                          entity_list: List[str],
                          use_llm: bool = True) -> Dict[str, Any]:
         """
-        从文本中提取实体信息，优先使用LLM进行提取，然后使用正则和关键词进行补充和验证
+        从文本中提取实体信息，实现降级策略：
+        1. 优先使用LLM进行提取（如果启用）
+        2. 然后使用NER模型进行补充（作为LLM的降级方案）
+        3. 最后使用其他提取器（结构化、关键词、正则）进行进一步补充和验证
         
         Args:
             text: 待提取的文本
@@ -802,13 +941,23 @@ class EntityExtractionCoordinator:
         # 清理和标准化文本
         cleaned_text = TextProcessor.clean_text(text)
 
-        # 首先使用LLM提取（如果启用）
+        # 1. 首先使用LLM提取（如果启用）
         if use_llm:
-            self._llm_extractor = LLMEntityExtractor()
-            self._llm_extractor.extract(cleaned_text, entity_list, entities,
-                                        extraction_stats)
+            try:
+                self._llm_extractor = LLMEntityExtractor()
+                self._llm_extractor.extract(cleaned_text, entity_list,
+                                            entities, extraction_stats)
+                logger.info(f"LLM提取完成，提取了{extraction_stats['llm_count']}个实体")
+            except Exception as e:
+                logger.warning(f"LLM提取失败，将使用NER作为降级方案: {e}")
+                # LLM失败时，继续使用NER进行提取
 
-        # 然后使用其他提取器进行补充
+        # 2. 使用NER模型进行补充（作为LLM的降级方案）
+        self._ner_extractor.extract(cleaned_text, entity_list, entities,
+                                    extraction_stats)
+        logger.info(f"NER提取完成，提取了{extraction_stats['ner_count']}个实体")
+
+        # 3. 最后使用其他提取器进行进一步补充和验证
         for extractor in self._extractors:
             extractor.extract(cleaned_text, entity_list, entities,
                               extraction_stats)

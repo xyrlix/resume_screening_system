@@ -25,8 +25,8 @@
 ### 3. LLM 模型配置
 
 - **前端配置界面**：支持配置 API Key
-- **模型选择**：支持多种 LLM 模型（gpt-3.5-turbo、gpt-4、qwen-1.8b、deepseek-llm-7b-chat、moonshot-v1-8k）
-- **链式组合**：支持 LLM 模型链式调用
+- **模型选择**：支持多种 LLM 模型（qwen-plus、deepseek-chat、moonshot-v1-8k、kimi-k2-turbo-preview、tngtech/tng-r1t-chimera:free、glm-4.6、hunyuan-lite）
+- **链式组合**：支持 LLM 模型链式调用，可配置多组模型链
 
 ### 4. 文件上传功能
 
@@ -35,8 +35,8 @@
 
 ### 5. 结构化解析
 
-- **实体提取**：优先使用 BERT-CRF 进行中英文 NER；若缺失则使用增强正则补全；最后由 LLM 兜底补全
-- **文本向量化**：使用 BGE-M3 生成 768 维向量
+- **实体提取**：优先使用 BERT-CRF 进行中文 NER（中文使用 `uer/roberta-base-finetuned-cluener2020-chinese`，英文使用 `dslim/bert-base-NER`）；若缺失则使用增强正则补全；最后由 LLM 兜底补全
+- **文本向量化**：使用 BGE-M3 生成 1024+ 维向量
 - **存储**：使用 ChromaDB 存储向量数据
 
 ### 5.1 分段向量融合
@@ -175,7 +175,8 @@ resume_screening_system/
 │   ├── evaluator.py       # 模型评估
 │   ├── file_processor.py  # 多格式文件处理
 │   ├── industry_job_manager.py  # 行业和岗位管理
-│   └── llm_config_manager.py    # LLM模型配置管理
+│   ├── llm_config_manager.py    # LLM模型配置管理
+│   └── ner_model.py       # BERT-CRF命名实体识别
 ├── services/              # 业务服务层
 │   ├── recruiter_service.py    # 招聘方服务
 │   └── candidate_service.py    # 求职者服务
@@ -186,7 +187,10 @@ resume_screening_system/
 ├── data/                  # 数据目录
 │   ├── raw/               # 原始数据
 │   ├── processed/         # 处理后的数据
-│   └── data/              # 数据和模型文件
+│   └── models/            # 模型文件
+├── uploads/               # 上传文件目录
+│   ├── resumes/           # 上传的简历文件
+│   └── jds/               # 上传的JD文件
 ├── app.py                 # 主应用入口
 ├── requirements.txt       # 项目依赖
 └── README.md              # 项目说明文档
@@ -196,51 +200,74 @@ resume_screening_system/
 
 - **前端框架**：Streamlit
 - **后端框架**：Python
-- **向量化模型**：BGE-M3
-- **LLM 模型**：支持多种 LLM 模型
+- **向量化模型**：实现优化的降级策略
+  - 优先使用 BGE-M3（高性能，维度 1024+，tokens 最大 8192）
+  - 中文使用 BAAI/bge-small-zh-v1.5（维度 1024，tokens 最大 512）
+  - 英文使用 sentence-transformers/all-MiniLM-L6-v2（维度 384）
+  - 最后使用简单向量化器
+- **NER 模型**：
+  - 中文：`uer/roberta-base-finetuned-cluener2020-chinese`
+  - 英文：`dslim/bert-base-NER`
+- **LLM 模型**：支持多种 LLM 模型（qwen-plus、deepseek-chat、moonshot-v1-8k、kimi-k2-turbo-preview、tngtech/tng-r1t-chimera:free、glm-4.6、hunyuan-lite）
 - **文件处理**：PyPDF2、python-docx、PaddleOCR、camelot-py
 - **数据存储**：ChromaDB
 - **可视化**：Matplotlib、Plotly
 
 ## 🎯 核心模块说明
 
-### 1. 数据处理器 (core/data_processor.py)
+### 1. 命名实体识别模型 (core/ner_model.py)
+
+- 实现基于 BERT-CRF 的中英文命名实体识别
+- 支持使用自定义预训练模型（中文：`uer/roberta-base-finetuned-cluener2020-chinese`，英文：`dslim/bert-base-NER`）
+- 提供实体提取、模型加载和预测功能
+- 支持权重兼容性处理和模型配置管理
+- 实现了高效的模型加载策略，中文模型初始化时加载，英文模型懒加载
+
+### 2. 数据处理器 (core/data_processor.py)
 
 - 实现简历和 JD 的数据收集
 - 实现数据的初步处理和清洗
 - 实现数据的数学处理和分析
+- 集成 NER 模型进行实体提取
 
-### 2. 特征引擎 (core/feature_engine.py)
+### 3. 特征引擎 (core/feature_engine.py)
 
-- 使用 BGE-M3 模型进行向量化
+- 集成向量模型的向量化功能
 - 实现特征选择和数据正规化
 - 支持多语言处理
 
-### 3. 匹配器 (core/matcher.py)
+### 4. 匹配器 (core/matcher.py)
 
-- 实现基于 BGE-M3 的语义匹配
+- 实现基于优化降级策略的语义匹配（BGE-M3 优先）
 - 实现多 LLM 链式分析
 - 支持多种匹配算法
 
-### 4. LLM 链式分析 (core/llm_chain.py)
+### 5. LLM 链式分析 (core/llm_chain.py)
 
 - 实现多 LLM 链式分析
 - 支持多种 LLM 模型
 - 实现 LLM 评估融合
 
-### 5. 文件处理器 (core/file_processor.py)
+### 6. 文件处理器 (core/file_processor.py)
 
 - 支持多种格式的文件处理
 - 实现图像增强和 OCR 提取
 - 支持批量处理
 
-### 6. 行业和岗位管理 (core/industry_job_manager.py)
+### 7. 向量化器 (core/vectorizer.py)
+
+- 实现优化的向量模型降级策略
+- 根据可用内存自动选择合适的模型
+- BGE-M3 需要至少 6GB 可用内存，中文优化模型需要至少 4GB 可用内存
+- 支持多语言文本的高效向量化
+
+### 8. 行业和岗位管理 (core/industry_job_manager.py)
 
 - 管理行业和岗位信息
 - 实现行业-岗位映射关系
 - 支持热门行业和岗位
 
-### 7. LLM 模型配置管理 (core/llm_config_manager.py)
+### 9. LLM 模型配置管理 (core/llm_config_manager.py)
 
 - 管理 LLM 模型配置
 - 支持配置 API Key

@@ -13,6 +13,10 @@
 
 # 必须在import transformers之前设置环境变量！
 import os
+import json
+import torch
+from torch import nn
+import tempfile
 
 # 使用HF镜像源解决下载问题
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
@@ -23,10 +27,7 @@ os.environ['HF_HUB_RETRY'] = '5'  # 重试5次
 os.environ['HF_HUB_RETRY_DELAY'] = '2'  # 重试间隔2秒
 
 # 然后再import其他模块
-import json
-import torch
-from torch import nn
-from transformers import BertTokenizerFast, BertModel
+from transformers import BertTokenizerFast, BertModel, pipeline
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -244,7 +245,8 @@ class BertCRFTagger(nn.Module):
 
     def __init__(self,
                  num_labels: int,
-                 pretrained_model_name: str = "bert-base-chinese"):
+                 pretrained_model_name:
+                 str = "uer/roberta-base-finetuned-cluener2020-chinese"):
         """
         初始化BERT+CRF模型
         
@@ -253,24 +255,28 @@ class BertCRFTagger(nn.Module):
             pretrained_model_name: 预训练BERT模型名称
         """
         super().__init__()
-        # 加载预训练BERT模型，优先使用中文模型以提高中文实体识别效果
         try:
-            # 尝试从本地加载BERT模型，优先使用中文模型，优先使用本地文件
-            self.bert = BertModel.from_pretrained(pretrained_model_name,
-                                                  local_files_only=True)
-            logger.info(f"从本地成功加载BERT模型: {pretrained_model_name}")
+            # 根据输入模型名称判断语言类型，只使用指定的两个模型
+            is_chinese = "chinese" in pretrained_model_name.lower(
+            ) or "中文" in pretrained_model_name
+            model_name = "uer/roberta-base-finetuned-cluener2020-chinese" if is_chinese else "dslim/bert-base-NER"
+
+            # 直接加载指定模型
+            self.bert = BertModel.from_pretrained(
+                model_name,
+                local_files_only=False,
+                resume_download=True  # 支持断点续传
+            )
+            logger.info(f"成功加载BERT模型: {model_name}")
         except Exception as e:
-            logger.warning(f"从本地加载BERT模型失败: {e}")
+            logger.error(f"BERT模型加载过程发生异常: {e}")
             logger.info("创建随机初始化的BERT模型...")
-            # 如果加载失败，创建一个随机初始化的BERT模型
-            # 使用与中文BERT模型兼容的配置参数
             from transformers import BertConfig
-            config = BertConfig(
-                vocab_size=21128,  # 中文BERT模型的词汇表大小
-                hidden_size=768,
-                num_hidden_layers=12,
-                num_attention_heads=12,
-                intermediate_size=3072)
+            config = BertConfig(vocab_size=21128,
+                                hidden_size=768,
+                                num_hidden_layers=12,
+                                num_attention_heads=12,
+                                intermediate_size=3072)
             self.bert = BertModel(config)
 
         # 添加dropout层防止过拟合
@@ -328,39 +334,9 @@ class NERPipeline:
         Args:
             model_dir: 模型文件目录路径
         """
-        # 加载标签映射
-        try:
-            with open(os.path.join(model_dir, 'label2id.json'),
-                      'r',
-                      encoding='utf-8') as f:
-                self.label2id = json.load(f)
+        logger.info("初始化NERPipeline...")
 
-            with open(os.path.join(model_dir, 'id2label.json'),
-                      'r',
-                      encoding='utf-8') as f:
-                self.id2label = json.load(f)
-
-            logger.info(f"成功加载标签映射，共 {len(self.label2id)} 个标签")
-        except Exception as e:
-            logger.error(f"加载标签映射失败: {e}")
-            # 使用默认的标签映射（适用于简历实体识别）
-            self.label2id = {
-                'O': 0,
-                'B-COMPANY': 1,
-                'I-COMPANY': 2,
-                'B-POSITION': 3,
-                'I-POSITION': 4,
-                'B-EDUCATION': 5,
-                'I-EDUCATION': 6,
-                'B-SKILL': 7,
-                'I-SKILL': 8,
-                'B-EXPERIENCE': 9,
-                'I-EXPERIENCE': 10
-            }
-            self.id2label = {str(v): k for k, v in self.label2id.items()}
-            logger.info("使用默认标签映射")
-
-        # 加载模型配置
+        # 从配置文件加载模型配置
         try:
             with open(os.path.join(model_dir, 'config.json'),
                       'r',
@@ -369,86 +345,99 @@ class NERPipeline:
                 logger.info("成功加载模型配置")
         except Exception as e:
             logger.warning(f"加载模型配置失败: {e}，将使用默认配置")
-            cfg = {}
-
-        # 获取预训练模型名称，优先使用中文模型
-        pretrained_model_name = cfg.get('pretrained', 'bert-base-chinese')
-
-        # 确保BertTokenizerFast在所有分支都可用
-        from transformers import BertTokenizerFast, BertConfig
-
-        # 尝试优先使用本地模型，避免每次都从Hugging Face下载
-        try:
-            # 首先检查model_dir中是否有本地的tokenizer文件
-            tokenizer_path = os.path.join(model_dir, 'tokenizer')
-            if os.path.exists(tokenizer_path) and os.path.isdir(
-                    tokenizer_path):
-                self.tokenizer = BertTokenizerFast.from_pretrained(
-                    tokenizer_path)
-                logger.info("从模型目录加载分词器成功")
-            else:
-                # 优先使用中文分词器，提高中文实体识别效果，仅使用本地文件
-                self.tokenizer = BertTokenizerFast.from_pretrained(
-                    'bert-base-chinese', local_files_only=True)
-                logger.info("使用本地中文分词器")
-        except Exception as e:
-            logger.warning(f"加载中文分词器失败: {e}，将使用内置的简单分词器")
-            # 作为最后的备用方案，创建一个简单的分词器配置，不依赖任何外部文件
-            logger.info("使用简单分词器配置...")
-            # 直接创建分词器，不依赖预训练模型文件
-            self.tokenizer = BertTokenizerFast(vocab_file=None,
-                                               tokenizer_file=None,
-                                               do_lower_case=True,
-                                               do_basic_tokenize=True,
-                                               never_split=None,
-                                               model_max_length=512)
-            logger.info("创建简单分词器成功")
-
-        # 添加中文特化的分词器设置
-        self.tokenizer.add_special_tokens(
-            {'additional_special_tokens': ['##']})
-        logger.info(f"分词器词汇表大小: {self.tokenizer.vocab_size}")
-
-        # 加载模型（BertCRFTagger会在内部处理BERT模型的加载）
-        self.model = BertCRFTagger(num_labels=len(self.label2id),
-                                   pretrained_model_name=pretrained_model_name)
-
-        # 加载模型权重，处理可能的兼容性问题
-        try:
-            state_dict_path = os.path.join(model_dir, 'pytorch_model.bin')
-            logger.info(f"尝试加载模型权重: {state_dict_path}")
-            state_dict = torch.load(state_dict_path, map_location='cpu')
-
-            # 检查并调整权重，确保与当前模型兼容
-            model_dict = self.model.state_dict()
-
-            # 只加载兼容的权重
-            compatible_state_dict = {
-                k: v
-                for k, v in state_dict.items()
-                if k in model_dict and v.shape == model_dict[k].shape
-            }
-            incompatible_keys = {
-                k: (v.shape, model_dict[k].shape)
-                for k, v in state_dict.items()
-                if k in model_dict and v.shape != model_dict[k].shape
+            cfg = {
+                'pretrained': 'uer/roberta-base-finetuned-cluener2020-chinese',
+                'chinese_model':
+                'uer/roberta-base-finetuned-cluener2020-chinese',
+                'english_model': 'dslim/bert-base-NER'
             }
 
-            if incompatible_keys:
-                logger.warning("发现不兼容的权重:")
-                for k, (shape1, shape2) in incompatible_keys.items():
-                    logger.warning(f"  {k}: 权重形状 {shape1}, 模型期望 {shape2}")
-                logger.info(f"只加载 {len(compatible_state_dict)} 个兼容的权重")
+        # 从配置中获取模型名称
+        self.pretrained_model = cfg.get(
+            'pretrained', 'uer/roberta-base-finetuned-cluener2020-chinese')
+        self.chinese_model = cfg.get(
+            'chinese_model', 'uer/roberta-base-finetuned-cluener2020-chinese')
+        self.english_model = cfg.get('english_model', 'dslim/bert-base-NER')
 
-            # 更新模型权重
-            model_dict.update(compatible_state_dict)
-            self.model.load_state_dict(model_dict, strict=False)
-            logger.info("加载兼容的模型权重成功")
+        logger.info(f"使用预训练模型: {self.pretrained_model}")
+        logger.info(f"中文模型: {self.chinese_model}")
+        logger.info(f"英文模型: {self.english_model}")
+
+        # 模型根目录
+        self.model_root_dir = model_dir
+        os.makedirs(self.model_root_dir, exist_ok=True)
+
+        # 初始化模型实例，默认只加载中文模型
+        self.ner_model = None
+        self.ner_zh = None
+        self.ner_en = None
+
+        # 导入所需的transformers组件
+        from transformers import AutoTokenizer, AutoModelForTokenClassification
+
+        try:
+            logger.info("开始加载NER模型...")
+
+            # 只加载中文模型作为默认模型
+            logger.info(f"只加载中文模型: {self.chinese_model}")
+
+            # 中文模型缓存目录
+            zh_cache_dir = os.path.join(self.model_root_dir, 'chinese')
+            os.makedirs(zh_cache_dir, exist_ok=True)
+
+            # 加载中文模型，使用local_files_only=True优先本地加载，避免重复下载
+            try:
+                # 优先尝试从本地加载
+                logger.info(f"尝试从本地加载中文tokenizer: {self.chinese_model}")
+                tokenizer_zh = AutoTokenizer.from_pretrained(
+                    self.chinese_model,
+                    cache_dir=zh_cache_dir,
+                    local_files_only=False)  # 允许从网络下载，确保模型能加载
+                logger.info(f"成功加载中文tokenizer: {self.chinese_model}")
+            except Exception as e:
+                logger.error(f"加载中文tokenizer失败: {e}")
+                raise  # 重新抛出异常，确保模型加载失败时能被捕获
+
+            try:
+                # 优先尝试从本地加载
+                logger.info(f"尝试从本地加载中文模型: {self.chinese_model}")
+                model_zh = AutoModelForTokenClassification.from_pretrained(
+                    self.chinese_model,
+                    cache_dir=zh_cache_dir,
+                    local_files_only=False)  # 允许从网络下载，确保模型能加载
+                logger.info(f"成功加载中文模型: {self.chinese_model}")
+            except Exception as e:
+                logger.error(f"加载中文模型失败: {e}")
+                raise  # 重新抛出异常，确保模型加载失败时能被捕获
+
+            # 创建中文NER pipeline
+            self.ner_zh = pipeline("ner",
+                                   model=model_zh,
+                                   tokenizer=tokenizer_zh,
+                                   aggregation_strategy="simple")
+            logger.info("成功创建中文NER pipeline")
+
+            # 设置默认模型为中文
+            self.ner_model = self.ner_zh
+            logger.info("使用中文模型作为默认模型")
+
         except Exception as e:
-            logger.warning(f"加载模型权重失败: {e}")
-            logger.info("使用未训练的模型...")
+            logger.error(f"加载NER模型失败: {e}")
+            logger.error("详细错误信息:", exc_info=True)
+            logger.warning("模型加载失败，将使用空结果返回")
 
-        self.model.eval()
+            # 尝试使用Hugging Face pipeline直接加载模型，不依赖本地模型文件
+            try:
+                logger.info("尝试使用Hugging Face pipeline直接加载模型...")
+                # 直接使用pipeline加载中文模型，不依赖本地模型文件
+                self.ner_zh = pipeline("ner",
+                                       model=self.chinese_model,
+                                       aggregation_strategy="simple")
+                self.ner_model = self.ner_zh
+                logger.info(
+                    f"成功使用Hugging Face pipeline直接加载中文模型: {self.chinese_model}")
+            except Exception as e2:
+                logger.error(f"使用Hugging Face pipeline直接加载模型失败: {e2}")
 
     def predict(self, text: str):
         """
@@ -464,123 +453,123 @@ class NERPipeline:
             - end: 实体结束位置
             - text: 实体文本内容
         """
-        # 文本预处理，提高识别效果
+        # 文本预处理
         text = text.strip()
         if not text:
             return []
 
-        # 文本编码，获取token偏移量映射，使用更长的max_length以处理长文本
-        enc = self.tokenizer(text,
-                             return_offsets_mapping=True,
-                             return_tensors='pt',
-                             max_length=512,
-                             truncation=True,
-                             padding=False)
+        # 检测文本语言，简单判断：如果包含中文则使用中文模型，否则使用英文模型
+        has_chinese = any('\u4e00' <= char <= '\u9fff' for char in text)
 
-        # 模型推理
-        with torch.no_grad():
-            pred = self.model(enc['input_ids'], enc['attention_mask'])
+        # 选择合适的模型
+        selected_model = None
+        model_name = ""
 
-        # 处理预测结果
-        tags = pred[0]
-        offsets = enc['offset_mapping'][0].tolist()
-        result = []
-        current = None
+        if has_chinese:
+            # 使用中文模型
+            if self.ner_zh:
+                selected_model = self.ner_zh
+                model_name = self.chinese_model
+                logger.debug("使用中文NER模型进行推理")
+            else:
+                selected_model = self.ner_model
+                model_name = self.pretrained_model if self.ner_model else "无"
+                logger.warning("中文模型不可用，使用默认模型")
+        else:
+            # 使用英文模型，但只在需要时才加载
+            if self.ner_en:
+                selected_model = self.ner_en
+                model_name = self.english_model
+                logger.debug("使用英文NER模型进行推理")
+            else:
+                # 只在需要时才加载英文模型
+                logger.info("英文模型未加载，开始加载英文模型...")
+                try:
+                    from transformers import AutoTokenizer, AutoModelForTokenClassification
 
-        # 根据标签和偏移量提取实体，改进实体边界处理
-        for i, tag_id in enumerate(tags):
-            # 跳过特殊标记（如[CLS], [SEP]）
-            if offsets[i] == (0, 0):
-                continue
+                    # 英文模型缓存目录
+                    en_cache_dir = os.path.join(self.model_root_dir, 'english')
+                    os.makedirs(en_cache_dir, exist_ok=True)
 
-            label = self.id2label[str(tag_id)]
-            start, end = offsets[i]
+                    # 优先从本地加载英文模型，避免重复下载
+                    try:
+                        # 加载英文tokenizer
+                        tokenizer_en = AutoTokenizer.from_pretrained(
+                            self.english_model,
+                            cache_dir=en_cache_dir,
+                            local_files_only=True)
+                        logger.info(
+                            f"成功从本地加载英文tokenizer: {self.english_model}")
 
-            # 确保偏移量有效
-            if start >= len(text) or end > len(text):
-                continue
+                        # 加载英文模型
+                        model_en = AutoModelForTokenClassification.from_pretrained(
+                            self.english_model,
+                            cache_dir=en_cache_dir,
+                            local_files_only=True)
+                        logger.info(f"成功从本地加载英文模型: {self.english_model}")
+                    except Exception as e:
+                        logger.info(f"本地加载英文模型失败: {e}，尝试从Hugging Face下载一次")
+                        # 只在本地没有时下载一次
+                        tokenizer_en = AutoTokenizer.from_pretrained(
+                            self.english_model,
+                            cache_dir=en_cache_dir,
+                            local_files_only=False)
+                        logger.info(
+                            f"成功从Hugging Face下载英文tokenizer: {self.english_model}"
+                        )
 
-            # 如果是O标签（非实体），结束当前实体
-            if label == 'O':
-                if current and current['text'] and len(
-                        current['text'].strip()) > 0:
-                    result.append(current)
-                    current = None
-                continue
+                        model_en = AutoModelForTokenClassification.from_pretrained(
+                            self.english_model,
+                            cache_dir=en_cache_dir,
+                            local_files_only=False)
+                        logger.info(
+                            f"成功从Hugging Face下载英文模型: {self.english_model}")
 
-            # 如果是B标签（实体开始），开始新实体
-            if label.startswith('B-'):
-                if current and current['text'] and len(
-                        current['text'].strip()) > 0:
-                    result.append(current)
-                entity_text = text[start:end]
-                if entity_text.strip():
-                    current = {
-                        'label': label[2:],  # 去掉'B-'前缀
-                        'start': start,
-                        'end': end,
-                        'text': entity_text
-                    }
-            # 如果是I标签（实体内部），扩展当前实体
-            elif label.startswith('I-'):
-                if current and current['label'] == label[2:]:
-                    # 处理BERT分词导致的不连续偏移（如中文词组被分成多个token）
-                    if start <= current['end']:  # 确保是连续的或重叠的
-                        # 更新结束位置
-                        current['end'] = max(current['end'], end)
-                        current['text'] = text[current['start']:current['end']]
-                else:
-                    # 如果当前没有实体或标签类型不匹配，创建新实体
-                    entity_text = text[start:end]
-                    if entity_text.strip():
-                        current = {
-                            'label': label[2:],  # 去掉'I-'前缀
-                            'start': start,
-                            'end': end,
-                            'text': entity_text
-                        }
+                    # 创建英文NER pipeline
+                    self.ner_en = pipeline("ner",
+                                           model=model_en,
+                                           tokenizer=tokenizer_en,
+                                           aggregation_strategy="simple")
+                    logger.info("成功创建英文NER pipeline")
 
-        # 添加最后一个实体（如果有）
-        if current and current['text'] and len(current['text'].strip()) > 0:
-            result.append(current)
+                    selected_model = self.ner_en
+                    model_name = self.english_model
+                except Exception as e:
+                    logger.error(f"加载英文模型失败: {e}")
+                    selected_model = self.ner_model
+                    model_name = self.pretrained_model if self.ner_model else "无"
+                    logger.warning("英文模型加载失败，使用默认模型")
 
-        # 后处理：合并重叠或相邻的相同类型实体
-        result = self._merge_overlapping_entities(result, text)
-
-        return result
-
-    def _merge_overlapping_entities(self, entities, text):
-        """
-        合并重叠或相邻的相同类型实体
-        
-        Args:
-            entities: 实体列表
-            text: 原始文本
-            
-        Returns:
-            合并后的实体列表
-        """
-        if not entities:
+        # 检查模型是否可用
+        if not selected_model:
+            logger.warning("没有可用的NER模型")
             return []
 
-        # 按起始位置排序
-        entities.sort(key=lambda x: x['start'])
+        # 使用选定的模型进行推理
+        logger.debug(f"使用模型 {model_name} 进行推理")
+        ner_result = selected_model(text)
 
-        merged = [entities[0]]
+        # 转换pipeline结果格式为预期格式
+        result = []
+        for entity in ner_result:
+            # 处理实体标签
+            label = entity['entity_group']
+            # 转换为统一的标签格式
+            if label.startswith('B-'):
+                label = label[2:]
+            elif label.startswith('I-'):
+                label = label[2:]
 
-        for current in entities[1:]:
-            last = merged[-1]
+            # 添加到结果列表
+            result.append({
+                'label': label,
+                'start': entity['start'],
+                'end': entity['end'],
+                'text': entity['word']
+            })
 
-            # 如果当前实体与上一个实体类型相同，且有重叠或相邻（间隔小于2个字符）
-            if (current['label'] == last['label']
-                    and current['start'] <= last['end'] + 2):
-                # 合并实体
-                last['end'] = max(last['end'], current['end'])
-                last['text'] = text[last['start']:last['end']]
-            else:
-                merged.append(current)
-
-        return merged
+        logger.debug(f"最终实体识别结果: {result}")
+        return result
 
 
 # NER模型单例实例
@@ -689,36 +678,18 @@ def get_ner(model_dir: str = None):
     base = os.path.join('data', 'models', 'ner_bert_crf')
     path = model_dir or base
 
-    # 检查模型文件是否存在
-    if os.path.isdir(path) and os.path.isfile(
-            os.path.join(path, 'pytorch_model.bin')):
-        try:
-            _NER_SINGLETON = NERPipeline(path)
+    try:
+        # 尝试直接创建NERPipeline实例，不管模型文件是否存在
+        # 因为NERPipeline内部已经实现了模型加载的容错机制
+        _NER_SINGLETON = NERPipeline(path)
+
+        # 检查模型是否真正可用
+        if _NER_SINGLETON.ner_model or _NER_SINGLETON.ner_zh or _NER_SINGLETON.ner_en:
             logger.info("NER模型加载成功")
             return _NER_SINGLETON
-        except Exception as e:
-            logger.error(f"NER模型初始化失败: {e}")
-            return None
-    else:
-        logger.warning(f"NER模型文件不存在或不完整: {path}")
-        logger.info("尝试使用备用模型路径...")
-
-        # 检查备用模型路径
-        alternative_paths = [
-            os.path.join('data', 'models', 'ner'),
-            os.path.join('models', 'ner_bert_crf'),
-            os.path.join('models', 'ner')
-        ]
-
-        for alt_path in alternative_paths:
-            if os.path.isdir(alt_path) and os.path.isfile(
-                    os.path.join(alt_path, 'pytorch_model.bin')):
-                try:
-                    _NER_SINGLETON = NERPipeline(alt_path)
-                    logger.info(f"NER模型从备用路径加载成功: {alt_path}")
-                    return _NER_SINGLETON
-                except Exception as e:
-                    logger.error(f"备用NER模型初始化失败: {e}")
-                    continue
-
-    return None
+        else:
+            logger.warning("NER模型加载成功，但没有可用的模型实例")
+            return _NER_SINGLETON
+    except Exception as e:
+        logger.error(f"NER模型初始化失败: {e}")
+        return None

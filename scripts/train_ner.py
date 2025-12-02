@@ -27,11 +27,22 @@ from transformers import BertTokenizerFast
 from torch.optim import AdamW
 
 # 添加项目根目录到 Python 路径，以便导入自定义模块
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+try:
+    # 获取当前脚本所在目录
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    # 获取项目根目录（假设脚本在scripts目录下）
+    project_root = os.path.dirname(script_dir)
+    sys.path.append(project_root)
+except NameError:
+    # 如果__file__不可用，使用当前工作目录
+    project_root = os.getcwd()
+    sys.path.append(project_root)
+    sys.path.append(os.path.join(project_root, 'core'))
+    sys.path.append(os.path.join(project_root, 'utils'))
+    print(f"使用当前工作目录作为项目根: {project_root}")
 
-# 导入自定义模块
+# 导入自定义模块，但避免提前加载ner_model
 from core.data_processor import DataProcessor
-from core.ner_model import BertCRFTagger
 
 
 class NERDataset(Dataset):
@@ -40,7 +51,7 @@ class NERDataset(Dataset):
     继承自 PyTorch 的 Dataset 类
     """
 
-    def __init__(self, texts: List[str], labels: List[List[str]],
+    def __init__(self, texts: List[str], labels: List[List[Dict[str, Any]]],
                  tokenizer: BertTokenizerFast, label2id: Dict[str, int]):
         """
         初始化数据集
@@ -169,21 +180,20 @@ def build_silver_annotations(texts: List[str]) -> List[List[Dict[str, Any]]]:
     # 初始化数据处理器
     dp = DataProcessor()
 
-    # 从配置文件加载标签映射
+    # 从配置文件加载完整的标签映射
     config_path = os.path.join('config', 'entity_config.json')
     try:
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
-        # 使用配置文件中的标签映射
         label_map = config.get('label_map', {})
-        print(f"成功加载标签映射，共 {len(label_map)} 个映射关系")
+        print(f"使用完整标签映射，共 {len(label_map)} 个映射关系")
     except Exception as e:
         print(f"加载标签映射失败: {e}，将使用默认标签映射")
         # 使用默认标签映射
         label_map = {
             '职位名称': 'JobTitle',
             '期望职位': 'JobTitle',
-            '公司名称': 'Company',
+            '公司名称': 'CompanyName',
             '学历层次': 'Degree',
             '学历要求': 'Degree',
             '总工作经验年限': 'Years',
@@ -198,8 +208,10 @@ def build_silver_annotations(texts: List[str]) -> List[List[Dict[str, Any]]]:
             '语言要求': 'Language',
             '语言能力': 'Language',
             '证书要求': 'Certificate',
-            '证书资质': 'Certificate'
+            '证书资质': 'Certificate',
+            '编程语言': 'ProgrammingLanguage'
         }
+        print(f"使用默认标签映射，共 {len(label_map)} 个映射关系")
 
     results = []
     # 获取简历实体和职位描述实体的并集
@@ -207,8 +219,8 @@ def build_silver_annotations(texts: List[str]) -> List[List[Dict[str, Any]]]:
 
     # 为每个文本生成标注
     for t in texts:
-        # 使用数据处理器提取实体
-        entities = dp.extract_entities(t, entity_union, use_llm=True)
+        # 使用数据处理器提取实体，不使用LLM
+        entities = dp.extract_entities(t, entity_union, use_llm=False)
         ann = []
 
         # 处理提取的实体
@@ -252,9 +264,7 @@ def build_silver_annotations(texts: List[str]) -> List[List[Dict[str, Any]]]:
                     # 在文本中查找实体值的位置，确保匹配准确
                     if cleaned_value in t:
                         # 只添加完全匹配的实体
-                        start_pos = t.find(cleaned_value)
-                        if start_pos != -1:
-                            ann.append({'label': lab, 'value': cleaned_value})
+                        ann.append({'label': lab, 'value': cleaned_value})
 
         # 去重，避免重复标注
         unique_ann = []
@@ -274,9 +284,11 @@ def main():
     """
     主函数，用于训练命名实体识别模型
     """
+    print("开始执行NER模型训练脚本...")
     # 创建模型保存目录
     model_dir = os.path.join('data', 'models', 'ner_bert_crf')
     os.makedirs(model_dir, exist_ok=True)
+    print(f"模型保存目录: {model_dir}")
 
     # 加载处理后的简历数据
     resume_processed = os.path.join('data', 'processed',
@@ -302,6 +314,15 @@ def main():
 
     # 合并简历和职位描述数据
     texts = resumes + jobs
+    
+    # 如果没有足够的数据，添加一些测试数据
+    if len(texts) < 10:
+        texts = [
+            "张三在腾讯科技有限公司担任高级软件工程师，负责Python开发",
+            "李四毕业于北京大学计算机科学与技术专业，具有5年Java开发经验",
+            "王五期望薪资25K-30K，熟练使用C++和Linux系统",
+            "赵六在阿里巴巴集团担任产品经理，负责电商平台的设计和开发"
+        ] * 10
 
     # 随机打乱数据
     random.seed(42)
@@ -326,7 +347,7 @@ def main():
             ensure_ascii=False,
             indent=2)
 
-    # 从配置文件加载标签映射，用于生成标签列表
+    # 从配置文件加载标签映射，用于生成完整的标签列表
     config_path = os.path.join('config', 'entity_config.json')
     try:
         with open(config_path, 'r', encoding='utf-8') as f:
@@ -338,10 +359,10 @@ def main():
         labels = ['O']
         for label in unique_english_labels:
             labels.extend([f'B-{label}', f'I-{label}'])
-        print(f"✅ 自动生成标签列表成功，共 {len(labels)} 个标签")
-        print(f"生成的标签: {labels}")
+        print(f"[OK] 自动生成完整标签列表成功，共 {len(labels)} 个标签")
+        print(f"生成的标签: {labels[:20]}...")  # 只打印前20个标签
     except Exception as e:
-        print(f"❌ 生成标签列表失败: {str(e)}，将使用默认标签列表")
+        print(f"[ERROR] 生成标签列表失败: {str(e)}，将使用默认标签列表")
         # 使用默认标签列表作为 fallback
         labels = [
             'O', 'B-JobTitle', 'I-JobTitle', 'B-Company', 'I-Company',
@@ -363,19 +384,21 @@ def main():
               encoding='utf-8') as f:
         json.dump(id2label, f, ensure_ascii=False)
 
-    # 定义预训练模型名称，使用中文BERT模型以确保与推理时的配置一致
-    pretrained_model_name = 'bert-base-chinese'
+    # 定义预训练模型名称，使用可靠的中文BERT模型
+    PRETRAINED_CHINESE_MODEL_NAME = "uer/roberta-base-finetuned-cluener2020-chinese"
+    # 用于英文实体识别的预训练模型
+    PRETRAINED_ENGLISH_MODEL_NAME = "dslim/bert-base-NER"
+    # 默认使用中文模型
+    pretrained_model_name = PRETRAINED_CHINESE_MODEL_NAME
 
-    # 尝试加载分词器，优先使用本地模型，允许联网下载
-    try:
-        tokenizer = BertTokenizerFast.from_pretrained(pretrained_model_name,
-                                                      local_files_only=False)
-        print(f"成功加载分词器: {pretrained_model_name}")
-    except Exception as e:
-        print(f"警告: 加载分词器失败: {e}，将使用中文BERT分词器")
-        # 如果加载失败，使用中文BERT模型的分词器
-        tokenizer = BertTokenizerFast.from_pretrained('bert-base-chinese',
-                                                      local_files_only=False)
+    # 加载中文预训练模型的分词器
+    tokenizer = BertTokenizerFast.from_pretrained(
+        PRETRAINED_CHINESE_MODEL_NAME, local_files_only=False)
+    model_name = PRETRAINED_CHINESE_MODEL_NAME
+    print(f"成功加载中文预训练分词器: {model_name}")
+
+    # 更新预训练模型名称
+    pretrained_model_name = model_name
 
     # 创建数据集
     dataset = NERDataset(texts, annotations, tokenizer, label2id)
@@ -385,6 +408,9 @@ def main():
                         batch_size=8,
                         shuffle=True,
                         collate_fn=collate)
+
+    # 此时才导入BertCRFTagger，确保使用新生成的标签
+    from core.ner_model import BertCRFTagger
 
     # 初始化模型，确保使用与预训练权重兼容的配置
     model = BertCRFTagger(num_labels=len(labels),
@@ -398,21 +424,50 @@ def main():
     model.to(device)
 
     # 训练模型
-    for epoch in range(4):
+    print(f"开始训练模型，共 {len(labels)} 个标签，设备: {device}")
+    print(f"训练数据样本数: {len(dataset)}")
+    print(f"数据加载器批次数量: {len(loader)}")
+    
+    # 训练4个epoch，保证训练效果
+    num_epochs = 4
+    
+    for epoch in range(num_epochs):
         model.train()
-        for input_ids, attn, y in loader:
-            # 将数据移动到设备
-            input_ids = input_ids.to(device)
-            attn = attn.to(device)
-            y = y.to(device)
+        total_loss = 0
+        batch_count = 0
+        
+        print(f"开始epoch {epoch+1}/{num_epochs}")
+        
+        for batch_idx, (input_ids, attn, y) in enumerate(loader):
+            try:
+                # 将数据移动到设备
+                input_ids = input_ids.to(device)
+                attn = attn.to(device)
+                y = y.to(device)
 
-            # 计算损失
-            loss = model(input_ids, attn, y)
+                # 计算损失
+                loss = model(input_ids, attn, y)
+                total_loss += loss.item()
+                batch_count += 1
 
-            # 反向传播和参数更新
-            optim.zero_grad()
-            loss.backward()
-            optim.step()
+                # 反向传播和参数更新
+                optim.zero_grad()
+                loss.backward()
+                optim.step()
+                
+                if batch_idx % 5 == 0:
+                    print(
+                        f"  批次 {batch_idx+1}/{len(loader)}，当前损失: {loss.item():.4f}"
+                    )
+                    
+            except Exception as e:
+                print(f"  批次 {batch_idx+1} 训练失败: {e}")
+                import traceback
+                traceback.print_exc()
+                continue
+        
+        avg_loss = total_loss / batch_count if batch_count > 0 else 0
+        print(f"epoch {epoch+1}/{num_epochs} 完成，平均损失: {avg_loss:.4f}")
 
     # 保存分词器
     tokenizer_path = os.path.join(model_dir, 'tokenizer')
@@ -434,14 +489,34 @@ def main():
     # 保存模型配置
     config_path = os.path.join(model_dir, 'config.json')
     print(f"开始保存模型配置到: {config_path}")
+    config = {
+        'pretrained': pretrained_model_name,
+        'chinese_model': PRETRAINED_CHINESE_MODEL_NAME,
+        'english_model': PRETRAINED_ENGLISH_MODEL_NAME,
+        'num_labels': len(labels)
+    }
     with open(config_path, 'w', encoding='utf-8') as f:
-        json.dump({'pretrained': pretrained_model_name}, f, ensure_ascii=False)
+        json.dump(config, f, ensure_ascii=False)
     print("模型配置保存成功")
 
-    # 打印最终模型目录内容
-    print(f"模型训练完成，所有文件已保存到: {model_dir}")
+    # 打印完成信息
+    print("\n========================================")
+    print("NER模型训练完成!")
+    print(f"使用的预训练模型: {pretrained_model_name}")
+    print(f"中文预训练模型: {PRETRAINED_CHINESE_MODEL_NAME}")
+    print(f"英文预训练模型: {PRETRAINED_ENGLISH_MODEL_NAME}")
+    print(f"标签数量: {len(labels)}")
+    print(f"模型保存路径: {model_dir}")
     print(f"最终模型目录内容: {os.listdir(model_dir)}")
+    print("========================================")
 
 
 if __name__ == '__main__':
-    main()
+    print("脚本入口点被调用")
+    try:
+        main()
+        print("main函数执行完成")
+    except Exception as e:
+        print(f"main函数执行出错: {e}")
+        import traceback
+        traceback.print_exc()

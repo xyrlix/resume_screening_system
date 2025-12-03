@@ -10,9 +10,23 @@ def clean_text(text: str) -> str:
     """
     清理文本，移除非中文字符、英文、数字和基本标点符号
     """
-    text = re.sub(r'[^\u4e00-\u9fa5a-zA-Z0-9\s,.!?;:()，。！？；：（）]', '', text
-                  or '')
-    text = re.sub(r'\n+', '\n', text)
+    if not text:
+        return ""
+
+    # 1. 先处理空白和换行：统一为单个空格
+    text = re.sub(r'\s+', ' ', text)
+
+    # 2. 保留更多实用字符
+    # 新增保留：@ . # + - _ / % $ & * = [ ] { } < > ~ `
+    # 这些对邮箱、网址、编程语言、版本号至关重要
+    text = re.sub(
+        r'[^\u4e00-\u9fa5a-zA-Z0-9\s'
+        r'@.#\+\-_/%\$&*=\[\]{}<>~`'
+        r',.!?;:()，。！？；：（）]', '', text)
+
+    # 3. 再次清理多余空格
+    text = re.sub(r'\s+', ' ', text)
+
     return text.strip()
 
 

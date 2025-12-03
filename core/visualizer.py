@@ -6,7 +6,6 @@
 负责生成各种可视化图表和分析报告
 """
 
-import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from typing import List, Dict, Any, Tuple
 import numpy as np

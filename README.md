@@ -37,7 +37,7 @@
 
 - **实体提取**：优先使用 BERT-CRF 进行中文 NER（中文使用 `uer/roberta-base-finetuned-cluener2020-chinese`，英文使用 `dslim/bert-base-NER`）；若缺失则使用增强正则补全；最后由 LLM 兜底补全
 - **文本向量化**：使用 BGE-M3 生成 1024+ 维向量
-- **存储**：使用 ChromaDB 存储向量数据
+- **存储**：内存缓存与文件存储结合的方式管理向量数据
 
 ### 5.1 分段向量融合
 
@@ -232,8 +232,8 @@ resume_screening_system/
   - 英文：`dslim/bert-base-NER`
 - **LLM 模型**：支持多种 LLM 模型（qwen-plus、deepseek-chat、moonshot-v1-8k、kimi-k2-turbo-preview、tngtech/tng-r1t-chimera:free、glm-4.6、hunyuan-lite）
 - **文件处理**：PyPDF2、python-docx、PaddleOCR、camelot-py
-- **数据存储**：ChromaDB
-- **可视化**：Matplotlib、Plotly
+- **数据存储**：内存缓存与文件存储结合
+- **可视化**：Plotly
 
 ## 🎯 核心模块说明
 

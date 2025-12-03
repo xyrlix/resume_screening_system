@@ -193,7 +193,7 @@ class RecruiterService:
         # 技能要求
         if 'skills' in filter_rules and filter_rules['skills']:
             required_skills = filter_rules['skills']
-            resume_skills = resume['skills']
+            resume_skills = resume.get('skills', [])
             # 要求至少匹配50%的技能
             matching_skills = set(resume_skills) & set(required_skills)
             if len(matching_skills) / len(required_skills) < 0.5:

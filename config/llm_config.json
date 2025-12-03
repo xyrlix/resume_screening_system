@@ -5,11 +5,8 @@
     "openrouter": "tngtech/tng-r1t-chimera:free",
     "moonshot": "moonshot-v1-8k",
     "kimi": "kimi-k2-turbo-preview",
-    "glm": "glm-4.6",
     "hunyuan": "hunyuan-lite",
-    "siliconflow": "qwen2.5-72b-instruct",
-    "spark": "spark-x",
-    "zhipu": "glm-4.6"
+    "siliconflow": "qwen2.5-72b-instruct"
   },
   "supported_models": [
     "qwen-plus",
@@ -17,7 +14,6 @@
     "moonshot-v1-8k",
     "kimi-k2-turbo-preview",
     "tngtech/tng-r1t-chimera:free",
-    "glm-4.6",
     "hunyuan-lite"
   ],
   "models": {
@@ -46,10 +42,6 @@
     "hunyuan-lite": {
       "api_key": "gAAAAABpLQ-j6E_XRtEJpVmx592V3qMx4HrrxUPK5Dd54VdXhfFyMNh6USEClWfeLl1jVhkDldp7wGFdjlQSL-BLHjKOVXMTYXEoNCr5kItQ5rw5x6IG7EaM2-ik_NUYZ-BgZBNfLrAv2g0OkhH0gUt0g6BGPQfI4w==",
       "base_url": "https://api.hunyuan.cloud.tencent.com/v1"
-    },
-    "glm-4.6": {
-      "api_key": "gAAAAABpLQ-jAgl4ipPsi9927Uy8ybAvoDcdbOPu5tAgxfMZL2ax-elfbD4QkNh8P13HMKNi-IYpUJ4ydyot46rpN8jjO1H1EZlCGV1cmKlTo-8esGQqcS0MIXYYnNu8G1XjW8eAWCiiVeYkgRaQT0gulRd6lgAk_w==",
-      "base_url": "https://open.bigmodel.cn/api/paas/v4/chat/completions"
     }
   },
   "chains": [
@@ -60,7 +52,6 @@
     ],
     [
       "tngtech/tng-r1t-chimera:free",
-      "glm-4.6",
       "kimi-k2-turbo-preview"
     ],
     [
@@ -74,8 +65,7 @@
       "qwen-plus",
       "deepseek-chat",
       "hunyuan-lite",
-      "moonshot-v1-8k",
-      "glm-4.6"
+      "moonshot-v1-8k"
     ],
     "international": [
       "tngtech/tng-r1t-chimera:free",

@@ -20,6 +20,7 @@ import re
 from typing import List, Dict, Any, Optional, Pattern
 from utils.logger import get_logger
 from utils.clean_tools import clean_text as utils_clean_text, remove_special_chars, normalize_whitespace
+from core.ner_model import get_ner  # 导入NER模型单例获取函数
 
 # 初始化日志记录器
 logger = get_logger("data_processor")
@@ -331,6 +332,22 @@ class RegexPatternManager:
                     re.IGNORECASE),
             ],
 
+            # 技能
+            "技能": [
+                re.compile(
+                    r'技能[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+                re.compile(
+                    r'技术栈[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+                re.compile(
+                    r'编程语言[:：]?\s*(.*?)(?=\d+\.|[\u4e00-\u9fa5]{2,}[:：]|$)',
+                    re.DOTALL),
+                re.compile(
+                    r'(Python|Java|C\+\+|JavaScript|HTML|CSS|SQL|PyTorch|TensorFlow|Linux|Git|GitHub|Docker|Kubernetes|Redis|MongoDB|MySQL|PostgreSQL|FastAPI|Flask|Django|Spring|React|Vue|Angular|Node\.js|TypeScript|R|MATLAB|Scala|Go|PHP|Swift|Objective-C|Kotlin|Rust|Assembly)',
+                    re.IGNORECASE),
+            ],
+
             # 岗位职责
             "岗位职责": [
                 re.compile(
@@ -524,8 +541,9 @@ class RegexExtractor(BaseEntityExtractor):
                 try:
                     # 严格检查pattern是否为预编译的正则表达式对象
                     if isinstance(pattern, re.Pattern):
-                        if entity_name == "技能要求":
-                            # 对于技能要求，使用findall提取所有匹配项
+                        # 对于技能要求和技能实体，使用findall提取所有匹配项
+                        if entity_name in ["技能要求", "技能"]:
+                            # 使用findall提取所有匹配项
                             matches = pattern.findall(text)
                             if matches:
                                 # 扁平化匹配结果
@@ -752,30 +770,131 @@ class NerExtractor:
         """
         self._ner_model = None
         self._ner_loaded = False
-        # 简化的标签映射，只保留最通用的映射关系
+        # 针对CLUENER2020中文模型优化的标签映射
+        # CLUENER2020模型支持的实体类型：address(地址), book(书名), company(公司), game(游戏), government(政府),
+        # movie(电影), name(姓名), organization(组织机构), position(职位), scene(景点)
         self._label_map = {
-            # 公司相关
+            # 教育相关标签 (Education)
+            'SchoolName': ['学校名称', '学校', '毕业院校', '就读院校'],
+            'Degree': ['学历', '学位', '学历层次', '学位层次'],
+            'HighestDegree': ['最高学历', '最高学位'],
+            'EducationLevel': ['教育水平', '学历等级'],
+            'EducationRequirement': ['学历要求', '教育背景要求'],
+            'Major': ['专业名称', '所学专业', '专业'],
+            'EnrollmentDate': ['入学日期', '入学时间'],
+            'GraduationDate': ['毕业日期', '毕业时间'],
+            'AcademicHonors': ['学术荣誉', '荣誉证书', '获奖情况'],
+            'Certification': ['证书', '资质证书', '职业证书'],
+            'CertificateRequirement': ['证书要求', '资质要求'],
+
+            # 个人基本信息 (Personal Information)
+            'Name': ['姓名', '姓名信息'],
+            'Age': ['年龄', '年纪'],
+            'Gender': ['性别'],
+            'BirthDate': ['出生日期', '生日'],
+            'BirthPlace': ['出生地', '籍贯'],
+            'CurrentResidence': ['现居地', '当前居住地'],
+            'HukouLocation': ['户籍地', '户口所在地'],
+            'Email': ['电子邮箱', '邮箱'],
+            'Phone': ['联系电话', '电话号码', '手机'],
+            'HomeAddress': ['家庭地址', '住址'],
+            'MaritalStatus': ['婚姻状况'],
+            'Height': ['身高'],
+            'Weight': ['体重'],
+            'PoliticalStatus': ['政治面貌'],
+            'AvailableDate': ['到岗时间', '可入职时间'],
+            'AcceptsEmploymentGap': ['接受工作空窗期', '接受职业间隔'],
+            'EmploymentGapTotal': ['工作空窗期', '职业间隔'],
+
+            # 工作与职位相关 (Work & Position)
+            'JobTitle': ['职位名称', '岗位名称', '职位', '岗位'],
+            'Position': ['职位', '岗位'],
             'CompanyName': ['公司名称', '公司'],
-            'Company': ['公司名称', '公司'],
+            'CompanyIndustry': ['公司行业', '行业'],
+            'CompanySize': ['公司规模'],
+            'EmploymentStartDate': ['入职日期', '开始工作时间'],
+            'EmploymentEndDate': ['离职日期', '结束工作时间'],
+            'LastEmploymentEndDate': ['上一份工作结束日期'],
+            'IsCurrentlyEmployed': ['当前是否在职', '是否在职'],
+            'IsFullTime': ['是否全职', '工作性质'],
+            'TotalWorkExperience': ['总工作年限', '工作经验'],
+            'ExperienceRequirement': ['工作经验要求'],
+            'ReportingTo': ['汇报对象', '上级'],
+            'TeamSize': ['团队规模'],
+            'TeamSituation': ['团队情况'],
+
+            # 薪资相关 (Salary)
+            'CurrentAnnualSalary': ['当前年薪', '目前薪资'],
+            'DesiredAnnualSalary': ['期望年薪', '期望薪资'],
+            'SalaryRange': ['薪资范围', '薪资区间'],
+            'DesiredSalary': ['期望薪资'],
+
+            # 技能与技术 (Skills & Technical)
+            'TechnicalStack': ['技术栈', '技术技能'],
+            'ProgrammingLanguage': ['编程语言', '编程技能'],
+            'Database': ['数据库', '数据库技能'],
+            'FrameworkTool': ['框架/工具', '开发工具'],
+            'SkillCategory': ['技能类别', '技能分类'],
+            'SkillProficiency': ['技能熟练度', '技能水平'],
+            'SkillRequirement': ['技能要求', '技术要求'],
+            'LanguageProficiency': ['语言能力', '语言水平'],
+            'LanguageRequirement': ['语言要求'],
+
+            # 项目相关 (Project)
+            'ProjectName': ['项目名称', '项目'],
+            'ProjectRole': ['项目角色', '角色'],
+            'ProjectStartDate': ['项目开始日期', '项目启动时间'],
+            'ProjectEndDate': ['项目结束日期', '项目完成时间'],
+            'ProjectAchievementIndicators': ['项目成果指标', '项目成果'],
+
+            # 招聘与求职相关 (Recruitment & Job Search)
+            'JobType': ['工作类型', '职位类型'],
+            'JobResponsibilities': ['岗位职责', '工作职责'],
+            'JobRequirements': ['职位要求', '任职要求'],
+            'JobContentKeywords': ['工作内容关键词', '职位描述关键词'],
+            'DesiredPosition': ['期望职位', '意向岗位'],
+            'DesiredIndustry': ['期望行业', '意向行业'],
+            'DesiredWorkCity': ['期望工作城市', '意向城市'],
+            'ApplicationDeadline': ['申请截止日期'],
+            'PostingDate': ['发布日期', '招聘发布时间'],
+            'HiringCount': ['招聘人数', '招聘数量'],
+            'Benefits': ['福利待遇', '福利'],
+            'WorkLocation': ['工作地点', '上班地点'],
+            'JoinDateUrgency': ['到岗紧急程度'],
+
+            # 组织与行业相关 (Organization & Industry)
+            'Organization': ['组织机构', '机构'],
+            'Government': ['政府机构', '政府部门'],
+            'Industry': ['行业'],
+
+            # 其他相关 (Others)
+            'Address': ['通讯地址', '地址'],
+            'PortfolioLink': ['作品集链接', '个人作品'],
+            'Hobby': ['兴趣爱好', '爱好'],
+            'SelfEvaluationKeywords': ['自我评价关键词', '自我评价'],
+            'SelfMotivationCase': ['自我激励案例', '激励情况'],
+            'CultureFitKeywords': ['文化契合关键词', '文化匹配'],
+            'ConflictResolution': ['冲突解决', '解决冲突'],
+            'CrossTeamCollaboration': ['跨团队协作', '团队协作'],
+            'BusinessGrowthIndicator': ['业务增长指标'],
+            'CostSavingIndicator': ['成本节约指标'],
+            'ExpectedAchievementIndicators': ['预期成果指标'],
+
+            # 兼容CLUENER2020和其他常用实体类型
+            'name': ['姓名'],
+            'position': ['职位名称', '岗位名称', '职位', '岗位'],
+            'company': ['公司名称', '公司'],
+            'organization': ['学校名称', '学校', '组织机构', '政府'],
+            'address': ['通讯地址', '家庭地址', '地址', '现居地', '户籍地', '籍贯', '工作地点'],
+            'PERSON': ['姓名'],
+            'POSITION': ['职位名称', '岗位名称', '职位', '岗位'],
             'COMPANY': ['公司名称', '公司'],
-
-            # 职位相关
-            'JobTitle': ['职位名称', '岗位名称', '职位'],
-            'POSITION': ['职位名称', '岗位名称', '职位'],
-
-            # 教育相关
-            'EducationLevel': ['学历层次', '学历'],
-            'Degree': ['学历要求', '学历'],
-            'EDUCATION': ['学历要求', '学历'],
-
-            # 技能相关
-            'Skill': ['技能', '技能要求'],
-            'SKILL': ['技能', '技能要求'],
-
-            # 经验相关
-            'TotalWorkExperience': ['总工作经验年限'],
-            'ExperienceRequirement': ['工作年限要求', '工作年限'],
-            'EXPERIENCE': ['工作年限', '经验']
+            'ORG': ['学校名称', '学校', '组织机构'],
+            'ADDRESS': ['通讯地址', '家庭地址', '地址'],
+            'EDUCATION': ['学校名称', '学历层次', '专业名称', '学历要求'],
+            'SKILL': ['技能', '技能要求', '技术栈', '编程语言', '框架/工具', '数据库'],
+            'EXPERIENCE': ['工作年限要求', '工作年限', '工作经验', '经验'],
+            'SALARY': ['期望薪资', '薪资范围', '目前年薪']
         }
 
     def _load_ner_model(self):
@@ -784,15 +903,22 @@ class NerExtractor:
         """
         if not self._ner_loaded:
             try:
-                from core.ner_model import get_ner
                 self._ner_model = get_ner()
                 self._ner_loaded = True
                 if self._ner_model:
                     logger.info("NER模型加载成功")
+                    # 检查模型是否真正可用
+                    if hasattr(self._ner_model, 'predict'):
+                        logger.info("NER模型predict方法可用")
+                    else:
+                        logger.warning("NER模型predict方法不可用")
+                        self._ner_model = None
                 else:
                     logger.warning("NER模型加载失败，返回了None值")
             except Exception as e:
                 logger.warning(f"NER模型加载失败: {e}")
+                import traceback
+                traceback.print_exc()
                 self._ner_loaded = True  # 避免重复尝试加载
 
     def extract(self, text: str, entity_list: List[str],
@@ -814,8 +940,16 @@ class NerExtractor:
             return
 
         try:
+            logger.debug(f"开始NER提取，实体列表: {entity_list}")
+
             # 使用NER模型预测实体
             ner_results = self._ner_model.predict(text)
+            logger.debug(f"NER模型返回原始结果: {ner_results}")
+
+            # 如果没有提取到实体，记录详细日志
+            if not ner_results:
+                logger.debug(f"NER模型未提取到任何实体，输入文本: {text[:100]}...")
+                return
 
             # 处理NER结果，映射到实体列表
             for entity in ner_results:
@@ -823,9 +957,11 @@ class NerExtractor:
                 ner_text = entity.get('text')
 
                 if not ner_label or not ner_text:
+                    logger.debug(f"跳过无效的NER实体: {entity}")
                     continue
 
                 # 处理BIO格式标签（如'B-CompanyName'、'I-CompanyName'）
+                original_label = ner_label
                 if '-' in ner_label:
                     bio_tag, entity_type = ner_label.split('-', 1)
                     # 只处理开始标签（B-），忽略内部标签（I-）以避免重复
@@ -833,59 +969,172 @@ class NerExtractor:
                         continue
                     ner_label = entity_type
 
+                logger.debug(
+                    f"处理NER实体: 标签={ner_label}, 文本={ner_text}, 原始标签={original_label}"
+                )
+
                 # 将NER标签映射到系统实体名称
-                # 首先尝试直接映射
                 mapped = False
+                lower_ner_label = ner_label.lower()
+
+                logger.debug(
+                    f"当前处理NER实体: 标签={ner_label}, 小写标签={lower_ner_label}, 文本={ner_text}"
+                )
+
+                # 1. 尝试直接映射（标签到系统实体）- 改进版：大小写不敏感
                 for sys_entity in entity_list:
-                    if sys_entity in self._label_map.get(ner_label, []):
-                        # 只有在实体为空时才更新（降级策略）
-                        if not entities.get(sys_entity):
-                            entities[sys_entity] = ner_text
-                            stats['ner_count'] = stats.get('ner_count', 0) + 1
-                            logger.debug(f"NER提取: {sys_entity} = {ner_text}")
-                        mapped = True
+                    # 遍历所有标签，找到匹配的小写标签
+                    for label, mapped_labels in self._label_map.items():
+                        if label.lower(
+                        ) == lower_ner_label and sys_entity in mapped_labels:
+                            if not entities.get(sys_entity):
+                                entities[sys_entity] = ner_text
+                                stats['ner_count'] = stats.get('ner_count',
+                                                               0) + 1
+                                logger.debug(
+                                    f"NER提取（直接映射）: {sys_entity} = {ner_text}")
+                            mapped = True
+                            break
+                    if mapped:
                         break
 
-                # 如果直接映射失败，尝试反向映射（英文标签到中文实体）
+                # 2. 尝试反向映射（系统实体到标签）- 改进版：更灵活的匹配
                 if not mapped:
                     for sys_entity in entity_list:
-                        for en_label, cn_labels in self._label_map.items():
-                            if sys_entity in cn_labels and en_label.lower(
-                            ) == ner_label.lower():
-                                if not entities.get(sys_entity):
-                                    entities[sys_entity] = ner_text
-                                    stats['ner_count'] = stats.get(
-                                        'ner_count', 0) + 1
-                                    logger.debug(
-                                        f"NER提取（反向映射）: {sys_entity} = {ner_text}"
-                                    )
-                                mapped = True
-                                break
+                        for label, mapped_entities in self._label_map.items():
+                            if sys_entity in mapped_entities:
+                                # 检查标签是否部分匹配
+                                if label.lower(
+                                ) in lower_ner_label or lower_ner_label in label.lower(
+                                ):
+                                    if not entities.get(sys_entity):
+                                        entities[sys_entity] = ner_text
+                                        stats['ner_count'] = stats.get(
+                                            'ner_count', 0) + 1
+                                        logger.debug(
+                                            f"NER提取（反向映射）: {sys_entity} = {ner_text}"
+                                        )
+                                    mapped = True
+                                    break
                         if mapped:
                             break
 
-                # 针对关键词匹配生成的实体类型进行特殊处理
+                # 3. 针对特定实体类型的特殊处理 - 扩展版：增加教育相关实体
                 if not mapped:
-                    special_mapping = {
-                        'CompanyName': '公司名称',
-                        'JobTitle': '职位名称',
-                        'ProgrammingLanguage': '编程语言',
-                        'Name': '姓名',
-                        'Degree': '学历层次',
-                        'Location': '工作地点',
-                        'Skill': '技能要求'
+                    # 教育相关实体特殊处理
+                    education_mappings = {
+                        'schoolname': '学校名称',
+                        'degree': '学历层次',
+                        'highestdegree': '学历层次',
+                        'educationlevel': '学历层次',
+                        'major': '专业名称',
+                        'academic honors': '获奖情况',
+                        'certification': '证书'
                     }
-
-                    if ner_label in special_mapping:
-                        sys_entity = special_mapping[ner_label]
-                        if sys_entity in entity_list and not entities.get(
+                    for label, sys_entity in education_mappings.items():
+                        if label in lower_ner_label and sys_entity in entity_list and not entities.get(
                                 sys_entity):
                             entities[sys_entity] = ner_text
                             stats['ner_count'] = stats.get('ner_count', 0) + 1
                             logger.debug(
-                                f"NER提取（特殊映射）: {sys_entity} = {ner_text}")
+                                f"NER提取（教育特殊处理）: {sys_entity} = {ner_text}")
+                            mapped = True
+                            break
+
+                    # 其他实体特殊处理
+                    if not mapped:
+                        # 公司相关
+                        if lower_ner_label in [
+                                'company', 'companyname'
+                        ] and '公司名称' in entity_list and not entities.get(
+                                '公司名称'):
+                            entities['公司名称'] = ner_text
+                            stats['ner_count'] = stats.get('ner_count', 0) + 1
+                            logger.debug(f"NER提取（特殊处理）: 公司名称 = {ner_text}")
+                            mapped = True
+                        # 职位相关
+                        elif lower_ner_label in [
+                                'position', 'jobtitle'
+                        ] and '职位名称' in entity_list and not entities.get(
+                                '职位名称'):
+                            entities['职位名称'] = ner_text
+                            stats['ner_count'] = stats.get('ner_count', 0) + 1
+                            logger.debug(f"NER提取（特殊处理）: 职位名称 = {ner_text}")
+                            mapped = True
+                        # 姓名相关
+                        elif lower_ner_label in [
+                                'name', 'person'
+                        ] and '姓名' in entity_list and not entities.get('姓名'):
+                            entities['姓名'] = ner_text
+                            stats['ner_count'] = stats.get('ner_count', 0) + 1
+                            logger.debug(f"NER提取（特殊处理）: 姓名 = {ner_text}")
+                            mapped = True
+
+                # 4. 如果仍未映射，尝试模糊匹配 - 增强版：更多实体类型
+                if not mapped:
+                    # 教育相关模糊匹配
+                    if '学校名称' in entity_list and not entities.get('学校名称'):
+                        if any(keyword in ner_text for keyword in
+                               ['大学', '学院', '学校', '研究所', '研究院', '中学', '小学']):
+                            entities['学校名称'] = ner_text
+                            stats['ner_count'] = stats.get('ner_count', 0) + 1
+                            logger.debug(f"NER提取（教育模糊匹配）: 学校名称 = {ner_text}")
+                            mapped = True
+
+                    if not mapped and '学历层次' in entity_list and not entities.get(
+                            '学历层次'):
+                        if any(keyword in ner_text for keyword in [
+                                '本科', '硕士', '博士', '大专', '高中', '初中', '小学',
+                                'MBA', 'EMBA'
+                        ]):
+                            entities['学历层次'] = ner_text
+                            stats['ner_count'] = stats.get('ner_count', 0) + 1
+                            logger.debug(f"NER提取（教育模糊匹配）: 学历层次 = {ner_text}")
+                            mapped = True
+
+                    if not mapped and '专业名称' in entity_list and not entities.get(
+                            '专业名称'):
+                        if any(keyword in ner_text for keyword in [
+                                '计算机', '软件', '电子', '机械', '自动化', '通信', '金融',
+                                '经济', '管理'
+                        ]):
+                            entities['专业名称'] = ner_text
+                            stats['ner_count'] = stats.get('ner_count', 0) + 1
+                            logger.debug(f"NER提取（教育模糊匹配）: 专业名称 = {ner_text}")
+                            mapped = True
+
+                    # 公司和职位模糊匹配
+                    if not mapped and '公司名称' in entity_list and not entities.get(
+                            '公司名称'):
+                        if any(keyword in ner_text for keyword in [
+                                '公司', '集团', '有限公司', '股份有限公司', '科技', '开发', '软件',
+                                '互联网'
+                        ]):
+                            entities['公司名称'] = ner_text
+                            stats['ner_count'] = stats.get('ner_count', 0) + 1
+                            logger.debug(f"NER提取（模糊匹配）: 公司名称 = {ner_text}")
+                            mapped = True
+
+                    if not mapped and '职位名称' in entity_list and not entities.get(
+                            '职位名称'):
+                        if any(keyword in ner_text for keyword in [
+                                '工程师', '经理', '总监', '主管', '专员', '分析师', '设计师',
+                                '开发', '架构师'
+                        ]):
+                            entities['职位名称'] = ner_text
+                            stats['ner_count'] = stats.get('ner_count', 0) + 1
+                            logger.debug(f"NER提取（模糊匹配）: 职位名称 = {ner_text}")
+                            mapped = True
+
+                # 记录未映射的实体，便于后续优化
+                if not mapped:
+                    logger.debug(
+                        f"NER实体未映射到系统实体: 标签={ner_label}, 文本={ner_text}")
+
         except Exception as e:
             logger.error(f"NER提取过程中发生错误: {e}")
+            import traceback
+            traceback.print_exc()
 
 
 # 实体提取协调器
@@ -1059,8 +1308,39 @@ class DataProcessor:
             提取的简历实体字典
         """
         logger.info("开始处理简历...")
-        return self.extract_entities(resume_text, self.resume_entities,
-                                     use_llm)
+        entities = self.extract_entities(resume_text, self.resume_entities,
+                                         use_llm)
+
+        # 将"技能"字段转换为"skills"字段，以兼容匹配器
+        if "技能" in entities:
+            # 确保skills始终是一个列表
+            skills = entities["技能"]
+            if isinstance(skills, dict):
+                # 如果是字典格式，将所有技能合并到一个列表
+                resume_skills = []
+                for skill_type, skill_list in skills.items():
+                    if isinstance(skill_list, list):
+                        resume_skills.extend(skill_list)
+                    elif isinstance(skill_list, str):
+                        resume_skills.append(skill_list)
+                entities["skills"] = resume_skills
+            elif isinstance(skills, str):
+                # 如果是字符串，尝试按分隔符分割
+                if ';' in skills:
+                    entities["skills"] = [
+                        s.strip() for s in skills.split(';') if s.strip()
+                    ]
+                elif ',' in skills:
+                    entities["skills"] = [
+                        s.strip() for s in skills.split(',') if s.strip()
+                    ]
+                else:
+                    entities["skills"] = [skills.strip()]
+            else:
+                # 如果是其他格式（如列表），直接使用
+                entities["skills"] = skills
+
+        return entities
 
     def process_jd(self, jd_text: str, use_llm: bool = True) -> Dict[str, Any]:
         """
@@ -1074,7 +1354,38 @@ class DataProcessor:
             提取的JD实体字典
         """
         logger.info("开始处理JD...")
-        return self.extract_entities(jd_text, self.jd_entities, use_llm)
+        entities = self.extract_entities(jd_text, self.jd_entities, use_llm)
+
+        # 将"技能要求"字段转换为"skills"字段，以兼容匹配器
+        if "技能要求" in entities:
+            # 确保skills始终是一个列表
+            skills = entities["技能要求"]
+            if isinstance(skills, dict):
+                # 如果是字典格式，将所有技能合并到一个列表
+                jd_skills = []
+                for skill_type, skill_list in skills.items():
+                    if isinstance(skill_list, list):
+                        jd_skills.extend(skill_list)
+                    elif isinstance(skill_list, str):
+                        jd_skills.append(skill_list)
+                entities["skills"] = jd_skills
+            elif isinstance(skills, str):
+                # 如果是字符串，尝试按分隔符分割
+                if ';' in skills:
+                    entities["skills"] = [
+                        s.strip() for s in skills.split(';') if s.strip()
+                    ]
+                elif ',' in skills:
+                    entities["skills"] = [
+                        s.strip() for s in skills.split(',') if s.strip()
+                    ]
+                else:
+                    entities["skills"] = [skills.strip()]
+            else:
+                # 如果是其他格式（如列表），直接使用
+                entities["skills"] = skills
+
+        return entities
 
     def process_resume_text(self,
                             resume_text: str,
@@ -1116,6 +1427,13 @@ class DataProcessor:
         if "学校名称" in entities and entities["学校名称"]:
             if "教育机构" not in result:
                 result["教育机构"] = []
+        # 提取简历技能并添加到结果中，确保匹配器可以直接访问
+        resume_skills = entities.get("skills", [])
+        # 确保skills始终是一个列表
+        if not isinstance(resume_skills, list):
+            resume_skills = []
+        result["skills"] = resume_skills
+        if "学校名称" in entities and entities["学校名称"]:
             result["教育机构"].append(entities["学校名称"])
         if "语言能力" in entities and entities["语言能力"]:
             result["语言技能"] = [entities["语言能力"]]
@@ -1158,5 +1476,23 @@ class DataProcessor:
             result["工作年限要求"] = [entities["工作年限要求"]]
         if "公司名称" in entities and entities["公司名称"]:
             result["公司信息"] = [entities["公司名称"]]
+        # 提取技能要求并添加到结果中，确保前端可以直接访问
+        skills = entities.get("技能要求", [])
+        # 确保skills始终是一个列表
+        if isinstance(skills, str):
+            # 如果是字符串，尝试按分隔符分割
+            if ';' in skills:
+                skills_list = [
+                    s.strip() for s in skills.split(';') if s.strip()
+                ]
+            elif ',' in skills:
+                skills_list = [
+                    s.strip() for s in skills.split(',') if s.strip()
+                ]
+            else:
+                skills_list = [skills]
+            result["skills"] = skills_list
+        else:
+            result["skills"] = skills
 
         return result

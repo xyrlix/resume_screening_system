@@ -10,6 +10,7 @@ from typing import List, Dict, Any, Optional, Tuple
 import json
 import time
 import random
+import re
 try:
     import openai
 except ImportError:
@@ -101,12 +102,11 @@ class LLMChain:
         # 优先使用健康的模型，如果没有健康模型则使用所有配置的模型
         selected = healthy_models if healthy_models else configured
 
-        # 如果没有配置任何模型，使用模拟实现
+        # 如果没有配置任何模型，设置为空字典并记录错误，但不抛出异常
         if not selected:
-            logger.info("未配置任何LLM模型或所有配置的模型都不健康，使用模拟实现")
-            # 使用优先顺序中的所有模型作为模拟提供者
-            selected = preferred_order
-            self.llm_providers = {n: MockLLMProvider(n) for n in selected}
+            logger.error("未配置任何LLM模型或所有配置的模型都不健康，请检查配置文件")
+            self.llm_providers = {}
+            self.active_provider_names = []
         else:
             logger.info(
                 f"已选择 {len(selected)} 个健康的LLM模型用于链式分析: {', '.join(selected)}")
@@ -158,16 +158,12 @@ class LLMChain:
                 break
             except Exception as e:
                 logger.error(f"步骤1-粗提 provider={cheap_model} 失败: {e}")
-                # 如果是最后一次尝试，使用模拟提供者
+                # 如果是最后一次尝试，抛出错误
                 if i == max_attempts_rough - 1:
-                    logger.warning("所有模型粗提取都失败，使用模拟提供者")
-                    rough_extraction = MockLLMProvider(
-                        cheap_model).extract_entities(jd_text, resume_text)
+                    raise Exception("所有模型粗提取都失败，请检查LLM模型配置")
 
         if not rough_extraction:
-            logger.warning("没有可用的廉价LLM，直接使用默认模型进行提取")
-            rough_extraction = MockLLMProvider('mock').extract_entities(
-                jd_text, resume_text)
+            raise Exception("没有可用的LLM模型进行提取，请检查配置")
 
         # 第二阶段：使用strong LLM（如deepseek）进行精修
         logger.info("第二阶段：使用强LLM进行实体精修")
@@ -475,6 +471,24 @@ class LLMChain:
             处理结果
         """
         try:
+            # 检查是否有可用的模型
+            if not self.active_provider_names:
+                logger.error("没有可用的LLM模型来处理简历")
+                return {
+                    "error": "没有可用的LLM模型来处理简历，所有配置的模型都不健康或未配置",
+                    "llm_results": [],
+                    "final_score": 0.0,
+                    "llm_scores": {},
+                    "weights": {},
+                    "active_providers": [],
+                    "suggestions": {
+                        "suggestions": [],
+                        "strengths": [],
+                        "weaknesses": []
+                    },
+                    "interview_questions": []
+                }
+
             logger.info(f"开始处理简历与JD匹配")
 
             # 1. 初步提取 (LLM1)
@@ -567,16 +581,6 @@ class LLMChain:
                 "interview_questions": []
             }
 
-    def generate_suggestions(self, resume_text: str, jd_text: str) -> dict:
-        """
-        生成简历优化建议
-        
-        Args:
-            resume_text: 简历文本
-            jd_text: JD文本
-        
-        Returns:
-            优化建议
         """
         provider_name = self.active_provider_names[
             0] if self.active_provider_names else list(
@@ -862,6 +866,25 @@ class BaseLLMProvider:
                         response_format={"type": "json_object"})
 
                 content = response.choices[0].message.content
+
+                # 去除可能的Markdown代码块标记
+                if content:
+                    if content.startswith('```json'):
+                        content = content[7:]
+                    if content.startswith('```'):
+                        content = content[3:]
+                    if content.endswith('```'):
+                        content = content[:-3]
+                    content = content.strip()
+
+                # 检查是否为空响应
+                if not content:
+                    logger.error(
+                        f"LLM返回空响应 provider={self.name} model={model} retry={retries}"
+                    )
+                    # 抛出异常让重试机制处理
+                    raise ValueError("LLM returned empty response")
+
                 logger.info(
                     f"LLM返回 provider={self.name} model={model} resp_len={len(content)} status=success retry={retries}"
                 )
@@ -919,10 +942,26 @@ class RealLLMProvider(BaseLLMProvider):
         resume_entities = self.extract_resume_entities(resume_text)
 
         # 转换为旧接口兼容的格式
+        # 确保技能要求始终是一个列表
+        jd_skills = jd_entities.get("技能要求", [])
+        if isinstance(jd_skills, str):
+            if ';' in jd_skills:
+                jd_skills_list = [
+                    s.strip() for s in jd_skills.split(';') if s.strip()
+                ]
+            elif ',' in jd_skills:
+                jd_skills_list = [
+                    s.strip() for s in jd_skills.split(',') if s.strip()
+                ]
+            else:
+                jd_skills_list = [jd_skills]
+        else:
+            jd_skills_list = jd_skills
+
         result = {
             "jd_entities": {
                 "skills":
-                jd_entities.get("技能要求", []),
+                jd_skills_list,
                 "education": [jd_entities.get("学历要求", "")]
                 if jd_entities.get("学历要求") else [],
                 "experience": [jd_entities.get("工作年限要求", "")]
@@ -1126,8 +1165,9 @@ class RealLLMProvider(BaseLLMProvider):
         except json.JSONDecodeError:
             # 如果解析失败，返回默认结果
             logger.error(f"解析LLM响应失败: {response}")
-            jd_skills = validated['jd_entities']['skills']
-            resume_skills = validated['resume_entities']['skills']
+            jd_skills = validated.get('jd_entities', {}).get('skills', [])
+            resume_skills = validated.get('resume_entities',
+                                          {}).get('skills', [])
             matching_skills = set(jd_skills) & set(resume_skills)
             return {
                 "skill_match": {
@@ -1165,17 +1205,23 @@ class RealLLMProvider(BaseLLMProvider):
             '{analyzed_json}',
             json.dumps(analyzed, ensure_ascii=False, indent=2))
 
-        response = self._call_llm(prompt)
         try:
+            response = self._call_llm(prompt)
+            # 尝试解析JSON
             return json.loads(response)
-        except json.JSONDecodeError:
-            # 如果解析失败，返回默认结果
-            logger.error(f"解析LLM响应失败: {response}")
-            skill_match_rate = analyzed['skill_match']['match_rate']
-            education_match = 1.0 if analyzed['education_match'][
-                'match'] else 0.0
-            experience_match = 1.0 if analyzed['experience_match'][
-                'match'] else 0.0
+        except (json.JSONDecodeError, ValueError) as e:
+            # JSON解析错误或_call_llm返回空响应
+            response_content = response if 'response' in locals() else str(e)
+            logger.error(f"解析LLM响应失败: {response_content}")
+            logger.error(f"错误详情: {str(e)}")
+            # 处理空响应或JSON解析错误的情况
+            # 计算默认分数
+            skill_match_rate = analyzed.get('skill_match',
+                                            {}).get('match_rate', 0.0)
+            education_match = 1.0 if analyzed.get('education_match', {}).get(
+                'match', False) else 0.0
+            experience_match = 1.0 if analyzed.get('experience_match', {}).get(
+                'match', False) else 0.0
 
             # 计算综合分数
             score = (skill_match_rate * 0.5) + (education_match * 0.25) + (
@@ -1186,340 +1232,55 @@ class RealLLMProvider(BaseLLMProvider):
             random_factor = random.uniform(0.95, 1.05)
             score = min(max(score * random_factor, 0.0), 1.0)
 
-            logger.info(f"MockLLM 生成分数 provider={self.name}")
+            logger.info(f"LLM解析失败，使用默认分数 provider={self.name}")
             return {
                 "score": score,
                 "reason":
                 f"技能匹配度: {skill_match_rate:.2f}, 教育背景匹配: {education_match:.2f}, 工作经验匹配: {experience_match:.2f}",
                 "details": analyzed
             }
+        except Exception as e:
+            # 其他所有异常
+            logger.error(f"LLM调用或解析失败: {str(e)}")
 
+            # 尝试从失败的响应中提取部分有用信息
+            extracted_score = None
+            try:
+                score_match = re.search(r'"score"\s*:\s*(\d+\.?\d*)', response)
+                if score_match:
+                    extracted_score = float(score_match.group(1))
+                    logger.info(f"从失败响应中提取到分数: {extracted_score}")
+            except Exception as extract_error:
+                logger.error(f"提取部分信息失败: {str(extract_error)}")
 
-class MockLLMProvider(BaseLLMProvider):
-    """
-    模拟LLM提供者，用于测试和演示
-    """
+            # 计算默认分数
+            skill_match_rate = analyzed.get('skill_match',
+                                            {}).get('match_rate', 0.0)
+            education_match = 1.0 if analyzed.get('education_match', {}).get(
+                'match', False) else 0.0
+            experience_match = 1.0 if analyzed.get('experience_match', {}).get(
+                'match', False) else 0.0
 
-    def extract_entities(self, jd_text: str, resume_text: str) -> dict:
-        """
-        模拟提取简历和JD的实体信息（兼容旧接口）
-        
-        Args:
-            jd_text: JD文本
-            resume_text: 简历文本
-        
-        Returns:
-            模拟的实体信息
-        """
-        # 分别提取JD和简历实体
-        jd_entities = self.extract_jd_entities(jd_text)
-        resume_entities = self.extract_resume_entities(resume_text)
+            # 计算综合分数
+            score = (skill_match_rate * 0.5) + (education_match * 0.25) + (
+                experience_match * 0.25)
 
-        # 转换为旧接口兼容的格式
-        result = {
-            "jd_entities": {
-                "skills":
-                jd_entities.get("技能要求", []),
-                "education": [jd_entities.get("学历要求", "")]
-                if jd_entities.get("学历要求") else [],
-                "experience": [jd_entities.get("工作年限要求", "")]
-                if jd_entities.get("工作年限要求") else [],
-                "position":
-                jd_entities.get("职位名称", "")
-            },
-            "resume_entities": {
-                "skills": [],
-                "education": [],
-                "experience": [],
-                "position": ""
+            # 如果能从失败响应中提取到分数，就使用它，否则使用计算出的分数
+            if extracted_score is not None:
+                score = extracted_score / 100.0  # 假设提取的分数是0-100范围
+
+            # 添加一些随机性，模拟不同LLM的差异
+            import random
+            random_factor = random.uniform(0.95, 1.05)
+            score = min(max(score * random_factor, 0.0), 1.0)
+
+            logger.info(f"LLM调用失败，使用默认分数 provider={self.name}")
+            return {
+                "score": score,
+                "reason":
+                f"技能匹配度: {skill_match_rate:.2f}, 教育背景匹配: {education_match:.2f}, 工作经验匹配: {experience_match:.2f}",
+                "details": analyzed
             }
-        }
-
-        # 处理简历技能，合并所有技能类别
-        resume_skills = resume_entities.get("技能", {})
-        for skill_type, skills in resume_skills.items():
-            result["resume_entities"]["skills"].extend(skills)
-
-        # 处理简历教育背景
-        education = resume_entities.get("教育背景", [])
-        if education:
-            # 提取最高学历
-            highest_edu = ""
-            edu_order = ["博士", "硕士", "本科", "大专", "高中"]
-            for edu in education:
-                degree = edu.get("学历", "")
-                for edu_level in edu_order:
-                    if edu_level in degree:
-                        highest_edu = edu_level
-                        break
-                if highest_edu:
-                    break
-            result["resume_entities"]["education"] = [highest_edu
-                                                      ] if highest_edu else []
-
-        # 处理简历工作经验
-        experience = resume_entities.get("总工作年限", "")
-        if experience:
-            result["resume_entities"]["experience"] = [experience]
-
-        # 处理简历职位
-        work_exp = resume_entities.get("工作经验", [])
-        if work_exp:
-            # 使用最近的工作职位
-            result["resume_entities"]["position"] = work_exp[0].get("职位", "")
-
-        return result
-
-    def extract_jd_entities(self, jd_text: str) -> dict:
-        """
-        模拟专门提取JD实体信息
-        
-        Args:
-            jd_text: JD文本
-        
-        Returns:
-            模拟的JD实体信息
-        """
-        # 模拟提取职位名称
-        position = ""
-        pos_match = re.search(r"职位\s*[:：]\s*(.*?)", jd_text)
-        if pos_match:
-            position = pos_match.group(1)
-        else:
-            # 尝试从文本开头提取职位名称
-            pos_start = re.match(r"^(.*?)[\s\n，,]", jd_text)
-            if pos_start and len(pos_start.group(1)) > 2:
-                position = pos_start.group(1)
-
-        # 模拟提取公司名称
-        company = ""
-        company_match = re.search(r"公司\s*[:：]\s*(.*?)", jd_text)
-        if company_match:
-            company = company_match.group(1)
-
-        # 模拟提取学历要求
-        education = ""
-        for edu in ["本科", "硕士", "博士", "大专", "高中"]:
-            if edu in jd_text:
-                education = edu
-                break
-
-        # 模拟提取工作年限要求
-        experience = ""
-        exp_match = re.search(r"(\d+)\s*年", jd_text)
-        if exp_match:
-            experience = f"{exp_match.group(1)}年以上"
-
-        # 模拟提取薪资范围
-        salary = ""
-        salary_match = re.search(r"(\d+)\s*[-—]\s*(\d+)\s*k", jd_text,
-                                 re.IGNORECASE)
-        if salary_match:
-            salary = f"{salary_match.group(1)}k-{salary_match.group(2)}k/月"
-
-        # 模拟提取工作地点
-        location = ""
-        location_match = re.search(r"地点\s*[:：]\s*(.*?)", jd_text)
-        if location_match:
-            location = location_match.group(1)
-
-        # 模拟提取技能要求
-        skills = []
-        all_skills = [
-            "Python", "Java", "C++", "JavaScript", "Go", "SQL", "MySQL",
-            "PostgreSQL", "MongoDB", "Redis", "Kafka", "Spark", "Hadoop",
-            "Docker", "Kubernetes", "AWS", "Azure", "GCP", "深度学习", "机器学习",
-            "人工智能", "自然语言处理", "计算机视觉", "大数据", "云计算"
-        ]
-        for skill in all_skills:
-            if skill in jd_text:
-                skills.append(skill)
-
-        # 模拟提取岗位职责
-        responsibilities = ""
-        resp_match = re.search(r"岗位职责[:：](.*?)(?:任职要求|岗位要求|其他|$)", jd_text,
-                               re.DOTALL)
-        if resp_match:
-            responsibilities = resp_match.group(1).strip()
-
-        # 模拟提取任职要求
-        requirements = ""
-        req_match = re.search(r"(?:任职要求|岗位要求)[:：](.*?)(?:其他|$)", jd_text,
-                              re.DOTALL)
-        if req_match:
-            requirements = req_match.group(1).strip()
-
-        # 模拟其他实体
-        industry = ""
-        if "互联网" in jd_text:
-            industry = "互联网"
-        elif "金融" in jd_text:
-            industry = "金融"
-
-        hiring_count = ""
-        count_match = re.search(r"招聘\s*(\d+)\s*人", jd_text)
-        if count_match:
-            hiring_count = f"{count_match.group(1)}人"
-
-        job_type = "全职"
-        if "实习" in jd_text:
-            job_type = "实习"
-        elif "兼职" in jd_text:
-            job_type = "兼职"
-
-        language_req = ""
-        if "英语" in jd_text:
-            language_req = "英语流利"
-
-        cert_req = ""
-        if "证书" in jd_text:
-            cert_req = "相关证书优先"
-
-        benefits = ""
-        if "五险一金" in jd_text:
-            benefits = "五险一金"
-
-        team_info = ""
-        team_match = re.search(r"(\d+)\s*人\s*团队", jd_text)
-        if team_match:
-            team_info = f"{team_match.group(1)}人团队"
-
-        return {
-            "职位名称": position,
-            "公司名称": company,
-            "学历要求": education,
-            "工作年限要求": experience,
-            "薪资范围": salary,
-            "工作地点": location,
-            "技能要求": skills,
-            "岗位职责": responsibilities,
-            "任职要求": requirements,
-            "行业": industry,
-            "招聘人数": hiring_count,
-            "发布时间": "",
-            "截止时间": "",
-            "职位类型": job_type,
-            "语言要求": language_req,
-            "证书要求": cert_req,
-            "福利": benefits,
-            "团队情况": team_info
-        }
-
-    def extract_resume_entities(self, resume_text: str) -> dict:
-        """
-        模拟专门提取简历实体信息
-        
-        Args:
-            resume_text: 简历文本
-        
-        Returns:
-            模拟的简历实体信息
-        """
-        # 模拟提取姓名
-        name = ""
-        name_match = re.search(r"姓名\s*[:：]\s*(.*?)", resume_text)
-        if name_match:
-            name = name_match.group(1)
-
-        # 模拟提取联系电话
-        phone = ""
-        phone_match = re.search(r"1[3-9]\d{9}", resume_text)
-        if phone_match:
-            phone = phone_match.group(0)
-
-        # 模拟提取电子邮箱
-        email = ""
-        email_match = re.search(
-            r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", resume_text)
-        if email_match:
-            email = email_match.group(0)
-
-        # 模拟提取现居地
-        location = ""
-        location_match = re.search(r"(?:现居地|居住地|地址)\s*[:：]\s*(.*?)",
-                                   resume_text)
-        if location_match:
-            location = location_match.group(1)
-
-        # 模拟提取期望职位
-        expected_position = ""
-        pos_match = re.search(r"(?:期望职位|应聘职位)\s*[:：]\s*(.*?)", resume_text)
-        if pos_match:
-            expected_position = pos_match.group(1)
-
-        # 模拟提取教育背景
-        education = []
-        edu_match = re.search(r"教育背景[:：](.*?)(?:工作经验|项目经验|技能|$)", resume_text,
-                              re.DOTALL)
-        if edu_match:
-            edu_text = edu_match.group(1)
-            # 简单模拟一条教育记录
-            school = ""
-            school_match = re.search(r"(?:学校|毕业院校)\s*[:：]\s*(.*?)", edu_text)
-            if school_match:
-                school = school_match.group(1)
-
-            major = ""
-            major_match = re.search(r"(?:专业|学科)\s*[:：]\s*(.*?)", edu_text)
-            if major_match:
-                major = major_match.group(1)
-
-            degree = ""
-            for edu in ["本科", "硕士", "博士", "大专"]:
-                if edu in edu_text:
-                    degree = edu
-                    break
-
-            time_period = ""
-            time_match = re.search(r"(\d{4})[\s-](\d{4})", edu_text)
-            if time_match:
-                time_period = f"{time_match.group(1)}-{time_match.group(2)}"
-
-            if school or major or degree:
-                education.append({
-                    "学校": school,
-                    "专业": major,
-                    "学历": degree,
-                    "时间": time_period
-                })
-
-        # 模拟提取工作经验
-        work_experience = []
-        exp_match = re.search(r"工作经验[:：](.*?)(?:项目经验|技能|$)", resume_text,
-                              re.DOTALL)
-        if exp_match:
-            exp_text = exp_match.group(1)
-            # 简单模拟一条工作经验记录
-            company = ""
-            company_match = re.search(r"(?:公司|企业)\s*[:：]\s*(.*?)", exp_text)
-            if company_match:
-                company = company_match.group(1)
-
-            position = ""
-            pos_match = re.search(r"(?:职位|岗位)\s*[:：]\s*(.*?)", exp_text)
-            if pos_match:
-                position = pos_match.group(1)
-
-            time_period = ""
-            time_match = re.search(r"(\d{4}\.\d{1,2})[\s-](\d{4}\.\d{1,2}|至今)",
-                                   exp_text)
-            if time_match:
-                time_period = f"{time_match.group(1)}-{time_match.group(2)}"
-
-            content = ""
-            content_match = re.search(r"(?:职责|工作内容)\s*[:：](.*?)", exp_text,
-                                      re.DOTALL)
-            if content_match:
-                content = content_match.group(1).strip()
-
-            if company or position:
-                work_experience.append({
-                    "公司": company,
-                    "职位": position,
-                    "时间": time_period,
-                    "内容": content
-                })
-
         # 模拟提取项目经验
         projects = []
         proj_match = re.search(r"项目经验[:：](.*?)(?:技能|$)", resume_text,
@@ -1591,106 +1352,3 @@ class MockLLMProvider(BaseLLMProvider):
         languages = []
         if "英语" in resume_text:
             languages.append("英语流利")
-
-        # 模拟提取总工作年限
-        total_experience = ""
-        exp_match = re.search(r"(\d+)\s*年", resume_text)
-        if exp_match:
-            total_experience = f"{exp_match.group(1)}年"
-
-        return {
-            "姓名": name,
-            "联系电话": phone,
-            "电子邮箱": email,
-            "现居地": location,
-            "期望职位": expected_position,
-            "教育背景": education,
-            "工作经验": work_experience,
-            "项目经验": projects,
-            "技能": skills,
-            "证书资质": certificates,
-            "语言能力": languages,
-            "总工作年限": total_experience
-        }
-
-    def validate_entities(self, extracted: dict) -> dict:
-        """
-        模拟验证和修正实体信息
-        
-        Args:
-            extracted: 初步提取的实体信息
-        
-        Returns:
-            验证和修正后的实体信息
-        """
-        # 简单验证，实际项目中应该使用LLM进行验证
-        logger.info(f"MockLLM 验证实体 provider={self.name}")
-        return extracted
-
-    def analyze_match(self, validated: dict) -> dict:
-        """
-        模拟分析简历和JD的匹配度
-        
-        Args:
-            validated: 验证和修正后的实体信息
-        
-        Returns:
-            详细的匹配度分析
-        """
-        jd_skills = validated['jd_entities']['skills']
-        resume_skills = validated['resume_entities']['skills']
-        matching_skills = set(jd_skills) & set(resume_skills)
-
-        logger.info(f"MockLLM 匹配分析 provider={self.name}")
-        return {
-            "skill_match": {
-                "matching_skills":
-                list(matching_skills),
-                "jd_skills":
-                jd_skills,
-                "resume_skills":
-                resume_skills,
-                "match_rate":
-                len(matching_skills) / len(jd_skills) if jd_skills else 0
-            },
-            "education_match": {
-                "match": True,
-                "reason": "简历教育背景满足JD要求"
-            },
-            "experience_match": {
-                "match": True,
-                "reason": "简历工作经验满足JD要求"
-            }
-        }
-
-    def generate_score(self, analyzed: dict) -> dict:
-        """
-        模拟生成匹配分数
-        
-        Args:
-            analyzed: 详细的匹配度分析
-        
-        Returns:
-            生成的匹配分数
-        """
-        # 基于分析结果生成模拟分数
-        skill_match_rate = analyzed['skill_match']['match_rate']
-        education_match = 1.0 if analyzed['education_match']['match'] else 0.0
-        experience_match = 1.0 if analyzed['experience_match']['match'] else 0.0
-
-        # 计算综合分数
-        score = (skill_match_rate * 0.5) + (education_match *
-                                            0.25) + (experience_match * 0.25)
-
-        # 添加一些随机性，模拟不同LLM的差异
-        import random
-        random_factor = random.uniform(0.95, 1.05)
-        score = min(max(score * random_factor, 0.0), 1.0)
-
-        logger.info(f"MockLLM 生成分数 provider={self.name}")
-        return {
-            "score": score,
-            "reason":
-            f"技能匹配度: {skill_match_rate:.2f}, 教育背景匹配: {education_match:.2f}, 工作经验匹配: {experience_match:.2f}",
-            "details": analyzed
-        }

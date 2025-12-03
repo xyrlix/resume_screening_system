@@ -446,52 +446,6 @@ with role_tabs[0]:
                 # 清除进度显示
                 status_text.empty()
                 progress_bar.empty()
-
-                # 使用保存的当前JD显示结构化信息
-                current_jd = st.session_state.get('current_jd', {})
-                with st.expander("📋 查看JD结构化信息"):
-                    st.write(
-                        f"**职位名称**: {current_jd['entities'].get('职位名称', '未提取到')}"
-                    )
-                    st.write(
-                        f"**公司名称**: {current_jd['entities'].get('公司名称', '未提取到')}"
-                    )
-                    st.write(
-                        f"**薪资范围**: {current_jd['entities'].get('薪资范围', '未提取到')}"
-                    )
-                    st.write(
-                        f"**工作地点**: {current_jd['entities'].get('工作地点', '未提取到')}"
-                    )
-                    st.write(
-                        f"**学历要求**: {current_jd['entities'].get('学历要求', '未提取到')}"
-                    )
-                    st.write(
-                        f"**工作年限要求**: {current_jd['entities'].get('工作年限要求', '未提取到')}"
-                    )
-
-                    if current_jd.get('skills'):
-                        st.write(
-                            f"**技能要求**: {', '.join(current_jd.get('skills'))}")
-
-                    if current_jd['entities'].get('岗位职责'):
-                        st.write(
-                            f"**岗位职责**: {current_jd['entities']['岗位职责'][:100]}..."
-                        )
-
-                    if current_jd['entities'].get('任职要求'):
-                        st.write(
-                            f"**任职要求**: {current_jd['entities']['任职要求'][:100]}..."
-                        )
-
-                    if 'vector' in current_jd:
-                        st.write(f"**向量维度**: {len(current_jd['vector'])}")
-                        st.write(
-                            f"**向量前5个值**: {[round(v, 4) for v in current_jd['vector'][:5]]}..."
-                        )
-
-                    # 使用当前JD的实体信息作为完整实体信息
-                    st.subheader("完整实体信息")
-                    st.json(current_jd['entities'], expanded=False)
             except Exception as e:
                 # 清除进度显示
                 status_text.empty()
@@ -500,6 +454,37 @@ with role_tabs[0]:
         else:
             st.error("❌ 请输入职位描述内容或上传JD文件")
 
+    # 显示当前JD的结构化信息（如果存在）
+    current_jd = st.session_state.get('current_jd', {})
+    if current_jd:
+        with st.expander("📋 查看JD结构化信息"):
+            entities = current_jd.get('entities', {})
+            st.write(f"**职位名称**: {entities.get('职位名称', '未提取到')}")
+            st.write(f"**公司名称**: {entities.get('公司名称', '未提取到')}")
+            st.write(f"**薪资范围**: {entities.get('薪资范围', '未提取到')}")
+            st.write(f"**工作地点**: {entities.get('工作地点', '未提取到')}")
+            st.write(f"**学历要求**: {entities.get('学历要求', '未提取到')}")
+            st.write(f"**工作年限要求**: {entities.get('工作年限要求', '未提取到')}")
+
+            if current_jd.get('skills'):
+                st.write(f"**技能要求**: {', '.join(current_jd.get('skills'))}")
+
+            if entities.get('岗位职责'):
+                st.write(f"**岗位职责**: {entities['岗位职责'][:100]}...")
+
+            if entities.get('任职要求'):
+                st.write(f"**任职要求**: {entities['任职要求'][:100]}...")
+
+            if 'vector' in current_jd:
+                st.write(f"**向量维度**: {len(current_jd['vector'])}")
+                st.write(
+                    f"**向量前5个值**: {[round(v, 4) for v in current_jd['vector'][:5]]}..."
+                )
+
+            # 使用当前JD的实体信息作为完整实体信息
+            st.subheader("完整实体信息")
+            st.json(entities, expanded=False)
+
     # 显示已上传的JD列表
     st.subheader("已上传的JD列表")
     jobs = recruiter_service.get_job_list()
@@ -507,7 +492,9 @@ with role_tabs[0]:
         for job in jobs:
             with st.expander(f"JD ID: {job['job_id']} - 职位描述"):
                 st.write(job['cleaned_text'][:150] + "...")
-                st.write(f"技能要求: {', '.join(job.get('skills', []))}")
+                st.write(
+                    f"技能要求: {', '.join(job['skills']) if job['skills'] else '未指定'}"
+                )
                 if 'source_file_type' in job or 'source_file_path' in job:
                     st.write(f"来源类型: {job.get('source_file_type','')}")
                     st.write(f"来源路径: {job.get('source_file_path','')}")
@@ -782,7 +769,10 @@ with role_tabs[0]:
             with st.expander(f"简历 ID: {resume['resume_id']} - 点击查看详情",
                              expanded=False):
                 st.write(f"**简历内容**: {resume['cleaned_text'][:150]}...")
-                st.write(f"**技能**: {', '.join(resume['skills'])}")
+                # 安全访问skills字段，如果不存在则显示"暂无技能信息"
+                skills = resume.get('skills', [])
+                st.write(
+                    f"**技能**: {', '.join(skills) if skills else '暂无技能信息'}")
                 if 'source_file_type' in resume or 'source_file_path' in resume:
                     st.write(f"来源类型: {resume.get('source_file_type','')}")
                     st.write(f"来源路径: {resume.get('source_file_path','')}")
@@ -978,11 +968,14 @@ with role_tabs[0]:
                     }
 
                     # 提交异步任务
-                    def match_task():
+                    def match_task(**kwargs):
                         return recruiter_service.matcher.match_resumes_to_jd_with_llm(
                             filtered_resumes, selected_job, top_k, config=cfg)
 
                     task_id = task_manager.submit_task(match_task)
+
+                    # 初始化结果变量
+                    results = []
 
                     # 显示进度条和状态
                     progress_bar = st.progress(0)
@@ -1319,7 +1312,9 @@ with role_tabs[0]:
                         ):
                             st.write(
                                 f"**简历内容**: {resume['cleaned_text'][:150]}...")
-                            st.write(f"**技能**: {', '.join(resume['skills'])}")
+                            st.write(
+                                f"**技能**: {', '.join(resume.get('skills', []))}"
+                            )
 
                             st.subheader("LLM分析结果")
                             if 'step3' in llm_analysis:
@@ -1795,7 +1790,7 @@ with role_tabs[1]:
             with st.expander(f"简历 ID: {resume['resume_id']} - 点击查看详情",
                              expanded=False):
                 st.write(f"**简历内容**: {resume['cleaned_text'][:150]}...")
-                st.write(f"**技能**: {', '.join(resume['skills'])}")
+                st.write(f"**技能**: {', '.join(resume.get('skills', []))}")
                 if 'source_file_type' in resume or 'source_file_path' in resume:
                     st.write(f"来源类型: {resume.get('source_file_type','')}")
                     st.write(f"来源路径: {resume.get('source_file_path','')}")
@@ -1832,11 +1827,21 @@ with role_tabs[1]:
         if st.button("生成优化建议", key="candidate_generate_suggestions"):
             if jd_text.strip():
                 with st.spinner("正在生成优化建议..."):
-                    # 生成优化建议
-                    suggestions = candidate_service.generate_resume_optimization_suggestions(
-                        selected_resume_id, jd_text)
+                    try:
+                        # 生成优化建议
+                        suggestions = candidate_service.generate_resume_optimization_suggestions(
+                            selected_resume_id, jd_text)
 
-                    st.success("✅ 优化建议生成完成！")
+                        # 检查响应是否包含错误信息
+                        if isinstance(suggestions,
+                                      dict) and 'error' in suggestions:
+                            st.error(f"❌ {suggestions['error']}")
+                        else:
+                            st.success("✅ 优化建议生成完成！")
+                    except ValueError as e:
+                        st.error(f"❌ {e}")
+                    except Exception as e:
+                        st.error(f"❌ 生成优化建议失败：{str(e)}")
 
                     # 显示优化建议
                     for i, suggestion in enumerate(suggestions['suggestions'],
@@ -1940,11 +1945,14 @@ with role_tabs[1]:
                 st.success("✅ 示例职位添加完成！")
 
             # 提交异步任务进行岗位匹配
-            def match_task():
+            def match_task(**kwargs):
                 return candidate_service.match_resume_to_jobs(
                     selected_resume_id, top_k)
 
             task_id = task_manager.submit_task(match_task)
+
+            # 初始化结果变量
+            results = []
 
             # 显示进度条和状态
             progress_bar = st.progress(0)
@@ -1987,7 +1995,7 @@ with role_tabs[1]:
                                         f"**职位描述**: {job['cleaned_text'][:150]}..."
                                     )
                                     st.write(
-                                        f"**技能要求**: {', '.join(job['skills'])}"
+                                        f"**技能要求**: {', '.join(job['skills']) if job['skills'] else '未指定'}"
                                     )
                         else:
                             st.error(f"❌ 匹配失败: {task.error}")

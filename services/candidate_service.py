@@ -182,6 +182,16 @@ class CandidateService:
                                                  resume['cleaned_text'])
         logger.info("LLM链式分析完成")
 
+        # 检查分析结果是否包含错误
+        if 'error' in analysis:
+            logger.error(f"LLM链式分析失败: {analysis['error']}")
+            return {
+                "error": analysis['error'],
+                "analysis": {},
+                "suggestions": [],
+                "resume_id": resume_id
+            }
+
         # 基于分析结果生成优化建议
         logger.info("开始生成优化建议")
         suggestions = self._generate_suggestions_from_analysis(

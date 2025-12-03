@@ -73,7 +73,12 @@ class Visualizer:
         resume_exp = max(
             (extract_years(exp) for exp in resume.get('experience', [])),
             default=0)
-        jd_exp = int(jd.get('entities', {}).get('工作年限要求', '3'))
+        # 安全地将工作年限要求转换为整数，增加默认值和类型检查
+
+        try:
+            jd_exp = int(jd.get('entities', {}).get('工作年限要求', '0') or '0')
+        except (ValueError, TypeError):
+            jd_exp = 0  # 默认值
         experience_match = min(resume_exp / jd_exp, 1.0) if jd_exp > 0 else 1.0
         scores.append(experience_match)
 

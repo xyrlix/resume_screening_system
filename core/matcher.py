@@ -183,14 +183,14 @@ class ResumeMatcher:
             similarity_score = self.calculate_similarity_score(
                 resume['vector'], jd['vector'])
 
-        skill_score = self.calculate_skill_match_score(resume['skills'],
-                                                       jd['skills'])
+        skill_score = self.calculate_skill_match_score(
+            resume.get('skills', []), jd.get('skills', []))
 
         education_score = self.calculate_education_match_score(
-            resume['education'], jd.get('education', []))
+            resume.get('education', []), jd.get('education', []))
 
         experience_score = self.calculate_experience_match_score(
-            resume['experience'], jd.get('experience', []))
+            resume.get('experience', []), jd.get('experience', []))
 
         # 计算加权综合分数
         overall_score = (similarity_score * weights['similarity'] +
@@ -288,7 +288,7 @@ class ResumeMatcher:
                 'gte',
                 'value':
                 jd.get('entities', {}).get('工作年限要求',
-                                           str(cfg.get('required_years', 3))),
+                                           str(cfg.get('required_years', 0))),
                 'field':
                 'experience'
             }
@@ -362,8 +362,24 @@ class ResumeMatcher:
 
                 # 检查是否包含所有必需技能
                 if required_skills:
-                    matching_skills = set(resume_skills) & set(required_skills)
-                    match_rate = len(matching_skills) / len(required_skills)
+                    # 确保resume_skills是列表
+                    if not isinstance(resume_skills, list):
+                        # 如果是字符串，按逗号分割并去除空白
+                        if isinstance(resume_skills, str):
+                            resume_skills = [
+                                skill.strip()
+                                for skill in resume_skills.split(',')
+                            ]
+                        else:
+                            resume_skills = []
+
+                    # 转换为小写进行匹配，忽略大小写差异
+                    resume_skill_set = set(skill.lower()
+                                           for skill in resume_skills)
+                    required_skill_set = set(skill.lower()
+                                             for skill in required_skills)
+                    matching_skills = resume_skill_set & required_skill_set
+                    match_rate = len(matching_skills) / len(required_skill_set)
                     min_rate = float(cfg.get('skills_min_rate', 0.3))
                     if match_rate < min_rate:
                         match = False
@@ -437,11 +453,12 @@ class ResumeMatcher:
                                   f"正在进行LLM补筛... {i + 1}/{total_stage2}")
 
             use_llm = filter_details['stage3']['enabled']
-            if boundary and isinstance(boundary,
-                                       (list, tuple)) and len(boundary) == 2:
-                lo, hi = float(boundary[0]), float(boundary[1])
-                use_llm = use_llm and (similarity_score >= lo
-                                       and similarity_score <= hi)
+            # 移除llm_boundary限制，让所有简历都使用LLM分析（如果enabled为True）
+            # if boundary and isinstance(boundary,
+            #                            (list, tuple)) and len(boundary) == 2:
+            #     lo, hi = float(boundary[0]), float(boundary[1])
+            #     use_llm = use_llm and (similarity_score >= lo
+            #                            and similarity_score <= hi)
             if use_llm:
                 llm_analysis = llm_chain.process_resume(
                     jd['cleaned_text'], resume['cleaned_text'])

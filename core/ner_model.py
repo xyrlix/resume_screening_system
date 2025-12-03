@@ -547,7 +547,75 @@ class NERPipeline:
 
         # 使用选定的模型进行推理
         logger.debug(f"使用模型 {model_name} 进行推理")
-        ner_result = selected_model(text)
+
+        # 获取模型的最大序列长度
+        max_length = selected_model.model.config.max_position_embeddings
+        logger.debug(f"模型最大序列长度: {max_length}")
+
+        # 获取tokenizer
+        tokenizer = selected_model.tokenizer
+
+        # 对长文本进行分段处理
+        if len(tokenizer.encode(text)) > max_length:
+            logger.debug(
+                f"输入文本过长({len(tokenizer.encode(text))} tokens)，需要分段处理")
+
+            # 将文本按max_length-2（留2个位置给特殊标记）进行分段
+            chunks = []
+            current_chunk = ""
+            current_length = 0
+
+            # 按句子分割文本（简单实现，按句号分割）
+            sentences = text.split('。')
+
+            for sentence in sentences:
+                sentence = sentence.strip()
+                if not sentence:
+                    continue
+
+                # 添加句号回到句子
+                sentence += '。'
+
+                # 计算句子的token长度
+                sentence_length = len(tokenizer.encode(sentence))
+
+                # 如果当前段落加上新句子不超过最大长度，则添加到当前段落
+                if current_length + sentence_length <= max_length - 2:
+                    current_chunk += sentence
+                    current_length += sentence_length
+                else:
+                    # 如果当前段落不为空，添加到段落列表
+                    if current_chunk:
+                        chunks.append(current_chunk)
+
+                    # 如果句子本身就超过最大长度，直接截断
+                    if sentence_length > max_length - 2:
+                        # 截断句子
+                        truncated_sentence = tokenizer.decode(
+                            tokenizer.encode(sentence,
+                                             max_length=max_length - 2,
+                                             truncation=True))
+                        chunks.append(truncated_sentence)
+                    else:
+                        # 开始新段落
+                        current_chunk = sentence
+                        current_length = sentence_length
+
+            # 添加最后一个段落
+            if current_chunk:
+                chunks.append(current_chunk)
+
+            logger.debug(f"文本被分成 {len(chunks)} 个段落")
+
+            # 对每个段落进行NER处理
+            ner_result = []
+            for i, chunk in enumerate(chunks):
+                logger.debug(f"处理第 {i+1}/{len(chunks)} 个段落")
+                chunk_result = selected_model(chunk)
+                ner_result.extend(chunk_result)
+        else:
+            # 文本长度正常，直接处理
+            ner_result = selected_model(text)
 
         # 转换pipeline结果格式为预期格式
         result = []
@@ -590,6 +658,7 @@ def get_ner(model_dir: str = None):
 
     # 如果单例已存在，直接返回
     if _NER_SINGLETON is not None:
+        logger.debug("使用已加载的NER模型实例")
         return _NER_SINGLETON
 
     # 设置默认模型路径
@@ -599,15 +668,15 @@ def get_ner(model_dir: str = None):
     try:
         # 尝试直接创建NERPipeline实例，不管模型文件是否存在
         # 因为NERPipeline内部已经实现了模型加载的容错机制
+        logger.debug(f"创建新的NER模型实例，模型路径: {path}")
         _NER_SINGLETON = NERPipeline(path)
 
         # 检查模型是否真正可用
         if _NER_SINGLETON.ner_model or _NER_SINGLETON.ner_zh or _NER_SINGLETON.ner_en:
             logger.info("NER模型加载成功")
-            return _NER_SINGLETON
         else:
             logger.warning("NER模型加载成功，但没有可用的模型实例")
-            return _NER_SINGLETON
+        return _NER_SINGLETON
     except Exception as e:
         logger.error(f"NER模型初始化失败: {e}")
         return None

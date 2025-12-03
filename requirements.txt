@@ -3,7 +3,6 @@
 # 核心依赖
 numpy>=1.24.0
 pandas>=2.0.0
-scikit-learn>=1.2.0
 
 # 文本处理和向量化
 sentence-transformers>=2.2.0
@@ -15,8 +14,6 @@ streamlit>=1.20.0
 plotly>=5.0.0
 
 # 工具库
-python-dotenv>=1.0.0
-pyyaml>=6.0
 openai>=1.0.0
 
 # 文件处理

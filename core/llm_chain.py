@@ -581,7 +581,6 @@ class LLMChain:
                 "interview_questions": []
             }
 
-        """
         provider_name = self.active_provider_names[
             0] if self.active_provider_names else list(
                 self.llm_providers.keys())[0]
@@ -781,7 +780,7 @@ class BaseLLMProvider:
                   model: str = None,
                   max_retries: int = 2) -> str:
         """
-        调用LLM模型，支持重试机制
+        调用LLM模型, 支持重试机制
         
         Args:
             prompt: 提示词
@@ -923,12 +922,12 @@ class BaseLLMProvider:
 
 class RealLLMProvider(BaseLLMProvider):
     """
-    真实LLM提供者，使用OpenAI API
+    真实LLM提供者, 使用OpenAI API
     """
 
     def extract_entities(self, jd_text: str, resume_text: str) -> dict:
         """
-        提取简历和JD的实体信息（兼容旧接口）
+        提取简历和JD的实体信息(兼容旧接口)
         
         Args:
             jd_text: JD文本
@@ -1200,6 +1199,7 @@ class RealLLMProvider(BaseLLMProvider):
         Returns:
             生成的匹配分数
         """
+        import random
         tmpl = self.llm_config_manager.get_prompt('generate_score')
         prompt = tmpl.replace(
             '{analyzed_json}',
@@ -1209,47 +1209,21 @@ class RealLLMProvider(BaseLLMProvider):
             response = self._call_llm(prompt)
             # 尝试解析JSON
             return json.loads(response)
-        except (json.JSONDecodeError, ValueError) as e:
-            # JSON解析错误或_call_llm返回空响应
-            response_content = response if 'response' in locals() else str(e)
-            logger.error(f"解析LLM响应失败: {response_content}")
-            logger.error(f"错误详情: {str(e)}")
-            # 处理空响应或JSON解析错误的情况
-            # 计算默认分数
-            skill_match_rate = analyzed.get('skill_match',
-                                            {}).get('match_rate', 0.0)
-            education_match = 1.0 if analyzed.get('education_match', {}).get(
-                'match', False) else 0.0
-            experience_match = 1.0 if analyzed.get('experience_match', {}).get(
-                'match', False) else 0.0
-
-            # 计算综合分数
-            score = (skill_match_rate * 0.5) + (education_match * 0.25) + (
-                experience_match * 0.25)
-
-            # 添加一些随机性，模拟不同LLM的差异
-            import random
-            random_factor = random.uniform(0.95, 1.05)
-            score = min(max(score * random_factor, 0.0), 1.0)
-
-            logger.info(f"LLM解析失败，使用默认分数 provider={self.name}")
-            return {
-                "score": score,
-                "reason":
-                f"技能匹配度: {skill_match_rate:.2f}, 教育背景匹配: {education_match:.2f}, 工作经验匹配: {experience_match:.2f}",
-                "details": analyzed
-            }
         except Exception as e:
-            # 其他所有异常
-            logger.error(f"LLM调用或解析失败: {str(e)}")
+            # 处理所有异常情况
+            response_content = response if 'response' in locals() else str(e)
+            logger.error(f"LLM调用或解析失败: {response_content}")
+            logger.error(f"错误详情: {str(e)}")
 
             # 尝试从失败的响应中提取部分有用信息
             extracted_score = None
             try:
-                score_match = re.search(r'"score"\s*:\s*(\d+\.?\d*)', response)
-                if score_match:
-                    extracted_score = float(score_match.group(1))
-                    logger.info(f"从失败响应中提取到分数: {extracted_score}")
+                if 'response' in locals():
+                    score_match = re.search(r'"score"\s*:\s*(\d+\.?\d*)',
+                                            response)
+                    if score_match:
+                        extracted_score = float(score_match.group(1))
+                        logger.info(f"从失败响应中提取到分数: {extracted_score}")
             except Exception as extract_error:
                 logger.error(f"提取部分信息失败: {str(extract_error)}")
 
@@ -1270,7 +1244,6 @@ class RealLLMProvider(BaseLLMProvider):
                 score = extracted_score / 100.0  # 假设提取的分数是0-100范围
 
             # 添加一些随机性，模拟不同LLM的差异
-            import random
             random_factor = random.uniform(0.95, 1.05)
             score = min(max(score * random_factor, 0.0), 1.0)
 
@@ -1281,49 +1254,6 @@ class RealLLMProvider(BaseLLMProvider):
                 f"技能匹配度: {skill_match_rate:.2f}, 教育背景匹配: {education_match:.2f}, 工作经验匹配: {experience_match:.2f}",
                 "details": analyzed
             }
-        # 模拟提取项目经验
-        projects = []
-        proj_match = re.search(r"项目经验[:：](.*?)(?:技能|$)", resume_text,
-                               re.DOTALL)
-        if proj_match:
-            proj_text = proj_match.group(1)
-            # 简单模拟一条项目经验记录
-            proj_name = ""
-            proj_name_match = re.search(r"(?:项目名称|项目)\s*[:：]\s*(.*?)",
-                                        proj_text)
-            if proj_name_match:
-                proj_name = proj_name_match.group(1)
-
-            role = ""
-            role_match = re.search(r"(?:角色|负责)\s*[:：]\s*(.*?)", proj_text)
-            if role_match:
-                role = role_match.group(1)
-
-            tech_stack = []
-            all_skills = ["Python", "Java", "SQL", "MySQL"]
-            for skill in all_skills:
-                if skill in proj_text:
-                    tech_stack.append(skill)
-
-            achievement = ""
-            achievement_match = re.search(r"(?:成果|成就)\s*[:：](.*?)", proj_text,
-                                          re.DOTALL)
-            if achievement_match:
-                achievement = achievement_match.group(1).strip()
-
-            if proj_name:
-                projects.append({
-                    "项目名称": proj_name,
-                    "角色": role,
-                    "技术栈": tech_stack,
-                    "成果": achievement
-                })
-
-        # 模拟提取技能
-        skills = {"编程语言": [], "框架工具": [], "数据库": [], "云平台": [], "软技能": []}
-
-        # 模拟从文本中提取技能
-        for skill in ["Python", "Java", "C++"]:
             if skill in resume_text:
                 skills["编程语言"].append(skill)
 

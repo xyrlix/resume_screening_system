@@ -93,6 +93,8 @@ class Vectorizer:
         # 更新加载状态
         self._model_loading = False
         self._model_loaded = True
+        # 清空临时向量缓存，避免混用不同维度的向量
+        self._vector_cache = {}
         load_time = time.time() - self._load_start_time
         print(f"[LOG] 🎯 模型异步加载完成，总耗时: {load_time:.2f}秒")
 

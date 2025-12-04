@@ -87,6 +87,13 @@ class FeatureEngine:
         Returns:
             余弦相似度，范围[-1, 1]
         """
+        # 对齐维度以避免形状不匹配
+        len1, len2 = len(vector1), len(vector2)
+        if len1 != len2:
+            target_len = min(len1, len2)
+            vector1 = vector1[:target_len]
+            vector2 = vector2[:target_len]
+
         vector1 = self.normalize_vector(vector1)
         vector2 = self.normalize_vector(vector2)
         return np.dot(vector1, vector2)
@@ -103,8 +110,17 @@ class FeatureEngine:
         Returns:
             余弦相似度列表
         """
+        # 统一所有向量的维度到最短长度
+        target_len = len(query_vector)
+        for v in vectors:
+            if len(v) < target_len:
+                target_len = len(v)
+
+        query_vector = query_vector[:target_len]
+        vectors_aligned = [v[:target_len] for v in vectors]
+
         query_vector = self.normalize_vector(query_vector)
-        normalized_vectors = self.normalize_vectors(vectors)
+        normalized_vectors = self.normalize_vectors(vectors_aligned)
         return [np.dot(query_vector, vector) for vector in normalized_vectors]
 
     def select_features(self, features: List[float],

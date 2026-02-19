@@ -1,0 +1,55 @@
+{
+  "dimensions": {
+    "基础维度": {
+      "技能匹配": {
+        "weight": 0.2,
+        "source": "llm_analysis.step3.skill_match.match_rate"
+      },
+      "教育匹配": {
+        "weight": 0.15,
+        "source": "llm_analysis.step3.education_match.match"
+      },
+      "经验匹配": {
+        "weight": 0.15,
+        "source": "llm_analysis.step3.experience_match.match"
+      }
+    },
+    "扩展维度": {
+      "语言能力": {
+        "weight": 0.1,
+        "source": "llm_analysis.step4.language_match.match_rate",
+        "fallback": "skills_contain:语言"
+      },
+      "证书匹配": {
+        "weight": 0.1,
+        "source": "llm_analysis.step4.certificate_match.match_rate",
+        "fallback": "skills_contain:证书"
+      },
+      "薪资匹配": {
+        "weight": 0.08,
+        "source": "llm_analysis.step4.salary_match.match_rate",
+        "fallback": 0.75
+      },
+      "工作地点": {
+        "weight": 0.07,
+        "source": "llm_analysis.step4.location_match.match_rate",
+        "fallback": 0.8
+      },
+      "行业匹配": {
+        "weight": 0.07,
+        "source": "llm_analysis.step4.industry_match.match_rate",
+        "fallback": 0.85
+      },
+      "职位匹配": {
+        "weight": 0.05,
+        "source": "llm_analysis.step4.position_match.match_rate",
+        "fallback": 0.9
+      },
+      "项目经验": {
+        "weight": 0.03,
+        "source": "llm_analysis.step4.project_match.match_rate",
+        "fallback": 0.7
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 # custom
-models/bert_entity/model.safetensors
-chroma_db/chroma.sqlite3
+data/models/*
+logs/*
+uploads/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

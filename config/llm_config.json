@@ -1,0 +1,75 @@
+{
+  "model_mappings": {
+    "qwen": "qwen-plus",
+    "deepseek": "deepseek-chat",
+    "openrouter": "tngtech/tng-r1t-chimera:free",
+    "moonshot": "moonshot-v1-8k",
+    "kimi": "kimi-k2-turbo-preview",
+    "hunyuan": "hunyuan-lite",
+    "siliconflow": "qwen2.5-72b-instruct"
+  },
+  "supported_models": [
+    "qwen-plus",
+    "deepseek-chat",
+    "moonshot-v1-8k",
+    "kimi-k2-turbo-preview",
+    "tngtech/tng-r1t-chimera:free",
+    "hunyuan-lite"
+  ],
+  "models": {
+    "qwen-plus": {
+      "api_key": "gAAAAABpLQ-jPfJhTEu2hBvCHHy1skU_OY9yhhFzs8LIPt8JAJlTfNjN2ukSVEphyM-qorhbMIbeT_wX0HNO2lgyUyv5PAX0LPs3Unhju0KvaDDcPiCblCQ_0ekrSG6QnW7_Y2RRGUgC",
+      "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "domestic_base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "international_base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+    },
+    "deepseek-chat": {
+      "api_key": "gAAAAABpLQ-jm_mqcta20oGNP1b2zhQyqe6Xm8H3vD2OJOXiJzNSwnt98KTcBcphHxnG3UJBZn9dEg4Na-u-lNo_NAaTgJTLT5p1ZL97vHP5LaiRu40ozaEakVjr9LRm3sxplU_j9ra4",
+      "base_url": "https://api.deepseek.com"
+    },
+    "moonshot-v1-8k": {
+      "api_key": "gAAAAABpLQ-jngVs9xl4cJqGUeOgNrCopjBdrDjP8TL6srAYFhhrE5vXCnTxJ60qo22xqaz6bWhXa1GMlqCKfr9M5GfjKtr47HMDNBZm4iEhQrtioarP6zN3wSLXuUUvGCUMzra4_FmDkb4z0Mqqg6Eb-aBexO1W1Q==",
+      "base_url": "https://api.moonshot.cn/v1"
+    },
+    "kimi-k2-turbo-preview": {
+      "api_key": "gAAAAABpLQ-jdTuQsvRNuMfPWH3V-NHWerMVGWwaDmUqMjkjKSOg34W-JEVdlvJf2FnNmEdc6CCxdcRUfu6mAP35HXKRYnPRBrxqYMkwoGutPx49k-aIjEPrnz_86-IIjtMXId1JVvq_9kOhoNqjEEX3m_sqJSOFhg==",
+      "base_url": "https://api.moonshot.cn/v1"
+    },
+    "tngtech/tng-r1t-chimera:free": {
+      "api_key": "gAAAAABpLQ-jWzWfwLtyiqbv50mpIrGKaf5WCDqZrdk9AKQH4Id8UdYaBmB6uBLn-BqfzLIozgwSmzFEUmarn7d7hB119OX2Trv1jiWw_JLEWXHyj3NfHy3FXH1JT1MIxzD9tLWc4ScJcj1p_AAOFJk89a5GEpET2HA0hkTsGswaVZtPTxnSZjs=",
+      "base_url": "https://openrouter.ai/api/v1/chat/completions"
+    },
+    "hunyuan-lite": {
+      "api_key": "gAAAAABpLQ-j6E_XRtEJpVmx592V3qMx4HrrxUPK5Dd54VdXhfFyMNh6USEClWfeLl1jVhkDldp7wGFdjlQSL-BLHjKOVXMTYXEoNCr5kItQ5rw5x6IG7EaM2-ik_NUYZ-BgZBNfLrAv2g0OkhH0gUt0g6BGPQfI4w==",
+      "base_url": "https://api.hunyuan.cloud.tencent.com/v1"
+    }
+  },
+  "chains": [
+    [
+      "qwen-plus",
+      "deepseek-chat",
+      "moonshot-v1-8k"
+    ],
+    [
+      "tngtech/tng-r1t-chimera:free",
+      "kimi-k2-turbo-preview"
+    ],
+    [
+      "hunyuan-lite"
+    ]
+  ],
+  "default_model": "qwen-plus",
+  "region": "domestic",
+  "preferred_orders": {
+    "domestic": [
+      "qwen-plus",
+      "deepseek-chat",
+      "hunyuan-lite",
+      "moonshot-v1-8k"
+    ],
+    "international": [
+      "tngtech/tng-r1t-chimera:free",
+      "kimi-k2-turbo-preview"
+    ]
+  }
+}
